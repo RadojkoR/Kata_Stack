@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LocalizedStringSchema } from "@/i18n/localized";
 
 export const AREAS = ["javascript", "typescript", "react-next", "node"] as const;
 export const LEVELS = ["pocetnik", "srednji", "expert"] as const;
@@ -12,23 +13,10 @@ export type Area = z.infer<typeof AreaSchema>;
 export type Level = z.infer<typeof LevelSchema>;
 export type Runtime = z.infer<typeof RuntimeSchema>;
 
-export const AREA_LABELS: Record<Area, string> = {
-  javascript: "JavaScript",
-  typescript: "TypeScript",
-  "react-next": "React/Next.js",
-  node: "Node.js",
-};
-
-export const LEVEL_LABELS: Record<Level, string> = {
-  pocetnik: "početnik",
-  srednji: "srednji",
-  expert: "expert",
-};
-
 const SolutionSchema = z.strictObject({
-  label: z.string().min(1),
+  label: LocalizedStringSchema,
   code: z.string().min(1),
-  note: z.string().optional(),
+  note: LocalizedStringSchema.optional(),
 });
 
 // ID se koristi u URL-u i u napretku, zato samo mala slova, brojevi i crtice.
@@ -36,7 +24,7 @@ const IdSchema = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "id sme da sadrži
 
 const BaseFields = {
   id: IdSchema,
-  title: z.string().min(1),
+  title: LocalizedStringSchema,
   area: AreaSchema,
   level: LevelSchema,
   runtime: RuntimeSchema,
@@ -46,7 +34,7 @@ const BaseFields = {
 export const ClassicExerciseSchema = z.strictObject({
   ...BaseFields,
   type: z.literal("classic"),
-  description: z.string().min(1),
+  description: LocalizedStringSchema,
   starterCode: z.string(),
   tests: z.string().min(1),
   hiddenTests: z.string().optional(),
@@ -56,11 +44,11 @@ export const ClassicExerciseSchema = z.strictObject({
 export const BugHuntExerciseSchema = z.strictObject({
   ...BaseFields,
   type: z.literal("bug-hunt"),
-  context: z.string().min(1),
+  context: LocalizedStringSchema,
   buggyCode: z.string().min(1),
   tests: z.string().min(1),
   hiddenTests: z.string().optional(),
-  bugExplanation: z.string().min(1),
+  bugExplanation: LocalizedStringSchema,
 });
 
 // code-review, fix-the-prompt i code-reading se dodaju u Fazi 4.
@@ -73,7 +61,7 @@ export type ExerciseType = Exercise["type"];
 
 export const TrackSchema = z.strictObject({
   id: IdSchema,
-  title: z.string().min(1),
+  title: LocalizedStringSchema,
   exercises: z.array(IdSchema).min(1),
 });
 

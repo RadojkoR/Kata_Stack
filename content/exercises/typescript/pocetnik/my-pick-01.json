@@ -1,0 +1,26 @@
+{
+  "id": "my-pick-01",
+  "title": { "sr": "Sopstveni Pick tip", "en": "Your own Pick type" },
+  "type": "classic",
+  "area": "typescript",
+  "level": "pocetnik",
+  "runtime": "types",
+  "tags": ["generics", "utility-types"],
+  "description": {
+    "sr": "Napiši tip `MyPick<T, K>` koji pravi novi tip samo sa ključevima `K` iz tipa `T` (kao ugrađeni `Pick`, ali bez njegove upotrebe).\n\nPrimer:\n```ts\ntype User = { id: number; name: string; age: number };\ntype Short = MyPick<User, 'id' | 'name'>; // { id: number; name: string }\n```\n\nNe izvršava se nikakav kod: rešenje je tačno kad nema grešaka tipova.",
+    "en": "Write a type `MyPick<T, K>` that creates a new type with only the keys `K` of type `T` (like the built-in `Pick`, but without using it).\n\nExample:\n```ts\ntype User = { id: number; name: string; age: number };\ntype Short = MyPick<User, 'id' | 'name'>; // { id: number; name: string }\n```\n\nNo code is executed: the solution is correct when there are no type errors."
+  },
+  "starterCode": "type MyPick<T, K extends keyof T> = unknown;",
+  "tests": "type User = { id: number; name: string; age: number };\ntype Case1 = Expect<Equal<MyPick<User, 'id'>, { id: number }>>;\ntype Case2 = Expect<Equal<MyPick<User, 'id' | 'name'>, { id: number; name: string }>>;",
+  "hiddenTests": "type Case3 = Expect<Equal<MyPick<{ a: string }, 'a'>, { a: string }>>;",
+  "solutions": [
+    {
+      "label": { "sr": "mapirani tip", "en": "mapped type" },
+      "code": "type MyPick<T, K extends keyof T> = {\n  [P in K]: T[P];\n};",
+      "note": {
+        "sr": "Mapirani tip prolazi kroz svaki ključ iz `K` i uzima njegov tip iz `T`.",
+        "en": "A mapped type iterates over every key in `K` and takes its type from `T`."
+      }
+    }
+  ]
+}

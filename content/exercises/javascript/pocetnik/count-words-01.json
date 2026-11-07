@@ -1,20 +1,26 @@
 {
   "id": "count-words-01",
-  "title": "Brojanje reči",
+  "title": { "sr": "Brojanje reči", "en": "Word count" },
   "type": "classic",
   "area": "javascript",
   "level": "pocetnik",
   "runtime": "worker",
-  "tags": ["stringovi", "objekti"],
-  "description": "Napiši funkciju `countWords(text)` koja vraća objekat sa brojem pojavljivanja svake reči.\n\nReči se razdvajaju razmacima, a velika i mala slova se ne razlikuju.\n\nPrimeri:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`",
-  "starterCode": "function countWords(text) {\n  // tvoj kod\n}",
-  "tests": "test('broji ponavljanja', () => {\n  expect(countWords('a b a')).toEqual({ a: 2, b: 1 });\n});\ntest('ne razlikuje velika i mala slova', () => {\n  expect(countWords('Hello hello')).toEqual({ hello: 2 });\n});\ntest('prazan tekst daje prazan objekat', () => {\n  expect(countWords('')).toEqual({});\n});",
-  "hiddenTests": "test('više razmaka između reči', () => {\n  expect(countWords('a   b  a')).toEqual({ a: 2, b: 1 });\n});\ntest('razmaci na početku i kraju', () => {\n  expect(countWords('  a b  ')).toEqual({ a: 1, b: 1 });\n});",
+  "tags": ["strings", "objects"],
+  "description": {
+    "sr": "Napiši funkciju `countWords(text)` koja vraća objekat sa brojem pojavljivanja svake reči.\n\nReči se razdvajaju razmacima, a velika i mala slova se ne razlikuju.\n\nPrimeri:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`",
+    "en": "Write a function `countWords(text)` that returns an object with the number of occurrences of each word.\n\nWords are separated by spaces, and case does not matter.\n\nExamples:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`"
+  },
+  "starterCode": "function countWords(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'broji ponavljanja', en: 'counts repeated words' }, () => {\n  expect(countWords('a b a')).toEqual({ a: 2, b: 1 });\n});\ntest({ sr: 'ne razlikuje velika i mala slova', en: 'ignores letter case' }, () => {\n  expect(countWords('Hello hello')).toEqual({ hello: 2 });\n});\ntest({ sr: 'prazan tekst daje prazan objekat', en: 'empty text gives an empty object' }, () => {\n  expect(countWords('')).toEqual({});\n});",
+  "hiddenTests": "test('multiple spaces between words', () => {\n  expect(countWords('a   b  a')).toEqual({ a: 2, b: 1 });\n});\ntest('leading and trailing spaces', () => {\n  expect(countWords('  a b  ')).toEqual({ a: 1, b: 1 });\n});",
   "solutions": [
     {
-      "label": "split + for",
+      "label": { "sr": "split + for", "en": "split + for" },
       "code": "function countWords(text) {\n  const counts = {};\n  for (const word of text.toLowerCase().split(/\\s+/)) {\n    if (!word) continue;\n    counts[word] = (counts[word] ?? 0) + 1;\n  }\n  return counts;\n}",
-      "note": "Prazne stringove treba preskočiti jer `''.split(/\\s+/)` vraća `['']`."
+      "note": {
+        "sr": "Prazne stringove treba preskočiti jer `''.split(/\\s+/)` vraća `['']`.",
+        "en": "Empty strings must be skipped because `''.split(/\\s+/)` returns `['']`."
+      }
     }
   ]
 }

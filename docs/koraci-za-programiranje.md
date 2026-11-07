@@ -22,7 +22,7 @@
 | Prijava (Etapa 2) | Sopstvena: `scrypt` (ugrađen u Node) + tabela `sessions` + httpOnly cookie | Bez dodatnih zavisnosti; jasno šta se dešava |
 | Validacija | Zod za fajlove zadataka, localStorage podatke, uvoz JSON-a i svaki ulaz u API | Jedan alat za sve granice gde podaci ulaze u aplikaciju |
 | Sadržaj (zadaci, staze) | JSON fajlovi u repou | Verzionisano u Git-u; napredak samo pokazuje na `exercise_id` |
-| Jezici | Srpski i engleski od početka: `[lang]` segment u URL-u, JSON rečnici, lokalizovana polja `{ sr, en }` u zadacima | Dva jezika od prvog dana jeftinije je nego naknadno prepravljanje; detalji u [plan-js-platforma.md](plan-js-platforma.md), sekcija 4.9 |
+| Jezici | Srpski i engleski od početka (Korak 5b, odmah posle Koraka 5): `[lang]` segment u URL-u, sopstveni JSON rečnici i `proxy.ts` kao u Next.js vodiču (bez `next-intl`), lokalizovana polja `{ sr, en }` u zadacima | Dva jezika od prvog dana jeftinije je nego naknadno prepravljanje; detalji u [plan-js-platforma.md](plan-js-platforma.md), sekcija 4.9 |
 | Poruke runnera | Kodovi i parametri, ne gotove rečenice | Da isti runner radi za oba jezika; prevodi ih UI |
 | AI | Tek posle Etape 2 | Ključevi se ne stavljaju na Netlify dok ne postoje prijava i limit |
 
@@ -505,32 +505,46 @@ Svaki korak ima uslov **"Gotovo kad"**: dok on nije ispunjen, ne prelazi se na s
 
 **Gotovo kad:** beskonačna petlja ne zamrzava tab, a rezultat testova stiže u `RunResult` obliku.
 
-#### Korak 5b: Dvojezičnost (sr/en)
-Radi se odmah posle Koraka 5 i pre radnog ekrana, jer sve što sledi (UI, poruke, zadaci) ima tekst. Menja i ono što je već urađeno u koracima 4 i 5, a sada je to još jeftino.
-- [ ] Pročitati i18n/routing vodiče u `node_modules/next/dist/docs/` (ova verzija Next.js-a ima izmene, npr. `proxy.ts` umesto `middleware.ts`)
-- [ ] `i18n/config.ts`, `[lang]` segment, `generateStaticParams` za `sr` i `en`, `proxy.ts` sa redosledom: cookie `ks_lang` → `Accept-Language` → `sr`
-- [ ] Rečnici `i18n/dictionaries/sr.json` i `en.json`, tipizovana funkcija `t()`; Vitest test pada ako jedan rečnik ima ključ koji drugi nema
-- [ ] `LocalizedString = { sr, en }` kao Zod šema; polja `title`, `description`, `context`, `bugExplanation`, `solutions[].label/note` i naslov staze postaju lokalizovana; build pada ako fali jedan jezik
-- [ ] Tagovi ostaju neutralni slug-ovi, a prikazani nazivi idu u rečnik
+#### Korak 5b: Dvojezičnost (sr/en), instalacija i temelj — **sledeći korak, pre svega ostalog**
+Radi se odmah, pre radnog ekrana: sve što sledi (UI, poruke, zadaci) ima tekst, pa je jeftinije da od prvog ekrana sve ide kroz rečnik nego da se kasnije prepravlja. Menja i ono što je već urađeno u koracima 4 i 5, a sada je to još jeftino.
+
+**Pristup (prema vodiču `node_modules/next/dist/docs/01-app/02-guides/internationalization.md`):** sopstveni JSON rečnici i `proxy.ts`, bez biblioteke za prevode kao što je `next-intl`. Za dva jezika i jednostavne tekstove to je dovoljno, a manje je zavisnosti. Ako se kasnije pokaže da trebaju množine ili formatiranje datuma, `next-intl` se može dodati.
+
+**Instalacija:**
+- [x] `npm i @formatjs/intl-localematcher negotiator` (biranje jezika iz `Accept-Language`, kao u vodiču)
+- [x] `npm i -D @types/negotiator`
+- [x] Ništa drugo: `next/root-params` je deo Next.js-a, a Zod i Vitest već postoje
+
+**Temelj:**
+- [x] Svi fajlovi iz `app/` (osim `api/`) se premeštaju pod `app/[lang]/`, uključujući root layout (`app/[lang]/layout.tsx` sa `<html lang={lang}>`)
+- [x] `i18n/config.ts` (`locales = ["sr", "en"]`, `defaultLocale = "sr"`), `hasLocale()` i `getDictionary()` preko `next/root-params`
+- [x] `generateStaticParams` za `sr` i `en`, `proxy.ts` sa redosledom: cookie `ks_lang` → `Accept-Language` → `sr`; `matcher` isključuje `/api` i `_next`
+- [x] Rečnici `i18n/dictionaries/sr.json` i `en.json`, tipizovana funkcija `t()`; Vitest test pada ako jedan rečnik ima ključ koji drugi nema
+- [x] `LocalizedString = { sr, en }` kao Zod šema; polja `title`, `description`, `context`, `bugExplanation`, `solutions[].label/note` i naslov staze postaju lokalizovana; build pada ako fali jedan jezik
+- [x] Tagovi ostaju neutralni slug-ovi, a prikazani nazivi idu u rečnik
 - [x] `test(name, fn)` prihvata string ili `{ sr, en }`; `TestResult.name` je isto (urađeno u Koraku 5, tip `TestName` u `lib/runner/types.ts`; u 5b ga zameniti zajedničkim `LocalizedString`)
 - [x] Runner ne vraća rečenice: `error` je kod sa parametrima (`{ code: "timeout", ms }`), skriveni testovi nose `hiddenIndex`, a `expect` vraća `failure.code`, `matcher`, `expected` i `actual` (urađeno u Koraku 5)
 - [ ] UI prevodi kodove iz runnera (`timeout`, `mismatch`, `negated`, `not-thrown`, `resolved-unexpectedly`, `rejected-unexpectedly`, `exception`, `transpile`, `worker`) iz rečnika
-- [ ] Postojeća 3 zadatka i njihovi testovi dobijaju engleski tekst
-- [ ] Prebacivač jezika (SR | EN) u zaglavlju; `<html lang>` iz segmenta
-- [ ] Izvoz/uvoz JSON-a i napredak ostaju isti (ne zavise od jezika)
+- [x] Postojeća 3 zadatka i njihovi testovi dobijaju engleski tekst
+- [x] Prebacivač jezika (SR | EN) u zaglavlju; `<html lang>` iz segmenta
+- [x] Izvoz/uvoz JSON-a i napredak ostaju isti (ne zavise od jezika)
+
+**Urađeno** (67 testova, `tsc`, lint i build prolaze; proveren produkcioni server: `/` → `/sr` ili `/en` po zaglavlju i cookie-ju, `<html lang>` i sadržaj po jeziku, `/de` → 404). Ostaje samo prevod kodova iz runnera, koji se radi u Koraku 6 kad postoji UI.
 
 **Gotovo kad:** `/sr` i `/en` prikazuju istu listu zadataka, svaka na svom jeziku; prebacivač pamti izbor; zadatak kome fali engleski naslov obara `npm run build`.
 
 #### Korak 6: Radni ekran
-- [ ] `Workspace` sa tri kolone (`react-resizable-panels`) i fokus modom
-- [ ] Monaco editor + Prettier + tipovi za `test`/`expect`
-- [ ] `TopBar`: Run, Submit, Reset, Format, tajmer
-- [ ] `TestResults`, `OutputConsole`
-- [ ] Prečice Ctrl+Enter / Ctrl+Shift+Enter
-- [ ] Svi tekstovi iz rečnika (bez ugrađenih stringova u komponentama); poruke runnera se prevode iz kodova
-- [ ] Tema i raspored panela u `ks:ui`; nacrt koda se automatski čuva u `ks:v1:draft:<id>` na svakih par sekundi
+- [x] `Workspace` sa tri kolone (`react-resizable-panels`) i fokus modom
+- [x] Monaco editor + Prettier + tipovi za `test`/`expect`
+- [x] `TopBar`: Run, Submit, Reset, Format, tajmer
+- [x] `TestResults`, `OutputConsole`
+- [x] Prečice Ctrl+Enter / Ctrl+Shift+Enter
+- [x] Svi tekstovi iz rečnika (bez ugrađenih stringova u komponentama); poruke runnera se prevode iz kodova
+- [x] Tema i raspored panela u `ks:ui`; nacrt koda se automatski čuva u `ks:v1:draft:<id>` na svakih par sekundi
 
 **Gotovo kad:** mogu da rešim zadatak od početka do kraja, a posle osvežavanja stranice kod je i dalje tu.
+
+**Stanje:** sve je napisano i prolazi `tsc`, lint, 82 testa i `npm run build`. **Nije proveren rad u pravom browseru** (Chrome ekstenzija nije bila povezana): Web Worker preko `new Worker(new URL(...))`, Monaco i provera tipova. Do tada Korak 6 nije zatvoren. Odluke usput: Monaco se kopira iz `node_modules` u `public/monaco` (skripta `scripts/copy-monaco.mjs`, pre `dev` i `build`), jer CDN verzija koju `@monaco-editor/react` učitava (0.55) ima drugačiji TypeScript API od instalirane (0.57); raspored panela pamti sama biblioteka pod ključem `ks:react-resizable-panels:...`; tema je atribut `data-theme` sa skriptom u `<head>`; dodata su 2 TypeScript zadatka (`worker-ts` i `types`) da se oba adaptera mogu probati.
 
 #### Korak 7: Napredak u localStorage-u
 - [ ] `types/progress.ts` i Zod šeme (sekcija 3.1)

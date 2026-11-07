@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "Kata Stack",
+    "description": "Platforma za vežbanje JavaScript-a, TypeScript-a, React-a i Node.js-a"
+  },
+  "language": {
+    "label": "Jezik",
+    "sr": "Srpski",
+    "en": "English"
+  },
+  "theme": {
+    "toggle": "Promeni temu",
+    "dark": "Tamna",
+    "light": "Svetla"
+  },
+  "home": {
+    "exercises": "Zadaci"
+  },
+  "workspace": {
+    "back": "Nazad",
+    "run": "Pokreni",
+    "submit": "Predaj",
+    "reset": "Resetuj",
+    "resetConfirm": "Sigurno? Briše tvoj kod",
+    "format": "Formatiraj",
+    "focus": "Fokus",
+    "exitFocus": "Izađi iz fokusa",
+    "loading": "Učitavanje editora…",
+    "statusRunning": "Izvršavanje…",
+    "tabTask": "Zadatak",
+    "tabTests": "Testovi",
+    "console": "Konzola",
+    "consoleEmpty": "Ovde se prikazuje ispis iz console.log",
+    "noRunYet": "Pokreni testove (Ctrl+Enter) da vidiš rezultate.",
+    "passedCount": "Prošlo {passed} od {total}",
+    "allPassed": "Svi testovi prolaze.",
+    "solved": "Rešeno! Svi testovi, uključujući skrivene, prolaze.",
+    "submitFailed": "Neki testovi ne prolaze.",
+    "typeErrors": "Greške tipova",
+    "line": "red {n}",
+    "noTests": "Nema pokrenutih testova.",
+    "shortcuts": "Ctrl+Enter pokreće, Ctrl+Shift+Enter predaje",
+    "formatFailed": "Formatiranje nije uspelo: kod ima grešku u sintaksi.",
+    "timer": "Vreme",
+    "unsupportedRuntime": "Ovo okruženje još nije podržano."
+  },
+  "runner": {
+    "hiddenTest": "Skriveni test {n}",
+    "timeout": "Isteklo vreme ({ms} ms). Moguća beskonačna petlja.",
+    "exception": "Greška pri izvršavanju",
+    "transpile": "Greška pri prevođenju",
+    "worker": "Greška u Worker-u",
+    "assertion": {
+      "mismatch": "Očekivano {expected}, dobijeno {actual}",
+      "negated": "Vrednost nije smela da bude {expected}",
+      "notThrown": "Očekivano je da bude bačena greška",
+      "resolvedUnexpectedly": "Očekivano je odbijanje (reject), a promise je razrešen vrednošću {actual}",
+      "rejectedUnexpectedly": "Očekivano je razrešenje (resolve), a promise je odbijen: {actual}"
+    }
+  },
+  "areas": {
+    "javascript": "JavaScript",
+    "typescript": "TypeScript",
+    "react-next": "React/Next.js",
+    "node": "Node.js"
+  },
+  "levels": {
+    "pocetnik": "početnik",
+    "srednji": "srednji",
+    "expert": "expert"
+  },
+  "types": {
+    "classic": "klasični",
+    "bug-hunt": "nađi bag"
+  },
+  "tags": {
+    "arrays": "nizovi",
+    "filter": "filter",
+    "reduce": "reduce",
+    "strings": "stringovi",
+    "objects": "objekti",
+    "closures": "closures",
+    "functions": "funkcije",
+    "generics": "generici",
+    "utility-types": "pomoćni tipovi"
+  }
+}

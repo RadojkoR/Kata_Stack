@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "Kata Stack",
+    "description": "A platform for practicing JavaScript, TypeScript, React and Node.js"
+  },
+  "language": {
+    "label": "Language",
+    "sr": "Srpski",
+    "en": "English"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "home": {
+    "exercises": "Exercises"
+  },
+  "workspace": {
+    "back": "Back",
+    "run": "Run",
+    "submit": "Submit",
+    "reset": "Reset",
+    "resetConfirm": "Sure? This erases your code",
+    "format": "Format",
+    "focus": "Focus",
+    "exitFocus": "Exit focus",
+    "loading": "Loading editor…",
+    "statusRunning": "Running…",
+    "tabTask": "Task",
+    "tabTests": "Tests",
+    "console": "Console",
+    "consoleEmpty": "Output from console.log appears here",
+    "noRunYet": "Run the tests (Ctrl+Enter) to see the results.",
+    "passedCount": "Passed {passed} of {total}",
+    "allPassed": "All tests pass.",
+    "solved": "Solved! All tests, including the hidden ones, pass.",
+    "submitFailed": "Some tests fail.",
+    "typeErrors": "Type errors",
+    "line": "line {n}",
+    "noTests": "No tests were run.",
+    "shortcuts": "Ctrl+Enter runs, Ctrl+Shift+Enter submits",
+    "formatFailed": "Formatting failed: the code has a syntax error.",
+    "timer": "Time",
+    "unsupportedRuntime": "This environment is not supported yet."
+  },
+  "runner": {
+    "hiddenTest": "Hidden test {n}",
+    "timeout": "Time limit exceeded ({ms} ms). Possible infinite loop.",
+    "exception": "Runtime error",
+    "transpile": "Compilation error",
+    "worker": "Worker error",
+    "assertion": {
+      "mismatch": "Expected {expected}, received {actual}",
+      "negated": "The value must not be {expected}",
+      "notThrown": "Expected an error to be thrown",
+      "resolvedUnexpectedly": "Expected the promise to reject, but it resolved with {actual}",
+      "rejectedUnexpectedly": "Expected the promise to resolve, but it rejected: {actual}"
+    }
+  },
+  "areas": {
+    "javascript": "JavaScript",
+    "typescript": "TypeScript",
+    "react-next": "React/Next.js",
+    "node": "Node.js"
+  },
+  "levels": {
+    "pocetnik": "beginner",
+    "srednji": "intermediate",
+    "expert": "expert"
+  },
+  "types": {
+    "classic": "classic",
+    "bug-hunt": "bug hunt"
+  },
+  "tags": {
+    "arrays": "arrays",
+    "filter": "filter",
+    "reduce": "reduce",
+    "strings": "strings",
+    "objects": "objects",
+    "closures": "closures",
+    "functions": "functions",
+    "generics": "generics",
+    "utility-types": "utility types"
+  }
+}

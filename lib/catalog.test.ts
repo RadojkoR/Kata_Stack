@@ -3,16 +3,16 @@ import { buildCatalog, ContentError, parseExerciseFile, parseTrackFile } from ".
 
 const classic = {
   id: "sum-01",
-  title: "Zbir",
+  title: { sr: "Zbir", en: "Sum" },
   type: "classic",
   area: "javascript",
   level: "pocetnik",
   runtime: "worker",
   tags: ["nizovi"],
-  description: "opis",
+  description: { sr: "opis", en: "description" },
   starterCode: "function sum() {}",
   tests: "test('x', () => {});",
-  solutions: [{ label: "a", code: "function sum() {}" }],
+  solutions: [{ label: { sr: "a", en: "a" }, code: "function sum() {}" }],
 };
 
 const raw = (o: unknown) => JSON.stringify(o);
@@ -42,6 +42,17 @@ describe("parseExerciseFile", () => {
     ).toThrow(ContentError);
   });
 
+  it("odbija zadatak kome fali jedan jezik", () => {
+    const samoSrpski = { ...classic, title: { sr: "Zbir" } };
+    expect(() => parseExerciseFile("javascript/pocetnik/sum-01.json", raw(samoSrpski))).toThrow(/title\.en/);
+  });
+
+  it("odbija običan string tamo gde treba tekst na oba jezika", () => {
+    expect(() =>
+      parseExerciseFile("javascript/pocetnik/sum-01.json", raw({ ...classic, description: "samo srpski" })),
+    ).toThrow(/description/);
+  });
+
   it("odbija nepoznata polja (greška u kucanju)", () => {
     expect(() => parseExerciseFile("javascript/pocetnik/sum-01.json", raw({ ...classic, hiddenTest: "x" }))).toThrow(
       /hiddenTest/,
@@ -60,15 +71,15 @@ describe("parseExerciseFile", () => {
   it("prepoznaje bug-hunt zadatak", () => {
     const bug = {
       id: "bug-01",
-      title: "Bag",
+      title: { sr: "Bag", en: "Bug" },
       type: "bug-hunt",
       area: "javascript",
       level: "srednji",
       runtime: "worker",
-      context: "AI je napisao ovo",
+      context: { sr: "AI je napisao ovo", en: "An AI wrote this" },
       buggyCode: "forEach(async () => {})",
       tests: "test('x', () => {});",
-      bugExplanation: "forEach ne čeka",
+      bugExplanation: { sr: "forEach ne čeka", en: "forEach does not wait" },
     };
     expect(parseExerciseFile("javascript/srednji/bug-01.json", raw(bug)).type).toBe("bug-hunt");
   });
@@ -90,14 +101,14 @@ describe("buildCatalog", () => {
   });
 
   it("odbija stazu koja pokazuje na nepostojeći zadatak", () => {
-    const track = parseTrackFile("async.json", raw({ id: "async", title: "Async", exercises: ["sum-01", "nema-ga"] }));
+    const track = parseTrackFile("async.json", raw({ id: "async", title: { sr: "Async", en: "Async" }, exercises: ["sum-01", "nema-ga"] }));
     expect(() =>
       buildCatalog([{ file: "javascript/pocetnik/a.json", exercise: ex("sum-01") }], [{ file: "async.json", track }]),
     ).toThrow(/nema-ga/);
   });
 
   it("prihvata ispravan skup", () => {
-    const track = parseTrackFile("t.json", raw({ id: "t", title: "T", exercises: ["sum-01"] }));
+    const track = parseTrackFile("t.json", raw({ id: "t", title: { sr: "T", en: "T" }, exercises: ["sum-01"] }));
     const catalog = buildCatalog([{ file: "javascript/pocetnik/a.json", exercise: ex("sum-01") }], [
       { file: "t.json", track },
     ]);

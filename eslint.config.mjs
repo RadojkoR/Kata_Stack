@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Kopija instaliranog Monaco-a (scripts/copy-monaco.mjs), nije naš kod.
+    "public/monaco/**",
   ]),
 ]);
 

@@ -1,0 +1,26 @@
+{
+  "id": "generic-first-01",
+  "title": { "sr": "Prvi element niza (generik)", "en": "First element of an array (generic)" },
+  "type": "classic",
+  "area": "typescript",
+  "level": "pocetnik",
+  "runtime": "worker-ts",
+  "tags": ["generics", "functions"],
+  "description": {
+    "sr": "Napiši generičku funkciju `first<T>(items: T[]): T | undefined` koja vraća prvi element niza, ili `undefined` ako je niz prazan.\n\nPrimeri:\n- `first([1, 2, 3])` → `1`\n- `first(['a', 'b'])` → `'a'`\n- `first([])` → `undefined`\n\nTip rezultata mora da prati tip elemenata: `first([1, 2])` je `number | undefined`, a ne `any`.",
+    "en": "Write a generic function `first<T>(items: T[]): T | undefined` that returns the first element of an array, or `undefined` if the array is empty.\n\nExamples:\n- `first([1, 2, 3])` → `1`\n- `first(['a', 'b'])` → `'a'`\n- `first([])` → `undefined`\n\nThe result type must follow the element type: `first([1, 2])` is `number | undefined`, not `any`."
+  },
+  "starterCode": "function first<T>(items: T[]): T | undefined {\n  // your code\n  return undefined;\n}",
+  "tests": "test({ sr: 'vraća prvi element', en: 'returns the first element' }, () => {\n  expect(first([1, 2, 3])).toBe(1);\n});\ntest({ sr: 'vraća undefined za prazan niz', en: 'returns undefined for an empty array' }, () => {\n  expect(first([])).toBe(undefined);\n});",
+  "hiddenTests": "test('works with strings', () => {\n  const s: string | undefined = first(['a', 'b']);\n  expect(s).toBe('a');\n});",
+  "solutions": [
+    {
+      "label": { "sr": "indeksiranje", "en": "indexing" },
+      "code": "function first<T>(items: T[]): T | undefined {\n  return items[0];\n}",
+      "note": {
+        "sr": "Za prazan niz `items[0]` je `undefined`, što se poklapa sa tipom rezultata.",
+        "en": "For an empty array `items[0]` is `undefined`, which matches the result type."
+      }
+    }
+  ]
+}

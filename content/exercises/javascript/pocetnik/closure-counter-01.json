@@ -1,20 +1,26 @@
 {
   "id": "closure-counter-01",
-  "title": "Brojač sa closure-om",
+  "title": { "sr": "Brojač sa closure-om", "en": "Counter with a closure" },
   "type": "classic",
   "area": "javascript",
   "level": "pocetnik",
   "runtime": "worker",
-  "tags": ["closures", "funkcije"],
-  "description": "Napiši funkciju `createCounter(start = 0)` koja vraća funkciju. Svaki poziv vraćene funkcije povećava brojač za 1 i vraća novu vrednost.\n\nSvaki brojač ima svoje stanje, bez globalnih promenljivih.\n\nPrimer:\n```js\nconst c = createCounter();\nc(); // 1\nc(); // 2\n```",
-  "starterCode": "function createCounter(start = 0) {\n  // tvoj kod\n}",
-  "tests": "test('počinje od 1 po defaultu', () => {\n  const c = createCounter();\n  expect(c()).toBe(1);\n  expect(c()).toBe(2);\n});\ntest('poštuje početnu vrednost', () => {\n  const c = createCounter(10);\n  expect(c()).toBe(11);\n});",
-  "hiddenTests": "test('brojači su nezavisni', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});",
+  "tags": ["closures", "functions"],
+  "description": {
+    "sr": "Napiši funkciju `createCounter(start = 0)` koja vraća funkciju. Svaki poziv vraćene funkcije povećava brojač za 1 i vraća novu vrednost.\n\nSvaki brojač ima svoje stanje, bez globalnih promenljivih.\n\nPrimer:\n```js\nconst c = createCounter();\nc(); // 1\nc(); // 2\n```",
+    "en": "Write a function `createCounter(start = 0)` that returns a function. Each call of the returned function increases the counter by 1 and returns the new value.\n\nEvery counter has its own state, with no global variables.\n\nExample:\n```js\nconst c = createCounter();\nc(); // 1\nc(); // 2\n```"
+  },
+  "starterCode": "function createCounter(start = 0) {\n  // your code\n}",
+  "tests": "test({ sr: 'počinje od 1 po defaultu', en: 'starts from 1 by default' }, () => {\n  const c = createCounter();\n  expect(c()).toBe(1);\n  expect(c()).toBe(2);\n});\ntest({ sr: 'poštuje početnu vrednost', en: 'respects the start value' }, () => {\n  const c = createCounter(10);\n  expect(c()).toBe(11);\n});",
+  "hiddenTests": "test('counters are independent', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});",
   "solutions": [
     {
-      "label": "closure nad promenljivom",
+      "label": { "sr": "closure nad promenljivom", "en": "closure over a variable" },
       "code": "function createCounter(start = 0) {\n  let count = start;\n  return () => ++count;\n}",
-      "note": "Vraćena funkcija \"pamti\" promenljivu `count` iz okruženja u kome je napravljena."
+      "note": {
+        "sr": "Vraćena funkcija \"pamti\" promenljivu `count` iz okruženja u kome je napravljena.",
+        "en": "The returned function \"remembers\" the `count` variable from the scope it was created in."
+      }
     }
   ]
 }

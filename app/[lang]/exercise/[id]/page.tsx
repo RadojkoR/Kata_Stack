@@ -1,0 +1,57 @@
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { Workspace } from "@/components/workspace/Workspace";
+import { getDictionary, getLocale, tagLabel } from "@/i18n/get-dictionary";
+import { localize } from "@/i18n/localized";
+import { getExercise, getExercises } from "@/lib/content";
+
+type Params = PageProps<"/[lang]/exercise/[id]">["params"];
+
+// Za sada se radni ekran pravi samo za klasične zadatke; ostali tipovi dolaze u Fazi 4.
+export function generateStaticParams() {
+  return getExercises()
+    .filter((e) => e.type === "classic")
+    .map((e) => ({ id: e.id }));
+}
+
+// `params` se ne čita u samoj stranici nego unutar <Suspense>, da navigacija ostane "instant" (Cache Components).
+export default function ExercisePage({ params }: PageProps<"/[lang]/exercise/[id]">) {
+  return (
+    <Suspense fallback={<div aria-busy className="h-[calc(100dvh-3rem)]" />}>
+      <ExerciseContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ExerciseContent({ params }: { params: Params }) {
+  const { id } = await params;
+  const exercise = getExercise(id);
+  if (!exercise || exercise.type !== "classic") notFound();
+
+  const locale = await getLocale();
+  const dict = await getDictionary();
+  const title = localize(exercise.title, locale);
+
+  return (
+    <>
+      {/* React 19 prebacuje <title> u <head>; zamena za generateMetadata, koji bi takođe čitao params */}
+      <title>{`${title} · ${dict.meta.title}`}</title>
+      <Workspace
+        locale={locale}
+        backHref={`/${locale}`}
+        labels={dict.workspace}
+        runnerLabels={dict.runner}
+        exercise={{
+          id: exercise.id,
+          title,
+          description: localize(exercise.description, locale),
+          meta: [dict.areas[exercise.area], dict.levels[exercise.level], ...exercise.tags.map((t) => tagLabel(dict, t))],
+          runtime: exercise.runtime,
+          starterCode: exercise.starterCode,
+          tests: exercise.tests,
+          hiddenTests: exercise.hiddenTests,
+        }}
+      />
+    </>
+  );
+}

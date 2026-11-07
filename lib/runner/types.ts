@@ -3,8 +3,10 @@
  * Runner ne vraća rečenice na srpskom ili engleskom nego kodove i vrednosti; prevodi ih UI.
  */
 
+import type { LocalizedString } from "@/i18n/localized";
+
 /** Ime testa: običan string ili po jedan tekst za svaki jezik. */
-export type TestName = string | { sr: string; en: string };
+export type TestName = string | LocalizedString;
 
 export interface RunInput {
   code: string;
