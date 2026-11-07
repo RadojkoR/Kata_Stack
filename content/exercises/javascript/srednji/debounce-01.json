@@ -1,0 +1,26 @@
+{
+  "id": "debounce-01",
+  "title": { "sr": "Napiši sopstveni debounce", "en": "Write your own debounce" },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": ["closures", "timers", "async"],
+  "description": {
+    "sr": "Napiši funkciju `debounce(fn, ms)` koja vraća novu funkciju.\n\nPoziv funkcije `fn` se odlaže za `ms` milisekundi **od poslednjeg poziva**. Ako stigne novi poziv pre isteka vremena, prethodni se otkazuje. Funkcija `fn` dobija argumente poslednjeg poziva.\n\nPrimer: tri brza poziva za redom izvršavaju `fn` samo jednom, posle pauze.",
+    "en": "Write a function `debounce(fn, ms)` that returns a new function.\n\nThe call of `fn` is delayed by `ms` milliseconds **from the last call**. If a new call arrives before the time is up, the previous one is cancelled. `fn` receives the arguments of the last call.\n\nExample: three quick calls in a row run `fn` only once, after the pause."
+  },
+  "starterCode": "function debounce(fn, ms) {\n  // your code\n}",
+  "tests": "const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\ntest({ sr: 'poziva fn samo jednom posle pauze', en: 'calls fn only once after the pause' }, async () => {\n  let calls = 0;\n  const d = debounce(() => { calls++; }, 30);\n  d(); d(); d();\n  await wait(90);\n  expect(calls).toBe(1);\n});\ntest({ sr: 'ne poziva fn pre isteka vremena', en: 'does not call fn before the delay' }, async () => {\n  let calls = 0;\n  const d = debounce(() => { calls++; }, 60);\n  d();\n  await wait(10);\n  expect(calls).toBe(0);\n  await wait(90);\n});",
+  "hiddenTests": "test('passes the arguments of the last call', async () => {\n  let got;\n  const d = debounce((x) => { got = x; }, 20);\n  d(1); d(2); d(3);\n  await wait(80);\n  expect(got).toBe(3);\n});\ntest('every call restarts the timer', async () => {\n  let calls = 0;\n  const d = debounce(() => { calls++; }, 60);\n  d();\n  await wait(35);\n  d();\n  await wait(35);\n  expect(calls).toBe(0);\n  await wait(90);\n  expect(calls).toBe(1);\n});",
+  "solutions": [
+    {
+      "label": { "sr": "clearTimeout + setTimeout", "en": "clearTimeout + setTimeout" },
+      "code": "function debounce(fn, ms) {\n  let timer;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), ms);\n  };\n}",
+      "note": {
+        "sr": "Promenljiva `timer` živi u closure-u, pa svaki poziv može da otkaže prethodni tajmer.",
+        "en": "The `timer` variable lives in the closure, so every call can cancel the previous timer."
+      }
+    }
+  ]
+}

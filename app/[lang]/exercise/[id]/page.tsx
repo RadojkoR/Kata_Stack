@@ -4,13 +4,14 @@ import { Workspace } from "@/components/workspace/Workspace";
 import { getDictionary, getLocale, tagLabel } from "@/i18n/get-dictionary";
 import { localize } from "@/i18n/localized";
 import { getExercise, getExercises } from "@/lib/content";
+import { isPlayable } from "@/lib/runner/runtimes";
 
 type Params = PageProps<"/[lang]/exercise/[id]">["params"];
 
-// Za sada se radni ekran pravi samo za klasične zadatke; ostali tipovi dolaze u Fazi 4.
+// Radni ekran postoji samo za zadatke koje je moguće rešavati (vidi isPlayable).
 export function generateStaticParams() {
   return getExercises()
-    .filter((e) => e.type === "classic")
+    .filter(isPlayable)
     .map((e) => ({ id: e.id }));
 }
 
@@ -26,7 +27,7 @@ export default function ExercisePage({ params }: PageProps<"/[lang]/exercise/[id
 async function ExerciseContent({ params }: { params: Params }) {
   const { id } = await params;
   const exercise = getExercise(id);
-  if (!exercise || exercise.type !== "classic") notFound();
+  if (!exercise || exercise.type !== "classic" || !isPlayable(exercise)) notFound();
 
   const locale = await getLocale();
   const dict = await getDictionary();

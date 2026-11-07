@@ -14,11 +14,35 @@
     "light": "Svetla"
   },
   "nav": {
-    "settings": "Podešavanja"
+    "settings": "Podešavanja",
+    "overview": "Pregled",
+    "exercises": "Zadaci",
+    "menu": "Meni",
+    "closeMenu": "Zatvori meni",
+    "main": "Glavna navigacija",
+    "areas": "Oblasti",
+    "areasMenu": "Oblasti i podešavanja"
   },
   "home": {
     "exercises": "Zadaci",
-    "solved": "Rešeno"
+    "solved": "Rešeno",
+    "overall": "Rešeno: {solved} od {total}",
+    "areasTitle": "Oblasti",
+    "soon": "uskoro",
+    "filtersTitle": "Filteri",
+    "filterType": "Tip vežbe",
+    "filterTag": "Tema",
+    "clearFilters": "Poništi filtere",
+    "noResults": "Nema zadataka za izabrane filtere.",
+    "resultCount": "Prikazano: {shown} od {total}",
+    "cellLabel": "{area}, {level}: rešeno {solved} od {total}",
+    "soonHint": "Okruženje za ovu oblast još nije gotovo.",
+    "soonPage": "Ova oblast stiže kad bude gotovo okruženje za izvršavanje koda.",
+    "levelsTitle": "Napredak po nivoima",
+    "recentTitle": "Poslednje rađeno",
+    "recentEmpty": "Još nema aktivnosti. Izaberi oblast sa leve strane i reši prvi zadatak.",
+    "continue": "Nastavi",
+    "inProgress": "U toku"
   },
   "workspace": {
     "back": "Nazad",
@@ -107,6 +131,16 @@
     "closures": "closures",
     "functions": "funkcije",
     "generics": "generici",
-    "utility-types": "pomoćni tipovi"
+    "utility-types": "pomoćni tipovi",
+    "loops": "petlje",
+    "async": "async",
+    "promises": "promise-i",
+    "timers": "tajmeri",
+    "caching": "keširanje",
+    "functional": "funkcionalno",
+    "conditional-types": "uslovni tipovi",
+    "mapped-types": "mapirani tipovi",
+    "parsing": "parsiranje",
+    "errors": "greške"
   }
 }

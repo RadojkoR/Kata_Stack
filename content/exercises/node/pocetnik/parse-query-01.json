@@ -1,0 +1,26 @@
+{
+  "id": "parse-query-01",
+  "title": { "sr": "Parsiranje query stringa", "en": "Parsing a query string" },
+  "type": "classic",
+  "area": "node",
+  "level": "pocetnik",
+  "runtime": "worker-ts",
+  "tags": ["parsing", "strings"],
+  "description": {
+    "sr": "Napiši funkciju `parseQuery(query: string): Record<string, string | string[]>` koja pretvara query string u objekat.\n\n- vodeći `?` se ignoriše\n- prazan string daje `{}`\n- ključ koji se ponavlja daje niz vrednosti\n- `%20` i `+` se dekodiraju u razmak (`decodeURIComponent`)\n- ključ bez `=` ima praznu vrednost\n\nPrimer: `parseQuery('?a=1&b=2&a=3')` → `{ a: ['1', '3'], b: '2' }`",
+    "en": "Write a function `parseQuery(query: string): Record<string, string | string[]>` that turns a query string into an object.\n\n- a leading `?` is ignored\n- an empty string gives `{}`\n- a repeated key gives an array of values\n- `%20` and `+` are decoded to a space (`decodeURIComponent`)\n- a key without `=` has an empty value\n\nExample: `parseQuery('?a=1&b=2&a=3')` → `{ a: ['1', '3'], b: '2' }`"
+  },
+  "starterCode": "function parseQuery(query: string): Record<string, string | string[]> {\n  // your code\n  return {};\n}",
+  "tests": "test({ sr: 'parsira parove ključ=vrednost', en: 'parses key=value pairs' }, () => {\n  expect(parseQuery('a=1&b=2')).toEqual({ a: '1', b: '2' });\n});\ntest({ sr: 'ignoriše vodeći ?', en: 'ignores the leading ?' }, () => {\n  expect(parseQuery('?x=y')).toEqual({ x: 'y' });\n});\ntest({ sr: 'prazan string daje prazan objekat', en: 'an empty string gives an empty object' }, () => {\n  expect(parseQuery('')).toEqual({});\n});\ntest({ sr: 'ključ koji se ponavlja daje niz', en: 'a repeated key gives an array' }, () => {\n  expect(parseQuery('t=a&t=b&t=c')).toEqual({ t: ['a', 'b', 'c'] });\n});",
+  "hiddenTests": "test('decodes percent-encoding and plus signs', () => {\n  expect(parseQuery('q=hello%20world&n=a+b')).toEqual({ q: 'hello world', n: 'a b' });\n});\ntest('a key without a value', () => {\n  expect(parseQuery('flag')).toEqual({ flag: '' });\n});\ntest('a value may contain =', () => {\n  expect(parseQuery('eq=a=b')).toEqual({ eq: 'a=b' });\n});",
+  "solutions": [
+    {
+      "label": { "sr": "split po & i prvom =", "en": "split on & and the first =" },
+      "code": "function parseQuery(query: string): Record<string, string | string[]> {\n  const result: Record<string, string | string[]> = {};\n  const text = query.startsWith('?') ? query.slice(1) : query;\n  if (!text) return result;\n\n  const decode = (s: string) => decodeURIComponent(s.replace(/\\+/g, ' '));\n\n  for (const pair of text.split('&')) {\n    const i = pair.indexOf('=');\n    const key = decode(i < 0 ? pair : pair.slice(0, i));\n    const value = i < 0 ? '' : decode(pair.slice(i + 1));\n\n    const existing = result[key];\n    if (existing === undefined) result[key] = value;\n    else if (Array.isArray(existing)) existing.push(value);\n    else result[key] = [existing, value];\n  }\n  return result;\n}",
+      "note": {
+        "sr": "Deli se po prvom `=` (`indexOf`), a ne `split('=')`, da vrednost koja sadrži `=` ostane cela.",
+        "en": "It splits on the first `=` (`indexOf`) rather than `split('=')`, so a value containing `=` stays intact."
+      }
+    }
+  ]
+}

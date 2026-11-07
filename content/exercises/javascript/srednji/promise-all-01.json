@@ -1,0 +1,26 @@
+{
+  "id": "promise-all-01",
+  "title": { "sr": "Sopstveni Promise.all", "en": "Your own Promise.all" },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": ["promises", "async"],
+  "description": {
+    "sr": "Napiši funkciju `promiseAll(promises)` koja radi kao `Promise.all`, bez njegove upotrebe.\n\n- vraća promise koji se razrešava nizom rezultata, **istim redosledom** kao ulaz\n- ulaz može sadržati i obične vrednosti, ne samo promise-e\n- prazan niz se razrešava praznim nizom\n- čim jedan promise bude odbijen, rezultat se odbija istom greškom",
+    "en": "Write a function `promiseAll(promises)` that works like `Promise.all`, without using it.\n\n- returns a promise that resolves to an array of results in the **same order** as the input\n- the input may contain plain values, not only promises\n- an empty array resolves to an empty array\n- as soon as one promise is rejected, the result is rejected with the same error"
+  },
+  "starterCode": "function promiseAll(promises) {\n  // your code\n}",
+  "tests": "const rejected = (message) => {\n  const p = Promise.reject(new Error(message));\n  p.catch(() => {});\n  return p;\n};\ntest({ sr: 'rezultati su u istom redosledu', en: 'results keep the input order' }, async () => {\n  const slow = new Promise((resolve) => setTimeout(() => resolve(2), 20));\n  const result = await promiseAll([Promise.resolve(1), slow, 3]);\n  expect(result).toEqual([1, 2, 3]);\n});\ntest({ sr: 'prazan niz daje prazan niz', en: 'an empty array gives an empty array' }, async () => {\n  expect(await promiseAll([])).toEqual([]);\n});\ntest({ sr: 'odbija se kad jedan promise bude odbijen', en: 'rejects when one promise rejects' }, async () => {\n  await expect(promiseAll([Promise.resolve(1), rejected('boom')])).rejects.toThrow('boom');\n});",
+  "hiddenTests": "test('rejects without waiting for the others', async () => {\n  let settled = false;\n  const slow = new Promise((resolve) => setTimeout(() => { settled = true; resolve(1); }, 80));\n  const p = promiseAll([slow, rejected('fast')]);\n  await expect(p).rejects.toThrow('fast');\n  expect(settled).toBe(false);\n});",
+  "solutions": [
+    {
+      "label": { "sr": "brojač preostalih", "en": "remaining counter" },
+      "code": "function promiseAll(promises) {\n  return new Promise((resolve, reject) => {\n    const results = [];\n    let remaining = promises.length;\n    if (remaining === 0) resolve(results);\n    promises.forEach((p, i) => {\n      Promise.resolve(p).then((value) => {\n        results[i] = value;\n        if (--remaining === 0) resolve(results);\n      }, reject);\n    });\n  });\n}",
+      "note": {
+        "sr": "Rezultat se upisuje na indeks `i`, a ne sa `push`, jer promise-i ne moraju da se razreše redom.",
+        "en": "The result is stored at index `i` instead of using `push`, because promises do not have to resolve in order."
+      }
+    }
+  ]
+}

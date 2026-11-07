@@ -544,24 +544,28 @@ Radi se odmah, pre radnog ekrana: sve što sledi (UI, poruke, zadaci) ima tekst,
 
 **Gotovo kad:** mogu da rešim zadatak od početka do kraja, a posle osvežavanja stranice kod je i dalje tu.
 
-**Stanje:** sve je napisano i prolazi `tsc`, lint, 82 testa i `npm run build`. **Nije proveren rad u pravom browseru** (Chrome ekstenzija nije bila povezana): Web Worker preko `new Worker(new URL(...))`, Monaco i provera tipova. Do tada Korak 6 nije zatvoren. Odluke usput: Monaco se kopira iz `node_modules` u `public/monaco` (skripta `scripts/copy-monaco.mjs`, pre `dev` i `build`), jer CDN verzija koju `@monaco-editor/react` učitava (0.55) ima drugačiji TypeScript API od instalirane (0.57); raspored panela pamti sama biblioteka pod ključem `ks:react-resizable-panels:...`; tema je atribut `data-theme` sa skriptom u `<head>`; dodata su 2 TypeScript zadatka (`worker-ts` i `types`) da se oba adaptera mogu probati.
+**Završeno i provereno u browseru** (Worker, prekid beskonačne petlje, Monaco, `worker-ts` i `types` zadaci, rešavanje do kraja). Odluke usput: Monaco se kopira iz `node_modules` u `public/monaco` (skripta `scripts/copy-monaco.mjs`), jer CDN verzija koju `@monaco-editor/react` učitava (0.55) ima drugačiji TypeScript API od instalirane (0.57); raspored panela pamti sama biblioteka pod ključem `ks:react-resizable-panels:...`; tema je atribut `data-theme` sa skriptom u `<head>`; `params` se čita unutar `<Suspense>` zbog provere "instant navigation".
 
 #### Korak 7: Napredak u localStorage-u
-- [ ] `types/progress.ts` i Zod šeme (sekcija 3.1)
-- [ ] `ProgressStore` interfejs (async metode, iako je localStorage sinhron, da se Etapa 2 uklopi bez izmena u UI-u)
-- [ ] `localStorageStore.ts` sa ključevima iz sekcije 3.2 i ograničenjem od 20 pokušaja po zadatku
-- [ ] Submit koji prođe sve testove postavlja `status = 'solved'` i `solvedAt`
-- [ ] Beleške (`NotesPanel`) u `notes`
-- [ ] Stranica Podešavanja: izvoz i uvoz JSON-a (sekcija 3.3)
-- [ ] Vitest testovi: izvoz → brisanje → uvoz daje iste podatke
+- [x] `types/progress.ts` i Zod šeme (sekcija 3.1)
+- [x] `ProgressStore` interfejs (async metode, iako je localStorage sinhron, da se Etapa 2 uklopi bez izmena u UI-u)
+- [x] `localStorageStore.ts` sa ključevima iz sekcije 3.2 i ograničenjem od 20 pokušaja po zadatku
+- [x] Submit koji prođe sve testove postavlja `status = 'solved'` i `solvedAt`
+- [x] Beleške (`NotesPanel`) u `notes`
+- [x] Stranica Podešavanja: izvoz i uvoz JSON-a (sekcija 3.3)
+- [x] Vitest testovi: izvoz → brisanje → uvoz daje iste podatke
+
+**Završeno i provereno u browseru:** rešavanje, beleške, izvoz → brisanje podataka → uvoz. Nova stranica `/{lang}/settings`; pokušaji se beleže iz radnog ekrana; `durationMs` pokušaja je vreme od otvaranja zadatka.
 
 **Gotovo kad:** rešim zadatak, izvezem JSON, obrišem podatke sajta u browseru, uvezem JSON i sve je kao pre.
 
 #### Korak 8: Početni ekran i lista zadataka
-- [ ] Oblasti × nivoi sa trakama napretka
-- [ ] Lista zadataka sa filterom po tipu i tagu
-- [ ] Oblasti bez gotovog okruženja prikazane kao "uskoro"
-- [ ] **15 zadataka**: JavaScript, TypeScript i čista logika Node-a (svaki sa srpskim i engleskim tekstom; AI napravi nacrt drugog jezika, ja proverim)
+- [x] Oblasti × nivoi sa trakama napretka
+- [x] Lista zadataka sa filterom po tipu i tagu
+- [x] Oblasti bez gotovog okruženja prikazane kao "uskoro"
+- [x] **15 zadataka**: JavaScript, TypeScript i čista logika Node-a (svaki sa srpskim i engleskim tekstom; AI napravi nacrt drugog jezika, ja proverim)
+
+**Urađeno** (135 testova, `tsc`, lint i build prolaze): 15 zadataka (JavaScript 8, TypeScript 5, Node.js 2), svaki dvojezičan; test proverava da svako rešenje prolazi, a početni kod pada. Početna ima oblasti × nivoi sa trakama napretka, filtere po tipu i temi i oznaku "uskoro" za React/Next.js. Filter tipa se prikazuje tek kad postoji više tipova (za sada su svi `classic`). **Čeka proveru u browseru.** Napomena: zadaci se učitavaju pri pokretanju servera, pa posle dodavanja JSON fajla treba restartovati `npm run dev`.
 
 **Gotovo kad:** svaki dan otvorim sajt i radim, bez ičega što me usporava. **MVP je gotov.**
 

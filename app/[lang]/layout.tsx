@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import { Suspense } from "react";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { locales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
+import { getExercises } from "@/lib/content";
 import { DEFAULT_THEME, THEME_INIT_SCRIPT } from "@/lib/theme";
 import "../globals.css";
 
@@ -45,23 +44,13 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col">
-        <header className="flex h-12 shrink-0 items-center justify-between border-b border-zinc-200 px-4 dark:border-zinc-800">
-          <a href={`/${locale}`} className="font-semibold tracking-tight">
-            {dict.meta.title}
-          </a>
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/${locale}/settings`}
-              className="rounded px-2 py-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
-              {dict.nav.settings}
-            </Link>
-            <Suspense fallback={null}>
-              <LanguageSwitcher locale={locale} label={dict.language.label} names={dict.language} />
-            </Suspense>
-            <ThemeToggle label={dict.theme.toggle} names={dict.theme} />
-          </div>
-        </header>
+        <Suspense fallback={<div className="h-12 shrink-0 border-b border-zinc-200 dark:border-zinc-800" />}>
+          <SiteHeader
+            locale={locale}
+            total={getExercises().length}
+            labels={{ meta: dict.meta, nav: dict.nav, language: dict.language, theme: dict.theme, home: dict.home }}
+          />
+        </Suspense>
         {children}
       </body>
     </html>

@@ -1,0 +1,26 @@
+{
+  "id": "memoize-01",
+  "title": { "sr": "Memoizacija funkcije", "en": "Function memoization" },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": ["closures", "caching", "functions"],
+  "description": {
+    "sr": "Napiši funkciju `memoize(fn)` koja vraća keširanu verziju funkcije `fn`.\n\nPoziv sa istim argumentima ne računa rezultat ponovo, nego vraća zapamćeni. Argumenti se porede po vrednosti (npr. preko `JSON.stringify` niza argumenata). Svaka memoizovana funkcija ima svoj keš.\n\nPrimer: `const f = memoize(slowSquare); f(4); f(4);` poziva `slowSquare` samo jednom.",
+    "en": "Write a function `memoize(fn)` that returns a cached version of `fn`.\n\nA call with the same arguments does not compute the result again but returns the remembered one. Arguments are compared by value (e.g. via `JSON.stringify` of the arguments array). Every memoized function has its own cache.\n\nExample: `const f = memoize(slowSquare); f(4); f(4);` calls `slowSquare` only once."
+  },
+  "starterCode": "function memoize(fn) {\n  // your code\n}",
+  "tests": "test({ sr: 'isti argumenti: fn se poziva jednom', en: 'same arguments: fn is called once' }, () => {\n  let calls = 0;\n  const f = memoize((a, b) => { calls++; return a + b; });\n  expect(f(1, 2)).toBe(3);\n  expect(f(1, 2)).toBe(3);\n  expect(calls).toBe(1);\n});\ntest({ sr: 'različiti argumenti se računaju posebno', en: 'different arguments are computed separately' }, () => {\n  let calls = 0;\n  const f = memoize((n) => { calls++; return n * 2; });\n  f(1); f(2); f(1);\n  expect(calls).toBe(2);\n});",
+  "hiddenTests": "test('caches undefined results too', () => {\n  let calls = 0;\n  const f = memoize(() => { calls++; return undefined; });\n  f(); f();\n  expect(calls).toBe(1);\n});\ntest('each memoized function has its own cache', () => {\n  let a = 0;\n  let b = 0;\n  const fa = memoize((n) => { a++; return n; });\n  const fb = memoize((n) => { b++; return n; });\n  fa(1); fb(1);\n  expect(a).toBe(1);\n  expect(b).toBe(1);\n});",
+  "solutions": [
+    {
+      "label": { "sr": "Map + JSON ključ", "en": "Map + JSON key" },
+      "code": "function memoize(fn) {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (!cache.has(key)) cache.set(key, fn(...args));\n    return cache.get(key);\n  };\n}",
+      "note": {
+        "sr": "Koristi se `cache.has`, a ne provera `cache.get(key) !== undefined`, da bi se keširali i rezultati `undefined`.",
+        "en": "`cache.has` is used instead of checking `cache.get(key) !== undefined`, so `undefined` results are cached too."
+      }
+    }
+  ]
+}

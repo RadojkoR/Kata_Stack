@@ -1,0 +1,26 @@
+{
+  "id": "curry-01",
+  "title": { "sr": "Curry funkcija", "en": "Curry function" },
+  "type": "classic",
+  "area": "javascript",
+  "level": "expert",
+  "runtime": "worker",
+  "tags": ["functional", "closures", "functions"],
+  "description": {
+    "sr": "Napiši funkciju `curry(fn)` koja pretvara funkciju sa više parametara u \"curry\" oblik.\n\nVraćena funkcija može da se poziva sa bilo kojim brojem argumenata odjednom. Kad ukupno stigne bar `fn.length` argumenata, poziva se `fn`; do tada se vraća nova funkcija koja čeka ostatak.\n\nPrimer:\n```js\nconst add = curry((a, b, c) => a + b + c);\nadd(1)(2)(3);   // 6\nadd(1, 2)(3);   // 6\nadd(1)(2, 3);   // 6\n```",
+    "en": "Write a function `curry(fn)` that turns a function with several parameters into its curried form.\n\nThe returned function can be called with any number of arguments at a time. Once at least `fn.length` arguments have arrived in total, `fn` is called; until then a new function that waits for the rest is returned.\n\nExample:\n```js\nconst add = curry((a, b, c) => a + b + c);\nadd(1)(2)(3);   // 6\nadd(1, 2)(3);   // 6\nadd(1)(2, 3);   // 6\n```"
+  },
+  "starterCode": "function curry(fn) {\n  // your code\n}",
+  "tests": "test({ sr: 'jedan argument po pozivu', en: 'one argument per call' }, () => {\n  const add = curry((a, b, c) => a + b + c);\n  expect(add(1)(2)(3)).toBe(6);\n});\ntest({ sr: 'više argumenata odjednom', en: 'several arguments at once' }, () => {\n  const add = curry((a, b, c) => a + b + c);\n  expect(add(1, 2)(3)).toBe(6);\n  expect(add(1)(2, 3)).toBe(6);\n  expect(add(1, 2, 3)).toBe(6);\n});",
+  "hiddenTests": "test('partial results are reusable', () => {\n  const add = curry((a, b) => a + b);\n  const add1 = add(1);\n  expect(add1(2)).toBe(3);\n  expect(add1(5)).toBe(6);\n});\ntest('a function without parameters is called immediately', () => {\n  expect(curry(() => 42)()).toBe(42);\n});",
+  "solutions": [
+    {
+      "label": { "sr": "rekurzivno gomilanje argumenata", "en": "recursive argument accumulation" },
+      "code": "function curry(fn) {\n  return function curried(...args) {\n    if (args.length >= fn.length) return fn(...args);\n    return (...more) => curried(...args, ...more);\n  };\n}",
+      "note": {
+        "sr": "Svaki poziv pravi nov niz argumenata (`[...args, ...more]`), pa se delimični rezultati mogu koristiti više puta.",
+        "en": "Every call builds a new array of arguments (`[...args, ...more]`), so partial results can be reused many times."
+      }
+    }
+  ]
+}

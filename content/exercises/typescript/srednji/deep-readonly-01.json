@@ -1,0 +1,26 @@
+{
+  "id": "deep-readonly-01",
+  "title": { "sr": "DeepReadonly tip", "en": "DeepReadonly type" },
+  "type": "classic",
+  "area": "typescript",
+  "level": "srednji",
+  "runtime": "types",
+  "tags": ["mapped-types", "utility-types"],
+  "description": {
+    "sr": "Napiši tip `DeepReadonly<T>` koji svako svojstvo objekta, uključujući ugnježdene objekte, pravi `readonly`.\n\nFunkcije ostaju kakve jesu, a primitivni tipovi se ne menjaju.\n\nPrimer:\n```ts\ntype X = { a: number; b: { c: string } };\ntype R = DeepReadonly<X>; // { readonly a: number; readonly b: { readonly c: string } }\n```\n\nNe izvršava se nikakav kod: rešenje je tačno kad nema grešaka tipova.",
+    "en": "Write a type `DeepReadonly<T>` that makes every property of an object `readonly`, including nested objects.\n\nFunctions stay as they are, and primitive types are not changed.\n\nExample:\n```ts\ntype X = { a: number; b: { c: string } };\ntype R = DeepReadonly<X>; // { readonly a: number; readonly b: { readonly c: string } }\n```\n\nNo code is executed: the solution is correct when there are no type errors."
+  },
+  "starterCode": "type DeepReadonly<T> = unknown;",
+  "tests": "type X = { a: number; b: { c: string; d: { e: boolean } } };\ntype Case1 = Expect<\n  Equal<\n    DeepReadonly<X>,\n    { readonly a: number; readonly b: { readonly c: string; readonly d: { readonly e: boolean } } }\n  >\n>;\ntype Case2 = Expect<Equal<DeepReadonly<{ n: number }>['n'], number>>;",
+  "hiddenTests": "type Case3 = Expect<Equal<DeepReadonly<{ f: () => void }>['f'], () => void>>;",
+  "solutions": [
+    {
+      "label": { "sr": "rekurzivni mapirani tip", "en": "recursive mapped type" },
+      "code": "type DeepReadonly<T> = T extends (...args: never[]) => unknown\n  ? T\n  : T extends object\n    ? { readonly [K in keyof T]: DeepReadonly<T[K]> }\n    : T;",
+      "note": {
+        "sr": "Funkcije se moraju izuzeti pre provere `extends object`, jer su i one objekti, pa bi mapiranje preko njih dalo `{}`.",
+        "en": "Functions must be excluded before the `extends object` check, because they are objects too and mapping over them would give `{}`."
+      }
+    }
+  ]
+}

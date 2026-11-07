@@ -1,0 +1,26 @@
+{
+  "id": "my-exclude-01",
+  "title": { "sr": "Sopstveni Exclude tip", "en": "Your own Exclude type" },
+  "type": "classic",
+  "area": "typescript",
+  "level": "pocetnik",
+  "runtime": "types",
+  "tags": ["conditional-types", "utility-types"],
+  "description": {
+    "sr": "Napiši tip `MyExclude<T, U>` koji iz unije `T` izbacuje sve članove koji se mogu dodeliti tipu `U` (kao ugrađeni `Exclude`, ali bez njegove upotrebe).\n\nPrimer:\n```ts\ntype R = MyExclude<'a' | 'b' | 'c', 'a'>; // 'b' | 'c'\n```\n\nNe izvršava se nikakav kod: rešenje je tačno kad nema grešaka tipova.",
+    "en": "Write a type `MyExclude<T, U>` that removes from the union `T` every member that is assignable to `U` (like the built-in `Exclude`, but without using it).\n\nExample:\n```ts\ntype R = MyExclude<'a' | 'b' | 'c', 'a'>; // 'b' | 'c'\n```\n\nNo code is executed: the solution is correct when there are no type errors."
+  },
+  "starterCode": "type MyExclude<T, U> = unknown;",
+  "tests": "type Case1 = Expect<Equal<MyExclude<'a' | 'b' | 'c', 'a'>, 'b' | 'c'>>;\ntype Case2 = Expect<Equal<MyExclude<string | number, number>, string>>;",
+  "hiddenTests": "type Case3 = Expect<Equal<MyExclude<'a' | 'b', 'a' | 'b'>, never>>;",
+  "solutions": [
+    {
+      "label": { "sr": "uslovni tip", "en": "conditional type" },
+      "code": "type MyExclude<T, U> = T extends U ? never : T;",
+      "note": {
+        "sr": "Uslovni tip se nad unijom primenjuje na svaki član posebno (distributivnost), pa članovi koji odgovaraju `U` postaju `never` i nestaju iz unije.",
+        "en": "A conditional type is applied to each union member separately (distributivity), so members matching `U` become `never` and disappear from the union."
+      }
+    }
+  ]
+}

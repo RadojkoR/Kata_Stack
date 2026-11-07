@@ -1,0 +1,26 @@
+{
+  "id": "group-by-01",
+  "title": { "sr": "Generička groupBy funkcija", "en": "Generic groupBy function" },
+  "type": "classic",
+  "area": "typescript",
+  "level": "srednji",
+  "runtime": "worker-ts",
+  "tags": ["generics", "arrays"],
+  "description": {
+    "sr": "Napiši generičku funkciju `groupBy<T, K extends string | number>(items: T[], getKey: (item: T) => K): Record<K, T[]>`.\n\nVraća objekat u kome je svaki ključ rezultat funkcije `getKey`, a vrednost je niz elemenata sa tim ključem, u originalnom redosledu.\n\nPrimer:\n```ts\ngroupBy([1, 2, 3, 4, 5], (n) => (n % 2 === 0 ? 'even' : 'odd'));\n// { odd: [1, 3, 5], even: [2, 4] }\n```",
+    "en": "Write a generic function `groupBy<T, K extends string | number>(items: T[], getKey: (item: T) => K): Record<K, T[]>`.\n\nIt returns an object where each key is the result of `getKey` and the value is an array of the items with that key, in their original order.\n\nExample:\n```ts\ngroupBy([1, 2, 3, 4, 5], (n) => (n % 2 === 0 ? 'even' : 'odd'));\n// { odd: [1, 3, 5], even: [2, 4] }\n```"
+  },
+  "starterCode": "function groupBy<T, K extends string | number>(items: T[], getKey: (item: T) => K): Record<K, T[]> {\n  // your code\n  return {} as Record<K, T[]>;\n}",
+  "tests": "test({ sr: 'grupiše po ključu', en: 'groups by key' }, () => {\n  const result = groupBy([1, 2, 3, 4, 5], (n) => (n % 2 === 0 ? 'even' : 'odd'));\n  expect(result).toEqual({ odd: [1, 3, 5], even: [2, 4] });\n});\ntest({ sr: 'prazan niz daje prazan objekat', en: 'an empty array gives an empty object' }, () => {\n  expect(groupBy([], () => 'x')).toEqual({});\n});",
+  "hiddenTests": "test('works with numeric keys and keeps the order', () => {\n  const result = groupBy(['a', 'bb', 'cc', 'd'], (s) => s.length);\n  expect(result).toEqual({ 1: ['a', 'd'], 2: ['bb', 'cc'] });\n});",
+  "solutions": [
+    {
+      "label": { "sr": "petlja i ??=", "en": "loop and ??=" },
+      "code": "function groupBy<T, K extends string | number>(items: T[], getKey: (item: T) => K): Record<K, T[]> {\n  const groups = {} as Record<K, T[]>;\n  for (const item of items) {\n    const key = getKey(item);\n    (groups[key] ??= []).push(item);\n  }\n  return groups;\n}",
+      "note": {
+        "sr": "`??=` pravi niz samo kad ključ još ne postoji, pa nema posebne grane za prvi element grupe.",
+        "en": "`??=` creates the array only when the key does not exist yet, so there is no special branch for the first item of a group."
+      }
+    }
+  ]
+}

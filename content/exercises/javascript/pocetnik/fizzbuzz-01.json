@@ -1,0 +1,26 @@
+{
+  "id": "fizzbuzz-01",
+  "title": { "sr": "FizzBuzz", "en": "FizzBuzz" },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["loops", "strings"],
+  "description": {
+    "sr": "Napiši funkciju `fizzBuzz(n)` koja vraća niz stringova od 1 do `n`.\n\n- brojevi deljivi sa 3 postaju `'Fizz'`\n- brojevi deljivi sa 5 postaju `'Buzz'`\n- brojevi deljivi sa oba postaju `'FizzBuzz'`\n- ostali se vraćaju kao string (`'1'`, `'2'`, ...)\n\nPrimer: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`",
+    "en": "Write a function `fizzBuzz(n)` that returns an array of strings from 1 to `n`.\n\n- numbers divisible by 3 become `'Fizz'`\n- numbers divisible by 5 become `'Buzz'`\n- numbers divisible by both become `'FizzBuzz'`\n- all others are returned as a string (`'1'`, `'2'`, ...)\n\nExample: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`"
+  },
+  "starterCode": "function fizzBuzz(n) {\n  // your code\n}",
+  "tests": "test({ sr: 'prvih pet brojeva', en: 'the first five numbers' }, () => {\n  expect(fizzBuzz(5)).toEqual(['1', '2', 'Fizz', '4', 'Buzz']);\n});\ntest({ sr: 'deljivo sa 15 je FizzBuzz', en: 'divisible by 15 is FizzBuzz' }, () => {\n  expect(fizzBuzz(15)[14]).toBe('FizzBuzz');\n});\ntest({ sr: 'n = 0 daje prazan niz', en: 'n = 0 gives an empty array' }, () => {\n  expect(fizzBuzz(0)).toEqual([]);\n});",
+  "hiddenTests": "test('length equals n', () => {\n  expect(fizzBuzz(15)).toHaveLength(15);\n});\ntest('nine is Fizz and ten is Buzz', () => {\n  const result = fizzBuzz(10);\n  expect(result[8]).toBe('Fizz');\n  expect(result[9]).toBe('Buzz');\n});",
+  "solutions": [
+    {
+      "label": { "sr": "Array.from", "en": "Array.from" },
+      "code": "function fizzBuzz(n) {\n  return Array.from({ length: n }, (_, i) => {\n    const k = i + 1;\n    if (k % 15 === 0) return 'FizzBuzz';\n    if (k % 3 === 0) return 'Fizz';\n    if (k % 5 === 0) return 'Buzz';\n    return String(k);\n  });\n}",
+      "note": {
+        "sr": "Najpre se proverava deljivost sa 15, inače bi `Fizz` ili `Buzz` \"pojeli\" slučaj kad su oba tačna.",
+        "en": "Divisibility by 15 is checked first, otherwise `Fizz` or `Buzz` would swallow the case where both apply."
+      }
+    }
+  ]
+}

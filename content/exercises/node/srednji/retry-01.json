@@ -1,0 +1,26 @@
+{
+  "id": "retry-01",
+  "title": { "sr": "Ponovni pokušaj asinhrone operacije", "en": "Retrying an async operation" },
+  "type": "classic",
+  "area": "node",
+  "level": "srednji",
+  "runtime": "worker-ts",
+  "tags": ["async", "errors"],
+  "description": {
+    "sr": "Napiši funkciju `retry<T>(fn: () => Promise<T>, attempts: number): Promise<T>`.\n\nPoziva `fn` najviše `attempts` puta. Čim jedan poziv uspe, vraća njegov rezultat i više ne poziva `fn`. Ako svi pokušaji ne uspeju, odbija se **poslednjom** greškom.\n\nPrimer: `fn` baca grešku dva puta pa uspe; `retry(fn, 3)` vraća rezultat trećeg poziva.",
+    "en": "Write a function `retry<T>(fn: () => Promise<T>, attempts: number): Promise<T>`.\n\nIt calls `fn` at most `attempts` times. As soon as one call succeeds, it returns its result and does not call `fn` again. If all attempts fail, it rejects with the **last** error.\n\nExample: `fn` throws twice and then succeeds; `retry(fn, 3)` returns the result of the third call."
+  },
+  "starterCode": "async function retry<T>(fn: () => Promise<T>, attempts: number): Promise<T> {\n  // your code\n  return fn();\n}",
+  "tests": "test({ sr: 'uspeva iz prvog pokušaja', en: 'succeeds on the first attempt' }, async () => {\n  let calls = 0;\n  const result = await retry(async () => { calls++; return 'ok'; }, 3);\n  expect(result).toBe('ok');\n  expect(calls).toBe(1);\n});\ntest({ sr: 'ponavlja dok ne uspe', en: 'retries until it succeeds' }, async () => {\n  let calls = 0;\n  const result = await retry(async () => {\n    calls++;\n    if (calls < 3) throw new Error('not yet');\n    return 'done';\n  }, 5);\n  expect(result).toBe('done');\n  expect(calls).toBe(3);\n});\ntest({ sr: 'odbija se poslednjom greškom', en: 'rejects with the last error' }, async () => {\n  let calls = 0;\n  await expect(retry(async () => { calls++; throw new Error('fail ' + calls); }, 3)).rejects.toThrow('fail 3');\n  expect(calls).toBe(3);\n});",
+  "hiddenTests": "test('attempts = 1 means a single call', async () => {\n  let calls = 0;\n  await expect(retry(async () => { calls++; throw new Error('x'); }, 1)).rejects.toThrow('x');\n  expect(calls).toBe(1);\n});",
+  "solutions": [
+    {
+      "label": { "sr": "petlja sa try/catch", "en": "loop with try/catch" },
+      "code": "async function retry<T>(fn: () => Promise<T>, attempts: number): Promise<T> {\n  let lastError: unknown;\n  for (let i = 0; i < attempts; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n    }\n  }\n  throw lastError;\n}",
+      "note": {
+        "sr": "`return await` (a ne samo `return`) je bitan: bez `await` greška bi izašla iz funkcije pre nego što je `catch` stigne da je uhvati.",
+        "en": "`return await` (not just `return`) matters: without `await` the error would leave the function before `catch` could handle it."
+      }
+    }
+  ]
+}

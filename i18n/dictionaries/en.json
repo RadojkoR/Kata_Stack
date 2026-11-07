@@ -14,11 +14,35 @@
     "light": "Light"
   },
   "nav": {
-    "settings": "Settings"
+    "settings": "Settings",
+    "overview": "Overview",
+    "exercises": "Exercises",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "main": "Main navigation",
+    "areas": "Areas",
+    "areasMenu": "Areas and settings"
   },
   "home": {
     "exercises": "Exercises",
-    "solved": "Solved"
+    "solved": "Solved",
+    "overall": "Solved: {solved} of {total}",
+    "areasTitle": "Areas",
+    "soon": "coming soon",
+    "filtersTitle": "Filters",
+    "filterType": "Exercise type",
+    "filterTag": "Topic",
+    "clearFilters": "Clear filters",
+    "noResults": "No exercises match the selected filters.",
+    "resultCount": "Showing: {shown} of {total}",
+    "cellLabel": "{area}, {level}: solved {solved} of {total}",
+    "soonHint": "The environment for this area is not ready yet.",
+    "soonPage": "This area arrives when the code execution environment is ready.",
+    "levelsTitle": "Progress by level",
+    "recentTitle": "Recent activity",
+    "recentEmpty": "No activity yet. Pick an area on the left and solve your first exercise.",
+    "continue": "Continue",
+    "inProgress": "In progress"
   },
   "workspace": {
     "back": "Back",
@@ -107,6 +131,16 @@
     "closures": "closures",
     "functions": "functions",
     "generics": "generics",
-    "utility-types": "utility types"
+    "utility-types": "utility types",
+    "loops": "loops",
+    "async": "async",
+    "promises": "promises",
+    "timers": "timers",
+    "caching": "caching",
+    "functional": "functional",
+    "conditional-types": "conditional types",
+    "mapped-types": "mapped types",
+    "parsing": "parsing",
+    "errors": "errors"
   }
 }
