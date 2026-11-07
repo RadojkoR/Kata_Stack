@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SolvedMark } from "@/components/SolvedMark";
 import { getExercises } from "@/lib/content";
 import { getDictionary, getLocale, tagLabel } from "@/i18n/get-dictionary";
 import { localize } from "@/i18n/localized";
@@ -24,13 +25,16 @@ export default async function Home() {
       <ul className="mt-8 divide-y divide-zinc-200 dark:divide-zinc-800">
         {exercises.map((e) => (
           <li key={e.id} className="py-4">
-            {e.type === "classic" ? (
-              <Link href={`/${locale}/exercise/${e.id}`} className="font-medium hover:underline">
-                {localize(e.title, locale)}
-              </Link>
-            ) : (
-              <p className="font-medium">{localize(e.title, locale)}</p>
-            )}
+            <p className="font-medium">
+              {e.type === "classic" ? (
+                <Link href={`/${locale}/exercise/${e.id}`} className="hover:underline">
+                  {localize(e.title, locale)}
+                </Link>
+              ) : (
+                localize(e.title, locale)
+              )}
+              <SolvedMark exerciseId={e.id} label={dict.home.solved} />
+            </p>
             <p className="mt-1 text-sm text-zinc-500">
               {[dict.areas[e.area], dict.levels[e.level], dict.types[e.type], ...e.tags.map((t) => tagLabel(dict, t))].join(
                 " · ",

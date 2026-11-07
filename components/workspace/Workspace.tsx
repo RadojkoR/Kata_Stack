@@ -10,10 +10,14 @@ import { createMonacoTypeChecker } from "@/lib/monaco/setup";
 import { createBrowserWorker } from "@/lib/runner/browser-worker";
 import { runCode, UnsupportedRuntimeError, type RunnerDeps } from "@/lib/runner";
 import { allPassed, type LogEntry } from "@/lib/runner/types";
+import { getProgressStore } from "@/lib/storage";
 import { createSafeStorage } from "@/lib/storage/browser";
+import { useExerciseProgress } from "@/lib/storage/use-progress";
 import { useTheme } from "@/lib/use-theme";
 import type { Runtime } from "@/types/exercise";
+import { isSolved } from "@/types/progress";
 import { CodeEditor, type CodeEditorHandle } from "./CodeEditor";
+import { NotesPanel } from "./NotesPanel";
 import { OutputConsole } from "./OutputConsole";
 import { SimpleMarkdown } from "./SimpleMarkdown";
 import { TestResults, type Outcome } from "./TestResults";
@@ -56,6 +60,7 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
   const isClient = useIsClient();
   const theme = useTheme();
   const storage = useMemo(() => createSafeStorage(), []);
+  const progress = useExerciseProgress(exercise.id);
 
   // Kod se čita tek na klijentu (localStorage), pa se editor iscrtava posle toga.
   const initialCode = useMemo(
@@ -79,9 +84,15 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
   const [solved, setSolved] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
+  const [tab, setTab] = useState<"task" | "notes">("task");
 
   const editorRef = useRef<CodeEditorHandle | null>(null);
+  const openedAt = useRef(0);
   const isTs = exercise.runtime !== "worker";
+
+  useEffect(() => {
+    openedAt.current = Date.now();
+  }, [exercise.id]);
 
   // --- tajmer: staje kad je zadatak rešen
   useEffect(() => {
@@ -111,16 +122,25 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
       setRunning(kind);
       setNotice(null);
       try {
+        const submittedCode = editorRef.current?.editor.getValue() ?? currentCode;
         const result = await runCode(
           exercise.runtime,
           {
-            code: editorRef.current?.editor.getValue() ?? currentCode,
+            code: submittedCode,
             tests: exercise.tests,
             hiddenTests: kind === "submit" ? exercise.hiddenTests : undefined,
           },
           deps,
         );
         setOutcome({ kind, result });
+        // Pokušaj se beleži u napredak; uspešan Submit označava zadatak kao rešen.
+        void getProgressStore().recordAttempt({
+          exerciseId: exercise.id,
+          kind,
+          passed: allPassed(result),
+          durationMs: Math.max(0, Date.now() - openedAt.current),
+          code: submittedCode,
+        });
         setLogs(result.logs);
         if (kind === "submit" && allPassed(result)) setSolved(true);
         if (result.logs.length > 0 && consolePanel.current?.isCollapsed()) consolePanel.current.expand();
@@ -212,6 +232,7 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
         running={running}
         resetArmed={resetArmed}
         focus={focus}
+        solved={solved || isSolved(progress)}
         elapsedSeconds={elapsed}
         onRun={() => void run("run")}
         onSubmit={() => void run("submit")}
@@ -236,10 +257,36 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
           onLayoutChanged={horizontal.onLayoutChanged}
         >
           <Panel id="task" panelRef={taskPanel} collapsible collapsedSize={0} minSize="15%" defaultSize="25%">
-            <section aria-label={labels.tabTask} className="h-full overflow-auto p-4">
-              <p className="mb-3 text-xs text-zinc-500">{exercise.meta.join(" · ")}</p>
-              <SimpleMarkdown source={exercise.description} />
-            </section>
+            <div className="flex h-full min-h-0 flex-col">
+              <div role="tablist" className="flex shrink-0 gap-1 border-b border-zinc-200 px-2 dark:border-zinc-800">
+                {(["task", "notes"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    role="tab"
+                    aria-selected={tab === t}
+                    onClick={() => setTab(t)}
+                    className={`px-2 py-1.5 text-xs font-semibold uppercase tracking-wide ${
+                      tab === t ? "border-b-2 border-blue-500" : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                    }`}
+                  >
+                    {t === "task" ? labels.tabTask : labels.tabNotes}
+                  </button>
+                ))}
+              </div>
+              <section hidden={tab !== "task"} aria-label={labels.tabTask} className="min-h-0 flex-1 overflow-auto p-4">
+                <p className="mb-3 text-xs text-zinc-500">{exercise.meta.join(" · ")}</p>
+                <SimpleMarkdown source={exercise.description} />
+              </section>
+              <section hidden={tab !== "notes"} aria-label={labels.tabNotes} className="min-h-0 flex-1 p-3">
+                <NotesPanel
+                  exerciseId={exercise.id}
+                  initialNotes={progress?.notes ?? ""}
+                  label={labels.tabNotes}
+                  placeholder={labels.notesPlaceholder}
+                />
+              </section>
+            </div>
           </Panel>
           <Separator className={resizeHandle} />
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import { Suspense } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -49,6 +50,12 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
             {dict.meta.title}
           </a>
           <div className="flex items-center gap-2">
+            <Link
+              href={`/${locale}/settings`}
+              className="rounded px-2 py-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
+              {dict.nav.settings}
+            </Link>
             <Suspense fallback={null}>
               <LanguageSwitcher locale={locale} label={dict.language.label} names={dict.language} />
             </Suspense>

@@ -13,8 +13,12 @@
     "dark": "Dark",
     "light": "Light"
   },
+  "nav": {
+    "settings": "Settings"
+  },
   "home": {
-    "exercises": "Exercises"
+    "exercises": "Exercises",
+    "solved": "Solved"
   },
   "workspace": {
     "back": "Back",
@@ -42,7 +46,28 @@
     "shortcuts": "Ctrl+Enter runs, Ctrl+Shift+Enter submits",
     "formatFailed": "Formatting failed: the code has a syntax error.",
     "timer": "Time",
-    "unsupportedRuntime": "This environment is not supported yet."
+    "unsupportedRuntime": "This environment is not supported yet.",
+    "tabNotes": "Notes",
+    "notesPlaceholder": "What confused you? The note will be shown when this exercise comes back for review.",
+    "solvedBadge": "✓ Solved"
+  },
+  "settings": {
+    "title": "Settings",
+    "intro": "For now your progress is stored only in this browser. Export it to a JSON file as a backup, or import it on another computer.",
+    "exportTitle": "Export",
+    "exportDescription": "Downloads a file with your solved exercises, attempts and notes.",
+    "exportButton": "Export JSON",
+    "importTitle": "Import",
+    "importDescription": "Choose a file that was exported from Kata Stack.",
+    "importChoose": "Choose file",
+    "importSummary": "Exercises in the file: {exercises} (solved: {solved}), attempts: {attempts}.",
+    "importReplace": "Replace all",
+    "importReplaceHint": "Deletes the current progress and uses the one from the file.",
+    "importMerge": "Merge",
+    "importMergeHint": "Keeps both; for the same exercise the newer record wins.",
+    "importCancel": "Cancel",
+    "importDone": "Exercises imported: {count}.",
+    "importInvalid": "The file is not valid ({reason}). Nothing was changed."
   },
   "runner": {
     "hiddenTest": "Hidden test {n}",

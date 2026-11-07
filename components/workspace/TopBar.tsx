@@ -8,6 +8,7 @@ type Props = {
   running: "run" | "submit" | null;
   resetArmed: boolean;
   focus: boolean;
+  solved: boolean;
   elapsedSeconds: number;
   onRun: () => void;
   onSubmit: () => void;
@@ -29,6 +30,7 @@ export function TopBar({
   running,
   resetArmed,
   focus,
+  solved,
   elapsedSeconds,
   onRun,
   onSubmit,
@@ -42,6 +44,12 @@ export function TopBar({
         ← {labels.back}
       </Link>
       <h1 className="min-w-0 flex-1 truncate text-sm font-semibold">{title}</h1>
+
+      {solved && (
+        <span className="rounded bg-green-500/15 px-2 py-0.5 text-xs text-green-700 dark:text-green-400">
+          {labels.solvedBadge}
+        </span>
+      )}
 
       <span className="font-mono text-sm tabular-nums text-zinc-500" title={labels.timer}>
         ⏱ {formatTime(elapsedSeconds)}

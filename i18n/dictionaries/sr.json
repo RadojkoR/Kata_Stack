@@ -13,8 +13,12 @@
     "dark": "Tamna",
     "light": "Svetla"
   },
+  "nav": {
+    "settings": "Podešavanja"
+  },
   "home": {
-    "exercises": "Zadaci"
+    "exercises": "Zadaci",
+    "solved": "Rešeno"
   },
   "workspace": {
     "back": "Nazad",
@@ -42,7 +46,28 @@
     "shortcuts": "Ctrl+Enter pokreće, Ctrl+Shift+Enter predaje",
     "formatFailed": "Formatiranje nije uspelo: kod ima grešku u sintaksi.",
     "timer": "Vreme",
-    "unsupportedRuntime": "Ovo okruženje još nije podržano."
+    "unsupportedRuntime": "Ovo okruženje još nije podržano.",
+    "tabNotes": "Beleške",
+    "notesPlaceholder": "Šta te je zbunilo? Beleška će ti se prikazati kad se zadatak vrati na ponavljanje.",
+    "solvedBadge": "✓ Rešeno"
+  },
+  "settings": {
+    "title": "Podešavanja",
+    "intro": "Napredak se za sada čuva samo u ovom browseru. Izvezi ga u JSON fajl kao rezervnu kopiju ili ga uvezi na drugom računaru.",
+    "exportTitle": "Izvoz",
+    "exportDescription": "Preuzima fajl sa rešenim zadacima, pokušajima i beleškama.",
+    "exportButton": "Izvezi JSON",
+    "importTitle": "Uvoz",
+    "importDescription": "Izaberi fajl koji je izvezen iz Kata Stack-a.",
+    "importChoose": "Izaberi fajl",
+    "importSummary": "Zadataka u fajlu: {exercises} (rešenih: {solved}), pokušaja: {attempts}.",
+    "importReplace": "Zameni sve",
+    "importReplaceHint": "Briše trenutni napredak i stavlja onaj iz fajla.",
+    "importMerge": "Spoji",
+    "importMergeHint": "Zadržava oba; za isti zadatak pobeđuje noviji zapis.",
+    "importCancel": "Odustani",
+    "importDone": "Uvezeno zadataka: {count}.",
+    "importInvalid": "Fajl nije ispravan ({reason}). Ništa nije promenjeno."
   },
   "runner": {
     "hiddenTest": "Skriveni test {n}",
