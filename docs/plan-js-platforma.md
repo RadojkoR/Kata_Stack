@@ -15,6 +15,8 @@ Platforma na kojoj vežbam JavaScript na dva načina:
 
 Četiri oblasti: **JavaScript**, **TypeScript**, **React/Next.js** (sa TypeScript-om) i **Node.js backend**, svaka u tri nivoa: **početnik**, **srednji**, **expert**.
 
+**Jezici:** sajt je dvojezičan, **srpski i engleski**, od početka (sekcija 4.9). Dvojezični su i interfejs i zadaci; kod i testovi su jedni za oba jezika.
+
 Princip: **prvo za sebe, bez razmišljanja o prodaji.** Ako mi posle nekoliko meseci stvarno koristi, razmišljam o drugim korisnicima.
 
 ---
@@ -27,11 +29,13 @@ Princip: **prvo za sebe, bez razmišljanja o prodaji.** Ako mi posle nekoliko me
   - bezbedno izvršavanje korisničkog koda u browseru,
   - čistu arhitekturu u Next.js + TypeScript.
 - Da gradivo ostane u glavi (ponavljanje sa razmakom), a ne samo da "rešim i zaboravim".
+- Da sajt i svi zadaci postoje na srpskom i engleskom (engleski je važan za portfolio i strane poslodavce).
 
 ### Van opsega (za sada)
 - Nalozi, plaćanje, više korisnika
 - Admin panel (zadaci su fajlovi u repou)
 - Jezici osim JavaScript/TypeScript
+- Jezici interfejsa osim srpskog i engleskog (struktura dozvoljava dodavanje, ali se ne radi sada)
 
 ---
 
@@ -47,6 +51,7 @@ Princip: **prvo za sebe, bez razmišljanja o prodaji.** Ako mi posle nekoliko me
 | Testovi za React | Sopstveni mini `render`/`screen`/`userEvent` ili Testing Library u iframe-u | Isti stil kao u stvarnim projektima |
 | Pravi Node u browseru | WebContainer API (kasnije, opciono) | `fs`, `http`, streams bez sopstvenog servera |
 | Stilovi | Tailwind CSS | Brzo prototipovanje |
+| Jezici (sr/en) | `[lang]` segment u URL-u + JSON rečnici + lokalizovana polja u zadacima (sekcija 4.9) | Dva jezika od prvog dana jeftinije je nego naknadno prepravljanje |
 | AI | DeepSeek i OpenAI iza `AiProvider` interfejsa (sekcija 4.7), preko Next.js API route-a | Već plaćeni API-ji; ključevi ostaju na serveru; Claude se može dodati kasnije |
 | Podaci (lično korišćenje) | localStorage / IndexedDB iza `ProgressStore` | Nema backenda |
 | Podaci (više korisnika) | Postgres (npr. Supabase) iza istog `ProgressStore` | Tek ako zatreba (Faza 7) |
@@ -221,6 +226,26 @@ Hosting je **Netlify**, a **Vercel** je rezerva. Kod je isti za obe platforme; r
 
 **Prelazak na Vercel** ako Netlify ne radi: povežem isti GitHub repo, unesem environment varijable i deployujem.
 
+### 4.9 Dvojezičnost (srpski i engleski)
+
+Jezici su `sr` (podrazumevani) i `en`. Postoje tri vrste teksta i svaka se rešava drugačije:
+
+| Vrsta teksta | Gde živi | Kako se prevodi |
+|---|---|---|
+| **Interfejs** (dugmad, naslovi, poruke) | `i18n/dictionaries/sr.json` i `en.json` | Rečnik sa ključevima; funkcija `t("ključ")`. Test pada ako jedan rečnik ima ključ koji drugi nema |
+| **Sadržaj zadataka i staza** (naslov, opis, kontekst, objašnjenje baga, napomene uz rešenja, imena testova) | JSON u `content/` | Svako tekstualno polje je objekat `{ "sr": "...", "en": "..." }`. Zod šema traži oba jezika, pa **build pada** ako jedan fali |
+| **Poruke runnera i greške** | `lib/runner` | Runner ne vraća gotove rečenice, nego kodove i parametre (npr. `timeout`, `hidden-test`); UI ih prevodi. Poruke samog JavaScript-a (`TypeError: ...`) ostaju kakve jesu |
+
+**Šta se ne prevodi:** kod (`starterCode`, `buggyCode`, rešenja), testovi i tagovi. Tag je neutralan slug (`closures`), a njegov prikazani naziv je u rečniku. Imena testova mogu biti obični string ili `{ sr, en }`.
+
+**Routing:** `/sr/...` i `/en/...` (segment `app/[lang]`), `generateStaticParams` za oba jezika, a `proxy.ts` preusmerava `/` na izabrani jezik. Redosled određivanja jezika: cookie `ks_lang` → `Accept-Language` → `sr`. Prebacivač jezika (SR | EN) je u zaglavlju i pamti izbor. `<html lang>` se postavlja iz segmenta.
+
+**AI:** zahtevi za mentora i review nose `lang`, a prompt traži odgovor na tom jeziku (sekcija 8). Ocena objašnjenja baga poredi tekst sa referencom bez obzira na jezik.
+
+**Baza (Etapa 2):** `users.locale` čuva izbor prijavljenog korisnika. Napredak ne zavisi od jezika (vezan je za `exercise_id`).
+
+**Posao oko prevoda:** AI napravi nacrt engleske (ili srpske) verzije svakog zadatka, a ja ga proverim. Pravilo je da zadatak ne ulazi u repo dok nema oba jezika.
+
 ---
 
 ## 5. UI/UX i editor
@@ -297,6 +322,7 @@ Tri kolone: zadatak levo (čita se prvi), editor u sredini, povratna informacija
 - Paneli se razvlače i sklapaju (`react-resizable-panels`).
 - **Fokus mod**: ostaje samo editor, za razmišljanje bez ometanja.
 - Tamna tema je podrazumevana; raspored panela i tema se pamte (localStorage).
+- Prebacivač jezika **SR | EN** je u gornjoj traci i na početnom ekranu; izbor se pamti (cookie `ks_lang`).
 
 ### 5.5 Raspored po tipu vežbe
 Struktura ostaje ista, menja se sadržaj panela:
@@ -346,18 +372,25 @@ Svaki zadatak je jedan fajl u `content/exercises/`.
 ```json
 {
   "id": "debounce-01",
-  "title": "Napiši sopstveni debounce",
+  "title": { "sr": "Napiši sopstveni debounce", "en": "Write your own debounce" },
   "type": "classic",
   "area": "javascript",
   "level": "srednji",
   "runtime": "worker",
   "tags": ["closures", "timers", "interview"],
-  "description": "Napiši funkciju debounce(fn, ms) koja ...",
+  "description": {
+    "sr": "Napiši funkciju debounce(fn, ms) koja ...",
+    "en": "Write a debounce(fn, ms) function that ..."
+  },
   "starterCode": "function debounce(fn, ms) {\n  // tvoj kod\n}",
-  "tests": "test('poziva fn samo jednom', async () => { ... });",
+  "tests": "test({ sr: 'poziva fn samo jednom', en: 'calls fn only once' }, async () => { ... });",
   "hiddenTests": "test('prosleđuje argumente', ...)",
   "solutions": [
-    { "label": "Klasičan pristup", "code": "...", "note": "..." }
+    {
+      "label": { "sr": "Klasičan pristup", "en": "Classic approach" },
+      "code": "...",
+      "note": { "sr": "...", "en": "..." }
+    }
   ]
 }
 ```
@@ -367,15 +400,21 @@ Svaki zadatak je jedan fajl u `content/exercises/`.
 {
   "id": "bug-async-loop-01",
   "type": "bug-hunt",
-  "title": "Zašto se korisnici učitavaju pogrešnim redom?",
+  "title": { "sr": "Zašto se korisnici učitavaju pogrešnim redom?", "en": "Why do users load in the wrong order?" },
   "area": "javascript",
   "level": "srednji",
   "runtime": "worker",
   "tags": ["async", "race-condition"],
-  "context": "AI je napisao ovu funkciju. Testovi u CI-ju povremeno padaju.",
+  "context": {
+    "sr": "AI je napisao ovu funkciju. Testovi u CI-ju povremeno padaju.",
+    "en": "An AI wrote this function. The tests in CI fail intermittently."
+  },
   "buggyCode": "...",
   "tests": "...",
-  "bugExplanation": "forEach ne čeka async callback ..."
+  "bugExplanation": {
+    "sr": "forEach ne čeka async callback ...",
+    "en": "forEach does not wait for an async callback ..."
+  }
 }
 ```
 
@@ -392,10 +431,12 @@ Polja koja određuju gde zadatak pripada:
 ```json
 {
   "id": "async-od-nule",
-  "title": "Async od nule do Promise.all",
+  "title": { "sr": "Async od nule do Promise.all", "en": "Async from zero to Promise.all" },
   "exercises": ["callbacks-01", "promise-basics-01", "debounce-01", "promise-all-01", "node-retry-01"]
 }
 ```
+
+**Lokalizovana polja:** svako tekstualno polje koje korisnik čita (`title`, `description`, `context`, `bugExplanation`, `label` i `note` uz rešenja, naslov staze) je objekat `{ "sr": "...", "en": "..." }` i mora imati oba jezika. Kod, testovi i tagovi nisu lokalizovani. Vidi sekciju 4.9.
 
 Ocenjivanje bug-hunt zadatka:
 1. Popravljen kod mora da prođe testove (automatski).
@@ -434,6 +475,7 @@ Pravila za prompt:
 - AI dobija opis zadatka, testove i moj kod, ali **ne i referentno rešenje** u nivou 1 i 2 (da ne "procuri").
 - Odgovor u strukturisanom JSON-u radi lakšeg prikaza.
 - Ograničenje broja poziva po danu (kontrola troška).
+- Zahtev nosi `lang` (`sr` ili `en`), a prompt traži odgovor na tom jeziku; kod i identifikatori ostaju neprevedeni.
 
 ---
 
@@ -452,9 +494,10 @@ Pojednostavljen SM-2 algoritam:
 ```
 kata-stack/
 ├── app/
-│   ├── page.tsx                 # početna: danas, staze, statistika
-│   ├── exercise/[id]/page.tsx   # radni ekran
-│   ├── tracks/[slug]/page.tsx   # tematske staze
+│   ├── [lang]/                  # sr | en
+│   │   ├── page.tsx             # početna: danas, staze, statistika
+│   │   ├── exercise/[id]/page.tsx   # radni ekran
+│   │   └── tracks/[slug]/page.tsx   # tematske staze
 │   └── api/
 │       ├── mentor/route.ts
 │       └── review/route.ts
@@ -503,6 +546,11 @@ kata-stack/
 │   │   ├── react-next/{pocetnik,srednji,expert}/*.json
 │   │   └── node/{pocetnik,srednji,expert}/*.json
 │   └── tracks/*.json
+├── i18n/
+│   ├── config.ts                # jezici, podrazumevani jezik
+│   ├── localized.ts             # LocalizedString + pomoćna funkcija za izbor jezika
+│   └── dictionaries/{sr,en}.json
+├── proxy.ts                     # preusmerava / na /sr ili /en
 └── types/
     └── exercise.ts
 ```
@@ -518,6 +566,7 @@ kata-stack/
 - [ ] Tipovi `Exercise` i `Track` + Zod validacija fajlova
 - [ ] Interfejsi `Runner` i `ProgressStore` (pre bilo koje implementacije)
 - [ ] Struktura foldera `content/` po oblastima i nivoima
+- [ ] Dvojezičnost (sekcija 4.9): `[lang]` segment, rečnici `sr`/`en`, lokalizovana polja u šemi zadatka, prebacivač jezika
 
 ### Faza 1: MVP (cilj: mogu da vežbam svaki dan)
 - [ ] Raspored u tri kolone sa resizable panelima (sekcija 5.2)
@@ -529,7 +578,7 @@ kata-stack/
 - [ ] Prikaz rezultata testova, grešaka tipova i console izlaza
 - [ ] `localStorageStore` (rešeno / pokušaji / vreme / beleške)
 - [ ] Početni ekran sa oblastima i nivoima (sekcija 5.7)
-- [ ] **Prvih 15 zadataka**: JavaScript, TypeScript i čista logika Node-a
+- [ ] **Prvih 15 zadataka**: JavaScript, TypeScript i čista logika Node-a (svaki na srpskom i engleskom)
 - [ ] Lista zadataka sa filterom po tipu i tagu
 
 ### Faza 2: AI mentor
@@ -537,6 +586,7 @@ kata-stack/
 - [ ] `/api/review` posle uspešnog rešenja
 - [ ] Ograničenje poziva po danu
 - [ ] Beleženje "rešeno uz pomoć"
+- [ ] Mentor i review odgovaraju na jeziku interfejsa (`lang` u zahtevu)
 
 ### Faza 3: React i Next.js
 - [ ] Adapter `iframe-react` (transpile JSX/TSX, React u iframe-u, timeout)
@@ -598,6 +648,8 @@ Za README: kratak demo GIF, objašnjenje arhitekture i sekcija "Šta sam naučio
 | Next.js i Node ne mogu potpuno u browseru | Vežbanje po delovima preko standardnih `Request`/`Response`; WebContainer tek u Fazi 6 |
 | Previše okruženja odjednom | Jedan `Runner` interfejs; okruženja se uvode jedno po jedno (sekcija 4.5) |
 | WebContainer traži posebne headere i licencu za komercijalnu upotrebu | Opciono, tek kad zatreba; proveriti uslove pre Faze 7 |
+| Prevođenje udvostručuje posao oko svakog zadatka | AI pravi nacrt drugog jezika, ja proveravam; zadatak bez oba jezika ne prolazi build |
+| Poruke na jednom jeziku "procure" u kod runnera ili AI-ja | Runner vraća kodove, ne rečenice; `lang` ide u svaki AI zahtev |
 
 ---
 

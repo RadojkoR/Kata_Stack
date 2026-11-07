@@ -1,0 +1,25 @@
+{
+  "id": "sum-evens-01",
+  "title": "Zbir parnih brojeva",
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["nizovi", "filter", "reduce"],
+  "description": "Napiši funkciju `sumEvens(numbers)` koja vraća zbir svih parnih brojeva u nizu.\n\nPrimeri:\n- `sumEvens([1, 2, 3, 4])` → `6`\n- `sumEvens([1, 3, 5])` → `0`\n- `sumEvens([])` → `0`\n\nOgraničenja: ne menjaj ulazni niz.",
+  "starterCode": "function sumEvens(numbers) {\n  // tvoj kod\n}",
+  "tests": "test('sabira parne brojeve', () => {\n  expect(sumEvens([1, 2, 3, 4])).toBe(6);\n});\ntest('vraća 0 kad nema parnih', () => {\n  expect(sumEvens([1, 3, 5])).toBe(0);\n});\ntest('prazan niz daje 0', () => {\n  expect(sumEvens([])).toBe(0);\n});",
+  "hiddenTests": "test('radi sa negativnim brojevima', () => {\n  expect(sumEvens([-2, -3, 4])).toBe(2);\n});\ntest('ne menja ulazni niz', () => {\n  const input = [1, 2, 3, 4];\n  sumEvens(input);\n  expect(input).toEqual([1, 2, 3, 4]);\n});",
+  "solutions": [
+    {
+      "label": "filter + reduce",
+      "code": "function sumEvens(numbers) {\n  return numbers.filter((n) => n % 2 === 0).reduce((sum, n) => sum + n, 0);\n}",
+      "note": "Čitljivo, ali prolazi kroz niz dva puta."
+    },
+    {
+      "label": "jedan prolaz",
+      "code": "function sumEvens(numbers) {\n  let sum = 0;\n  for (const n of numbers) {\n    if (n % 2 === 0) sum += n;\n  }\n  return sum;\n}",
+      "note": "Jedan prolaz i bez pomoćnih nizova."
+    }
+  ]
+}

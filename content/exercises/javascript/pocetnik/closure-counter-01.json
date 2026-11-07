@@ -1,0 +1,20 @@
+{
+  "id": "closure-counter-01",
+  "title": "Brojač sa closure-om",
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["closures", "funkcije"],
+  "description": "Napiši funkciju `createCounter(start = 0)` koja vraća funkciju. Svaki poziv vraćene funkcije povećava brojač za 1 i vraća novu vrednost.\n\nSvaki brojač ima svoje stanje, bez globalnih promenljivih.\n\nPrimer:\n```js\nconst c = createCounter();\nc(); // 1\nc(); // 2\n```",
+  "starterCode": "function createCounter(start = 0) {\n  // tvoj kod\n}",
+  "tests": "test('počinje od 1 po defaultu', () => {\n  const c = createCounter();\n  expect(c()).toBe(1);\n  expect(c()).toBe(2);\n});\ntest('poštuje početnu vrednost', () => {\n  const c = createCounter(10);\n  expect(c()).toBe(11);\n});",
+  "hiddenTests": "test('brojači su nezavisni', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});",
+  "solutions": [
+    {
+      "label": "closure nad promenljivom",
+      "code": "function createCounter(start = 0) {\n  let count = start;\n  return () => ++count;\n}",
+      "note": "Vraćena funkcija \"pamti\" promenljivu `count` iz okruženja u kome je napravljena."
+    }
+  ]
+}

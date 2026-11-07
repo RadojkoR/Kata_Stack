@@ -22,6 +22,8 @@
 | Prijava (Etapa 2) | Sopstvena: `scrypt` (ugrađen u Node) + tabela `sessions` + httpOnly cookie | Bez dodatnih zavisnosti; jasno šta se dešava |
 | Validacija | Zod za fajlove zadataka, localStorage podatke, uvoz JSON-a i svaki ulaz u API | Jedan alat za sve granice gde podaci ulaze u aplikaciju |
 | Sadržaj (zadaci, staze) | JSON fajlovi u repou | Verzionisano u Git-u; napredak samo pokazuje na `exercise_id` |
+| Jezici | Srpski i engleski od početka: `[lang]` segment u URL-u, JSON rečnici, lokalizovana polja `{ sr, en }` u zadacima | Dva jezika od prvog dana jeftinije je nego naknadno prepravljanje; detalji u [plan-js-platforma.md](plan-js-platforma.md), sekcija 4.9 |
+| Poruke runnera | Kodovi i parametri, ne gotove rečenice | Da isti runner radi za oba jezika; prevodi ih UI |
 | AI | Tek posle Etape 2 | Ključevi se ne stavljaju na Netlify dok ne postoje prijava i limit |
 
 **Zašto ne poseban Node/Express server:** Netlify ne pokreće server koji stalno radi, nego funkcije koje se pale po zahtevu. Next.js route handleri se deploy-uju upravo kao takve funkcije i rade na Node runtime-u, tako da pišemo pravi Node.js kod (`node:crypto`, SQL upiti) bez zasebnog hostinga. Ako jednog dana zatreba stalni server (WebSocket, dugi poslovi), to bi išlo na Render/Railway/Fly, ali za ovu aplikaciju nije potrebno.
@@ -128,7 +130,7 @@ export type ProgressExport = {
 | `ks:v1:progress` | `Record<exerciseId, ExerciseProgress>` |
 | `ks:v1:attempts` | `Attempt[]`, samo poslednjih 20 po zadatku (localStorage ima limit od ~5 MB) |
 | `ks:v1:draft:<exerciseId>` | nesačuvan kod u editoru |
-| `ks:ui` | tema, raspored panela |
+| `ks:ui` | tema, raspored panela (jezik je u URL-u i u cookie-ju `ks_lang`, ne ovde) |
 
 - `v1` u ključu omogućava da se oblik podataka kasnije promeni bez lomljenja starih podataka (čitač prepozna `v1` i prevede ga).
 - Sve što se čita iz localStorage-a prolazi kroz Zod šemu; nevalidan podatak se ne briše tiho, nego se prijavi u konzoli i preskoči.
@@ -219,6 +221,7 @@ create table users (
   id            uuid primary key default gen_random_uuid(),
   email         text not null unique,
   password_hash text not null,
+  locale        text not null default 'sr' check (locale in ('sr', 'en')),
   created_at    timestamptz not null default now()
 );
 
@@ -283,9 +286,10 @@ create table ai_review_cache (
   user_id     uuid not null references users(id) on delete cascade,
   exercise_id text not null,
   code_hash   text not null,
+  lang        text not null check (lang in ('sr', 'en')),
   response    jsonb not null,
   created_at  timestamptz not null default now(),
-  primary key (user_id, exercise_id, code_hash)
+  primary key (user_id, exercise_id, code_hash, lang)
 );
 
 -- Supabase automatski izlaže public šemu preko Data API-ja.
@@ -370,14 +374,16 @@ Proširenje strukture iz sekcije 10 prvog plana. Oznaka **[E2]** znači da se fa
 ```
 kata-stack/
 ├── app/
-│   ├── (auth)/login/page.tsx             [E2]
-│   ├── (app)/                            # u E2 layout poziva requireUser()
-│   │   ├── layout.tsx
-│   │   ├── page.tsx                      # početna
-│   │   ├── exercise/[id]/page.tsx
-│   │   ├── tracks/[slug]/page.tsx
-│   │   └── settings/page.tsx             # izvoz / uvoz JSON-a
-│   └── api/
+│   ├── [lang]/                           # sr | en
+│   │   ├── layout.tsx                    # <html lang>, rečnik, prebacivač jezika
+│   │   ├── (auth)/login/page.tsx         [E2]
+│   │   └── (app)/                        # u E2 layout poziva requireUser()
+│   │       ├── layout.tsx
+│   │       ├── page.tsx                  # početna
+│   │       ├── exercise/[id]/page.tsx
+│   │       ├── tracks/[slug]/page.tsx
+│   │       └── settings/page.tsx         # izvoz / uvoz JSON-a
+│   └── api/                              # API nije pod [lang]
 │       ├── health/route.ts               # E1: { ok: true }; E2: + select 1
 │       ├── auth/login/route.ts           [E2]
 │       ├── auth/logout/route.ts          [E2]
@@ -415,7 +421,12 @@ kata-stack/
 ├── scripts/                              [E2]
 │   ├── migrate.ts
 │   └── create-user.ts
-├── content/                              # kao u prvom planu
+├── content/                              # kao u prvom planu, ali sa { sr, en } poljima
+├── i18n/
+│   ├── config.ts                         # jezici, podrazumevani jezik
+│   ├── localized.ts                      # LocalizedString + izbor jezika
+│   └── dictionaries/{sr,en}.json
+├── proxy.ts                              # / → /sr ili /en (cookie ks_lang → Accept-Language → sr)
 ├── types/
 │   ├── exercise.ts
 │   └── progress.ts                       # sekcija 3.1
@@ -494,12 +505,29 @@ Svaki korak ima uslov **"Gotovo kad"**: dok on nije ispunjen, ne prelazi se na s
 
 **Gotovo kad:** beskonačna petlja ne zamrzava tab, a rezultat testova stiže u `RunResult` obliku.
 
+#### Korak 5b: Dvojezičnost (sr/en)
+Radi se odmah posle Koraka 5 i pre radnog ekrana, jer sve što sledi (UI, poruke, zadaci) ima tekst. Menja i ono što je već urađeno u koracima 4 i 5, a sada je to još jeftino.
+- [ ] Pročitati i18n/routing vodiče u `node_modules/next/dist/docs/` (ova verzija Next.js-a ima izmene, npr. `proxy.ts` umesto `middleware.ts`)
+- [ ] `i18n/config.ts`, `[lang]` segment, `generateStaticParams` za `sr` i `en`, `proxy.ts` sa redosledom: cookie `ks_lang` → `Accept-Language` → `sr`
+- [ ] Rečnici `i18n/dictionaries/sr.json` i `en.json`, tipizovana funkcija `t()`; Vitest test pada ako jedan rečnik ima ključ koji drugi nema
+- [ ] `LocalizedString = { sr, en }` kao Zod šema; polja `title`, `description`, `context`, `bugExplanation`, `solutions[].label/note` i naslov staze postaju lokalizovana; build pada ako fali jedan jezik
+- [ ] Tagovi ostaju neutralni slug-ovi, a prikazani nazivi idu u rečnik
+- [x] `test(name, fn)` prihvata string ili `{ sr, en }`; `TestResult.name` je isto (urađeno u Koraku 5, tip `TestName` u `lib/runner/types.ts`; u 5b ga zameniti zajedničkim `LocalizedString`)
+- [x] Runner ne vraća rečenice: `error` je kod sa parametrima (`{ code: "timeout", ms }`), skriveni testovi nose `hiddenIndex`, a `expect` vraća `failure.code`, `matcher`, `expected` i `actual` (urađeno u Koraku 5)
+- [ ] UI prevodi kodove iz runnera (`timeout`, `mismatch`, `negated`, `not-thrown`, `resolved-unexpectedly`, `rejected-unexpectedly`, `exception`, `transpile`, `worker`) iz rečnika
+- [ ] Postojeća 3 zadatka i njihovi testovi dobijaju engleski tekst
+- [ ] Prebacivač jezika (SR | EN) u zaglavlju; `<html lang>` iz segmenta
+- [ ] Izvoz/uvoz JSON-a i napredak ostaju isti (ne zavise od jezika)
+
+**Gotovo kad:** `/sr` i `/en` prikazuju istu listu zadataka, svaka na svom jeziku; prebacivač pamti izbor; zadatak kome fali engleski naslov obara `npm run build`.
+
 #### Korak 6: Radni ekran
 - [ ] `Workspace` sa tri kolone (`react-resizable-panels`) i fokus modom
 - [ ] Monaco editor + Prettier + tipovi za `test`/`expect`
 - [ ] `TopBar`: Run, Submit, Reset, Format, tajmer
 - [ ] `TestResults`, `OutputConsole`
 - [ ] Prečice Ctrl+Enter / Ctrl+Shift+Enter
+- [ ] Svi tekstovi iz rečnika (bez ugrađenih stringova u komponentama); poruke runnera se prevode iz kodova
 - [ ] Tema i raspored panela u `ks:ui`; nacrt koda se automatski čuva u `ks:v1:draft:<id>` na svakih par sekundi
 
 **Gotovo kad:** mogu da rešim zadatak od početka do kraja, a posle osvežavanja stranice kod je i dalje tu.
@@ -519,7 +547,7 @@ Svaki korak ima uslov **"Gotovo kad"**: dok on nije ispunjen, ne prelazi se na s
 - [ ] Oblasti × nivoi sa trakama napretka
 - [ ] Lista zadataka sa filterom po tipu i tagu
 - [ ] Oblasti bez gotovog okruženja prikazane kao "uskoro"
-- [ ] **15 zadataka**: JavaScript, TypeScript i čista logika Node-a
+- [ ] **15 zadataka**: JavaScript, TypeScript i čista logika Node-a (svaki sa srpskim i engleskim tekstom; AI napravi nacrt drugog jezika, ja proverim)
 
 **Gotovo kad:** svaki dan otvorim sajt i radim, bez ičega što me usporava. **MVP je gotov.**
 
@@ -552,6 +580,7 @@ Svaki korak ima uslov **"Gotovo kad"**: dok on nije ispunjen, ne prelazi se na s
 - [ ] `scripts/create-user.ts` i napravljen moj korisnik
 - [ ] `/api/auth/login`, `/api/auth/logout`, stranica `/login`
 - [ ] Layout `(app)` preusmerava na `/login` ako sesija ne postoji
+- [ ] Izbor jezika prijavljenog korisnika se čuva u `users.locale` (cookie `ks_lang` ostaje za neprijavljene); prijava vodi na `/{locale}`
 
 **Gotovo kad:** bez prijave me vraća na `/login`; posle prijave vidim početnu; posle odjave cookie i red u `sessions` nestaju.
 
@@ -589,6 +618,8 @@ Svaki korak ima uslov **"Gotovo kad"**: dok on nije ispunjen, ne prelazi se na s
 - [ ] `/api/review` posle uspešnog Submit-a, sa keširanjem u `ai_review_cache` (ključ: SHA-256 koda)
 - [ ] Dnevni limit: pre poziva `select count(*) from ai_usage where user_id = $1 and created_at >= current_date`
 - [ ] Oba endpointa počinju sa `requireUser()`
+- [ ] Zahtev nosi `lang` (Zod: `sr` ili `en`); prompt traži odgovor na tom jeziku, a kod i identifikatori ostaju neprevedeni
+- [ ] Ključ keša u `ai_review_cache` uključuje jezik (kolona `lang` je već u `001_init.sql`), da `en` review ne dobije `sr` odgovor
 - [ ] Streamovanje odgovora (zbog vremenskog limita Netlify funkcija)
 - [ ] Nivo 3 postavlja `status = 'solved_with_help'`
 - [ ] Tek sada: AI ključevi u Netlify env varijable
@@ -680,3 +711,6 @@ Etapa 2 (dodatno):
 | Migracija pokvari produkciju | Kompatibilnost unazad, test lokalno, Supabase dnevni backup |
 | Vezivanje za Supabase | Koristimo samo Postgres; prelazak = nova `DATABASE_URL` + `db:migrate:prod` |
 | Deploy preview piše u pravu bazu | Posebna baza ili isključeni preview-i (korak 13) |
+| Prevođenje udvostručuje posao oko zadataka | AI pravi nacrt, ja proveravam; build pada ako fali jedan jezik, pa nepotpun zadatak ne može u produkciju |
+| Srpski tekst ostane ugrađen u kod (runner, komponente) | Runner vraća kodove; test rečnika; od Koraka 5b nema stringova u komponentama |
+| Keširan AI odgovor na pogrešnom jeziku | Jezik je deo ključa keša (korak 14) |
