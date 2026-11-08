@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   availableTags,
+  barSegments,
   availableTypes,
   countSolved,
   filterItems,
   levelStats,
   percent,
   recentActivity,
+  solvedSets,
   type BrowseItem,
 } from "./browse";
 import { newProgress } from "./progress";
@@ -53,17 +55,37 @@ describe("statistika", () => {
   const solved = new Set(["a", "c", "nepostojeci"]);
 
   it("countSolved broji samo rešene zadatke koji postoje u listi", () => {
-    expect(countSolved(items, solved)).toEqual({ solved: 2, total: 4 });
-    expect(countSolved([], solved)).toEqual({ solved: 0, total: 0 });
+    expect(countSolved(items, solved)).toEqual({ solved: 2, helped: 0, total: 4 });
+    expect(countSolved([], solved)).toEqual({ solved: 0, helped: 0, total: 0 });
   });
 
   it("levelStats daje brojeve za svaku oblast i nivo, i prazne ćelije", () => {
     const stats = levelStats(items, solved);
-    expect(stats.javascript.pocetnik).toEqual({ solved: 1, total: 1 });
-    expect(stats.javascript.srednji).toEqual({ solved: 0, total: 1 });
-    expect(stats.javascript.expert).toEqual({ solved: 0, total: 0 });
-    expect(stats.typescript.pocetnik).toEqual({ solved: 1, total: 1 });
-    expect(stats["react-next"].pocetnik).toEqual({ solved: 0, total: 0 });
+    expect(stats.javascript.pocetnik).toEqual({ solved: 1, helped: 0, total: 1 });
+    expect(stats.javascript.srednji).toEqual({ solved: 0, helped: 0, total: 1 });
+    expect(stats.javascript.expert).toEqual({ solved: 0, helped: 0, total: 0 });
+    expect(stats.typescript.pocetnik).toEqual({ solved: 1, helped: 0, total: 1 });
+    expect(stats["react-next"].pocetnik).toEqual({ solved: 0, helped: 0, total: 0 });
+  });
+
+  it("solvedSets razdvaja rešeno samostalno od rešenog uz pomoć, a nerešeno ne broji", () => {
+    const base = newProgress("x", "2026-01-01T00:00:00.000Z");
+    const { solvedIds, helpedIds } = solvedSets({
+      a: { ...base, exerciseId: "a", status: "solved" },
+      b: { ...base, exerciseId: "b", status: "solved_with_help" },
+      c: { ...base, exerciseId: "c", status: "in_progress" },
+    });
+    expect([...solvedIds].sort()).toEqual(["a", "b"]);
+    expect([...helpedIds]).toEqual(["b"]);
+  });
+
+  it("countSolved broji uz pomoć posebno, ali ih uključuje u rešene", () => {
+    expect(countSolved(items, new Set(["a", "c"]), new Set(["c"]))).toEqual({ solved: 2, helped: 1, total: 4 });
+  });
+
+  it("barSegments daje zeleni i narandžasti deo trake koji zajedno daju rešene", () => {
+    expect(barSegments({ solved: 3, helped: 1, total: 4 })).toEqual({ solo: 50, helped: 25 });
+    expect(barSegments({ solved: 0, helped: 0, total: 0 })).toEqual({ solo: 0, helped: 0 });
   });
 
   it("percent ne deli nulom i zaokružuje", () => {

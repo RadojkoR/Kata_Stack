@@ -13,11 +13,23 @@ export type Area = z.infer<typeof AreaSchema>;
 export type Level = z.infer<typeof LevelSchema>;
 export type Runtime = z.infer<typeof RuntimeSchema>;
 
+/** Objašnjenje jedne linije ili grupe linija rešenja. `lines` je [od, do], brojanje od 1, oba uključena. */
+const WalkthroughStepSchema = z.strictObject({
+  lines: z.tuple([z.number().int().positive(), z.number().int().positive()]),
+  text: LocalizedStringSchema,
+});
+
 const SolutionSchema = z.strictObject({
   label: LocalizedStringSchema,
   code: z.string().min(1),
+  /** Kratak zaključak ispod objašnjenja. */
   note: LocalizedStringSchema.optional(),
+  /** Objašnjenje po linijama; ako postoji, mora da pokrije svaku linijsku koja nije prazna (proverava `lib/catalog.ts`). */
+  walkthrough: z.array(WalkthroughStepSchema).min(1).optional(),
 });
+
+export type WalkthroughStep = z.infer<typeof WalkthroughStepSchema>;
+export type Solution = z.infer<typeof SolutionSchema>;
 
 // ID se koristi u URL-u i u napretku, zato samo mala slova, brojevi i crtice.
 const IdSchema = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "id sme da sadrži samo mala slova, brojeve i crtice");

@@ -9,6 +9,7 @@ import {
   countSolved,
   levelStats,
   recentActivity,
+  solvedSets,
   type BrowseItem,
   type RecentEntry,
 } from "@/lib/browse";
@@ -29,12 +30,9 @@ type Props = {
 /** Glavni dashboard: ukupni napredak, šta je poslednje rađeno i napredak po oblastima. */
 export function Overview({ items, locale, labels }: Props) {
   const progress = useProgressMap();
-  const solvedIds = useMemo(
-    () => new Set(Object.values(progress).filter(isSolved).map((p) => p.exerciseId)),
-    [progress],
-  );
-  const stats = useMemo(() => levelStats(items, solvedIds), [items, solvedIds]);
-  const overall = countSolved(items, solvedIds);
+  const { solvedIds, helpedIds } = useMemo(() => solvedSets(progress), [progress]);
+  const stats = useMemo(() => levelStats(items, solvedIds, helpedIds), [items, solvedIds, helpedIds]);
+  const overall = countSolved(items, solvedIds, helpedIds);
   const recent = useMemo(() => recentActivity(items, progress, 5), [items, progress]);
 
   // Prvi nerešen zadatak sa liste je ono na čemu se nastavlja.
@@ -95,6 +93,7 @@ export function Overview({ items, locale, labels }: Props) {
           const areaStats = countSolved(
             items.filter((i) => i.area === area),
             solvedIds,
+            helpedIds,
           );
           return (
             <Link
@@ -146,7 +145,12 @@ function RecentRow({
   formatDate: (iso: string) => string;
 }) {
   const { item, progress } = entry;
-  const solved = isSolved(progress);
+  const status =
+    progress.status === "solved"
+      ? { text: `✓ ${labels.home.solved}`, className: "bg-green-500/15 text-green-700 dark:text-green-400" }
+      : progress.status === "solved_with_help"
+        ? { text: `✓ ${labels.home.solvedWithHelp}`, className: "bg-orange-500/15 text-orange-700 dark:text-orange-400" }
+        : { text: labels.home.inProgress, className: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-400" };
 
   return (
     <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
@@ -162,15 +166,7 @@ function RecentRow({
           {labels.areas[item.area]} · {labels.levels[item.level]}
         </span>
       </p>
-      <span
-        className={`rounded px-1.5 py-0.5 text-xs ${
-          solved
-            ? "bg-green-500/15 text-green-700 dark:text-green-400"
-            : "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-        }`}
-      >
-        {solved ? `✓ ${labels.home.solved}` : labels.home.inProgress}
-      </span>
+      <span className={`rounded px-1.5 py-0.5 text-xs ${status.className}`}>{status.text}</span>
       <time dateTime={progress.updatedAt} className="text-xs tabular-nums text-zinc-500">
         {formatDate(progress.updatedAt)}
       </time>

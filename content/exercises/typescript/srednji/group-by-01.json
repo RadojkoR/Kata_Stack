@@ -15,8 +15,69 @@
   "hiddenTests": "test('works with numeric keys and keeps the order', () => {\n  const result = groupBy(['a', 'bb', 'cc', 'd'], (s) => s.length);\n  expect(result).toEqual({ 1: ['a', 'd'], 2: ['bb', 'cc'] });\n});",
   "solutions": [
     {
-      "label": { "sr": "petlja i ??=", "en": "loop and ??=" },
+      "label": {
+        "sr": "petlja i ??=",
+        "en": "loop and ??="
+      },
       "code": "function groupBy<T, K extends string | number>(items: T[], getKey: (item: T) => K): Record<K, T[]> {\n  const groups = {} as Record<K, T[]>;\n  for (const item of items) {\n    const key = getKey(item);\n    (groups[key] ??= []).push(item);\n  }\n  return groups;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Potpis funkcije: ovde je većina TypeScript-a.\n\n- `<T, K extends string | number>` su dva parametra tipa. `T` je tip elementa niza. `K` je tip ključa i ograničen je na `string | number`, jer samo oni mogu biti ključevi objekta. `extends` ovde znači „mora biti podskup od“.\n- `items: T[]` je ulazni niz elemenata tipa `T`.\n- `getKey: (item: T) => K` je funkcija (callback) koja za jedan element vraća njegov ključ. Pozivalac je piše, npr. `(n) => n % 2 === 0 ? 'even' : 'odd'`.\n- `Record<K, T[]>` je tip rezultata: objekat čiji su ključevi tipa `K`, a vrednosti nizovi elemenata `T[]`.\n- `{` otvara telo; zatvara ga `}` u liniji 8.\n\nPrimer: `groupBy([1, 2, 3], (n) => n % 2 === 0 ? 'even' : 'odd')` daje `T = number`, `K = 'even' | 'odd'`, pa je rezultat tipa `Record<'even' | 'odd', number[]>`.",
+            "en": "The function signature: this is where most of the TypeScript is.\n\n- `<T, K extends string | number>` are two type parameters. `T` is the type of an array element. `K` is the type of the key and is limited to `string | number`, because only those can be object keys. `extends` here means “must be a subset of”.\n- `items: T[]` is the input array of elements of type `T`.\n- `getKey: (item: T) => K` is a function (callback) that returns the key for one element. The caller writes it, e.g. `(n) => n % 2 === 0 ? 'even' : 'odd'`.\n- `Record<K, T[]>` is the result type: an object whose keys are of type `K` and whose values are arrays of elements `T[]`.\n- `{` opens the body; it is closed by `}` on line 8.\n\nExample: `groupBy([1, 2, 3], (n) => n % 2 === 0 ? 'even' : 'odd')` gives `T = number`, `K = 'even' | 'odd'`, so the result is of type `Record<'even' | 'odd', number[]>`."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo prazan objekat koji punimo u petlji.\n\n- `const groups = {}` pravi prazan objekat; `const` jer se promenljiva ne dodeljuje ponovo (sadržaj objekta se menja).\n- Problem: `{}` nije dodeljiv tipu `Record<K, T[]>`, jer nedostaju ključevi.\n- `as Record<K, T[]>` je **tvrdnja tipa** (type assertion): kažemo kompajleru „veruj nam, ovaj objekat će imati te ključeve kad ga popunimo“. Pri izvršavanju `as` ne radi ništa, jer se briše zajedno sa ostalim tipovima.",
+            "en": "We create an empty object that we fill in the loop.\n\n- `const groups = {}` creates an empty object; `const` because the variable is not reassigned (the object's contents change).\n- The problem: `{}` is not assignable to the type `Record<K, T[]>`, because the keys are missing.\n- `as Record<K, T[]>` is a **type assertion**: we tell the compiler “trust us, this object will have those keys once we fill it”. At runtime `as` does nothing, because it is erased along with the other types."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Prolazimo kroz sve elemente, redom.\n\n- `for (const item of items)` uzima jedan po jedan element niza `items`; u `item` je u svakom prolazu trenutni element.\n- Redosled se čuva, pa su elementi u svakoj grupi u originalnom redosledu.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 6.",
+            "en": "We go through all the elements, in order.\n\n- `for (const item of items)` takes the elements of the array `items` one by one; in `item` there is the current element on each pass.\n- The order is preserved, so the items in each group stay in their original order.\n- `{` opens the loop body; it is closed by `}` on line 6."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Izračunavamo ključ grupe za ovaj element.\n\n- `getKey(item)` poziva funkciju koju je pozivalac dao i prosleđuje joj trenutni element.\n- Rezultat je tipa `K` (string ili broj), jer je to ono što `getKey` vraća.",
+            "en": "We compute the group key for this element.\n\n- `getKey(item)` calls the function the caller provided and passes it the current element.\n- The result is of type `K` (string or number), because that is what `getKey` returns."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Dodajemo element u njegovu grupu.\n\n- `groups[key]` čita grupu (niz) za taj ključ. Ako je ključ nov, vrednost je `undefined`.\n- `??=` je **logičko nullish dodeljivanje**: ako je leva strana `null` ili `undefined`, dodeli joj desnu (`[]`, prazan niz). Ako već ima vrednost, ne radi ništa. Vrednost celog izraza je niz koji sada postoji u toj grupi (novi ili već postojeći).\n- Zagrade su neophodne da bi `.push(item)` delovao na taj niz, a ne na `[]` unutar izraza.\n- `.push(item)` dodaje element na kraj niza grupe.\n- Duži kod bi uradio isto: `if (!groups[key]) groups[key] = []; groups[key].push(item);`. Prva varijanta je kraća i ne traži ključ dvaput.\n\nTok za `groupBy([1, 2, 3, 4], n => n % 2 === 0 ? 'even' : 'odd')`:\n\n```\nitem = 1 → key = 'odd'  → groups.odd je undefined → postaje [] → push(1)   groups = { odd: [1] }\nitem = 2 → key = 'even' → groups.even je undefined → postaje [] → push(2)  groups = { odd: [1], even: [2] }\nitem = 3 → key = 'odd'  → groups.odd već postoji → push(3)                groups = { odd: [1, 3], even: [2] }\nitem = 4 → key = 'even' → groups.even već postoji → push(4)               groups = { odd: [1, 3], even: [2, 4] }\n```",
+            "en": "We add the element to its group.\n\n- `groups[key]` reads the group (array) for that key. If the key is new, the value is `undefined`.\n- `??=` is a **logical nullish assignment**: if the left side is `null` or `undefined`, assign it the right side (`[]`, an empty array). If it already has a value, it does nothing. The value of the whole expression is the array that now exists for that group (new or already existing).\n- The parentheses are necessary so that `.push(item)` acts on that array, and not on the `[]` inside the expression.\n- `.push(item)` adds the element to the end of the group's array.\n- The longer code would do the same: `if (!groups[key]) groups[key] = []; groups[key].push(item);`. The first variant is shorter and does not look up the key twice.\n\nFlow for `groupBy([1, 2, 3, 4], n => n % 2 === 0 ? 'even' : 'odd')`:\n\n```\nitem = 1 → key = 'odd'  → groups.odd is undefined → becomes [] → push(1)   groups = { odd: [1] }\nitem = 2 → key = 'even' → groups.even is undefined → becomes [] → push(2)  groups = { odd: [1], even: [2] }\nitem = 3 → key = 'odd'  → groups.odd already exists → push(3)               groups = { odd: [1, 3], even: [2] }\nitem = 4 → key = 'even' → groups.even already exists → push(4)              groups = { odd: [1, 3], even: [2, 4] }\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Vraćamo sve grupe.\n\n- Za prazan niz petlja nije dodala nijedan ključ, pa se vraća `{}`, što test traži.\n- Napomena: objekti sa ključevima koji su celi brojevi (`1`, `2`) ređaju ključeve rastuće, bez obzira na redosled dodavanja. Elementi unutar svake grupe ipak ostaju u originalnom redosledu.",
+            "en": "We return all the groups.\n\n- For an empty array the loop added no keys, so `{}` is returned, which the test requires.\n- Note: objects with integer keys (`1`, `2`) order their keys ascending, regardless of the order they were added in. The elements inside each group still keep their original order."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "`??=` pravi niz samo kad ključ još ne postoji, pa nema posebne grane za prvi element grupe.",
         "en": "`??=` creates the array only when the key does not exist yet, so there is no special branch for the first item of a group."

@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { percent } from "@/lib/browse";
+import { solvedSets } from "@/lib/browse";
 import { interpolate } from "@/lib/runner/messages";
 import { useProgressMap } from "@/lib/storage/use-progress";
-import { isSolved } from "@/types/progress";
+import { Bar } from "../home/Bar";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { ThemeToggle } from "../ThemeToggle";
 
@@ -26,7 +26,9 @@ export function SiteHeader({ locale, total, labels }: Props) {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
-  const solved = Object.values(progress).filter(isSolved).length;
+  const { solvedIds, helpedIds } = solvedSets(progress);
+  const solved = solvedIds.size;
+  const stats = { solved, helped: helpedIds.size, total };
   const progressLabel = interpolate(labels.home.overall, { solved, total });
 
   // Meni se zatvara na Escape i na klik van trake.
@@ -75,8 +77,8 @@ export function SiteHeader({ locale, total, labels }: Props) {
             aria-label={progressLabel}
             className="flex items-center gap-2 rounded px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
           >
-            <span className="hidden h-1.5 w-16 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-800 md:block">
-              <span className="block h-full bg-green-500" style={{ width: `${percent({ solved, total })}%` }} />
+            <span className="hidden w-16 md:block">
+              <Bar stats={stats} />
             </span>
             <span className="tabular-nums">
               {solved}/{total}

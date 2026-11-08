@@ -7,6 +7,8 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/drafts";
 import { createMonacoTypeChecker } from "@/lib/monaco/setup";
+import { createSolutionViewer, type SolutionViewer } from "@/lib/monaco/solution-view";
+import { interpolate } from "@/lib/runner/messages";
 import { createBrowserWorker } from "@/lib/runner/browser-worker";
 import { runCode, UnsupportedRuntimeError, type RunnerDeps } from "@/lib/runner";
 import { allPassed, type LogEntry } from "@/lib/runner/types";
@@ -18,6 +20,7 @@ import type { Runtime } from "@/types/exercise";
 import { isSolved } from "@/types/progress";
 import { CodeEditor, type CodeEditorHandle } from "./CodeEditor";
 import { NotesPanel } from "./NotesPanel";
+import { SolutionsPanel, type ActiveStep, type WorkspaceSolution } from "./SolutionsPanel";
 import { OutputConsole } from "./OutputConsole";
 import { SimpleMarkdown } from "./SimpleMarkdown";
 import { TestResults, type Outcome } from "./TestResults";
@@ -33,6 +36,7 @@ export type WorkspaceExercise = {
   starterCode: string;
   tests: string;
   hiddenTests?: string;
+  solutions: WorkspaceSolution[];
 };
 
 type Props = {
@@ -52,6 +56,67 @@ const useIsClient = () =>
     () => true,
     () => false,
   );
+
+/** Traka iznad editora dok je otvoreno rešenje: gde smo, navigacija kroz korake i povratak na moj kod. */
+function ViewingBar({
+  view,
+  solutions,
+  labels,
+  onMove,
+  onClose,
+}: {
+  view: ActiveStep;
+  solutions: WorkspaceSolution[];
+  labels: Dictionary["workspace"];
+  onMove: (delta: number) => void;
+  onClose: () => void;
+}) {
+  const solution = solutions[view.solution];
+  const steps = solution?.steps ?? [];
+  const step = steps[view.step];
+  if (!solution || !step) return null;
+
+  const lines =
+    step.from === step.to
+      ? interpolate(labels.linesOne, { from: step.from })
+      : interpolate(labels.linesRange, { from: step.from, to: step.to });
+  const nav =
+    "rounded border border-blue-500/40 px-2 py-0.5 text-sm hover:bg-blue-500/10 disabled:opacity-40 disabled:hover:bg-transparent";
+
+  return (
+    <div
+      role="status"
+      className="flex shrink-0 flex-wrap items-center gap-2 border-b border-blue-500/40 bg-blue-500/10 px-3 py-1.5 text-sm"
+    >
+      <span className="min-w-0 flex-1 truncate">
+        <span className="font-medium">
+          {interpolate(labels.viewingSolution, { n: view.solution + 1, label: solution.label })}
+        </span>
+        <span className="text-zinc-500">
+          {" · "}
+          {lines}
+          {" · "}
+          {interpolate(labels.stepOf, { i: view.step + 1, n: steps.length })}
+        </span>
+      </span>
+      <button type="button" className={nav} disabled={view.step === 0} onClick={() => onMove(-1)} aria-label={labels.prevStep}>
+        ‹
+      </button>
+      <button
+        type="button"
+        className={nav}
+        disabled={view.step === steps.length - 1}
+        onClick={() => onMove(1)}
+        aria-label={labels.nextStep}
+      >
+        ›
+      </button>
+      <button type="button" className={`${nav} border-blue-500`} onClick={onClose}>
+        {labels.backToMyCode}
+      </button>
+    </div>
+  );
+}
 
 const resizeHandle =
   "bg-zinc-200 transition-colors hover:bg-blue-500 data-[separator=active]:bg-blue-500 dark:bg-zinc-800 data-[orientation=vertical]:w-px";
@@ -84,15 +149,69 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
   const [solved, setSolved] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
-  const [tab, setTab] = useState<"task" | "notes">("task");
+  const [tab, setTab] = useState<"task" | "solutions" | "notes">("task");
+
+  // Rešenje je vidljivo kad je zadatak rešen ili kad je rešenje već otvoreno (nivo pomoći 3).
+  const solutionUnlocked = isSolved(progress) || progress?.hintLevel === 3;
 
   const editorRef = useRef<CodeEditorHandle | null>(null);
+  const viewerRef = useRef<SolutionViewer | null>(null);
+  const [editorReady, setEditorReady] = useState(false);
+  // Korak rešenja koji je otvoren u editoru (kod rešenja, samo za čitanje, sa objašnjenjem ispod linija).
+  const [view, setView] = useState<ActiveStep | null>(null);
   const openedAt = useRef(0);
   const isTs = exercise.runtime !== "worker";
 
   useEffect(() => {
     openedAt.current = Date.now();
   }, [exercise.id]);
+
+  // Prikaz koraka u editoru prati stanje `view`; kad je `null`, vraća se korisnikov kod.
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!editorReady || !viewer) return;
+    if (!view) {
+      viewer.exit();
+      return;
+    }
+    const solution = exercise.solutions[view.solution];
+    const step = solution?.steps?.[view.step];
+    if (!solution || !step) return;
+    viewer.show({
+      code: solution.code,
+      language: isTs ? "typescript" : "javascript",
+      path: `file:///solutions/${exercise.id}-${view.solution}.${isTs ? "ts" : "js"}`,
+      from: step.from,
+      to: step.to,
+      text: step.text,
+    });
+  }, [view, editorReady, exercise, isTs]);
+
+  // Pri napuštanju stranice vraća se korisnikov model, da ne ostane otvoren model rešenja.
+  useEffect(
+    () => () => {
+      viewerRef.current?.exit();
+    },
+    [],
+  );
+
+  /** Zatvara pregled rešenja odmah (a ne tek posle sledećeg renderovanja), pre radnji nad korisnikovim kodom. */
+  const closeView = useCallback(() => {
+    viewerRef.current?.exit();
+    setView(null);
+  }, []);
+
+  const moveStep = useCallback(
+    (delta: number) => {
+      setView((v) => {
+        const steps = v ? exercise.solutions[v.solution]?.steps : undefined;
+        if (!v || !steps) return v;
+        const step = Math.min(steps.length - 1, Math.max(0, v.step + delta));
+        return { ...v, step };
+      });
+    },
+    [exercise.solutions],
+  );
 
   // --- tajmer: staje kad je zadatak rešen
   useEffect(() => {
@@ -122,7 +241,8 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
       setRunning(kind);
       setNotice(null);
       try {
-        const submittedCode = editorRef.current?.editor.getValue() ?? currentCode;
+        // Dok je otvoreno rešenje u editoru, izvršava se korisnikov kod, ne kod rešenja.
+        const submittedCode = viewerRef.current?.getUserCode() ?? editorRef.current?.editor.getValue() ?? currentCode;
         const result = await runCode(
           exercise.runtime,
           {
@@ -170,16 +290,18 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
       return;
     }
     setResetArmed(false);
+    closeView();
     editorRef.current?.editor.setValue(exercise.starterCode);
     clearDraft(storage, exercise.id);
     setOutcome(null);
     setLogs([]);
     setSolved(false);
-  }, [resetArmed, exercise.starterCode, exercise.id, storage]);
+  }, [resetArmed, exercise.starterCode, exercise.id, storage, closeView]);
 
   const format = useCallback(async () => {
     const handle = editorRef.current;
     if (!handle) return;
+    closeView();
     try {
       const [prettier, babel, estree, typescript] = await Promise.all([
         import("prettier/standalone"),
@@ -197,15 +319,19 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
     } catch {
       setNotice(labels.formatFailed);
     }
-  }, [isTs, labels.formatFailed]);
+  }, [isTs, labels.formatFailed, closeView]);
 
-  const gotoLine = useCallback((line: number) => {
-    const editor = editorRef.current?.editor;
-    if (!editor) return;
-    editor.revealLineInCenter(line);
-    editor.setPosition({ lineNumber: line, column: 1 });
-    editor.focus();
-  }, []);
+  const gotoLine = useCallback(
+    (line: number) => {
+      const editor = editorRef.current?.editor;
+      if (!editor) return;
+      closeView(); // brojevi linija iz grešaka odnose se na korisnikov kod
+      editor.revealLineInCenter(line);
+      editor.setPosition({ lineNumber: line, column: 1 });
+      editor.focus();
+    },
+    [closeView],
+  );
 
   // Prečice van editora (unutar editora ih registruje CodeEditor).
   useEffect(() => {
@@ -233,6 +359,7 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
         resetArmed={resetArmed}
         focus={focus}
         solved={solved || isSolved(progress)}
+        helped={progress?.status === "solved_with_help"}
         elapsedSeconds={elapsed}
         onRun={() => void run("run")}
         onSubmit={() => void run("submit")}
@@ -259,7 +386,7 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
           <Panel id="task" panelRef={taskPanel} collapsible collapsedSize={0} minSize="15%" defaultSize="25%">
             <div className="flex h-full min-h-0 flex-col">
               <div role="tablist" className="flex shrink-0 gap-1 border-b border-zinc-200 px-2 dark:border-zinc-800">
-                {(["task", "notes"] as const).map((t) => (
+                {(["task", "solutions", "notes"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -270,13 +397,28 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
                       tab === t ? "border-b-2 border-blue-500" : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
                     }`}
                   >
-                    {t === "task" ? labels.tabTask : labels.tabNotes}
+                    {t === "task" ? labels.tabTask : t === "solutions" ? labels.tabSolutions : labels.tabNotes}
                   </button>
                 ))}
               </div>
               <section hidden={tab !== "task"} aria-label={labels.tabTask} className="min-h-0 flex-1 overflow-auto p-4">
                 <p className="mb-3 text-xs text-zinc-500">{exercise.meta.join(" · ")}</p>
                 <SimpleMarkdown source={exercise.description} />
+              </section>
+              <section
+                hidden={tab !== "solutions"}
+                aria-label={labels.tabSolutions}
+                className="min-h-0 flex-1 overflow-auto p-4"
+              >
+                <SolutionsPanel
+                  solutions={exercise.solutions}
+                  activeStep={view}
+                  onOpenStep={(solution, step) => setView({ solution, step })}
+                  unlocked={solutionUnlocked}
+                  helped={progress?.status === "solved_with_help" || (!isSolved(progress) && progress?.hintLevel === 3)}
+                  onReveal={() => void getProgressStore().markSolutionViewed(exercise.id)}
+                  labels={labels}
+                />
               </section>
               <section hidden={tab !== "notes"} aria-label={labels.tabNotes} className="min-h-0 flex-1 p-3">
                 <NotesPanel
@@ -298,18 +440,35 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
               onLayoutChanged={vertical.onLayoutChanged}
             >
               <Panel id="code" minSize="30%" defaultSize="75%">
-                <CodeEditor
-                  path={`file:///exercises/${exercise.id}.${isTs ? "ts" : "js"}`}
-                  language={isTs ? "typescript" : "javascript"}
-                  initialValue={initialCode}
-                  theme={theme}
-                  loadingLabel={labels.loading}
-                  onChange={setCode}
-                  onReady={(handle) => (editorRef.current = handle)}
-                  onRun={() => void run("run")}
-                  onSubmit={() => void run("submit")}
-                  onToggleFocus={toggleFocus}
-                />
+                <div className="flex h-full min-h-0 flex-col">
+                  {view && (
+                    <ViewingBar
+                      view={view}
+                      solutions={exercise.solutions}
+                      labels={labels}
+                      onMove={moveStep}
+                      onClose={closeView}
+                    />
+                  )}
+                  <div className="min-h-0 flex-1">
+                    <CodeEditor
+                      path={`file:///exercises/${exercise.id}.${isTs ? "ts" : "js"}`}
+                      language={isTs ? "typescript" : "javascript"}
+                      initialValue={initialCode}
+                      theme={theme}
+                      loadingLabel={labels.loading}
+                      onChange={setCode}
+                      onReady={(handle) => {
+                        editorRef.current = handle;
+                        viewerRef.current = createSolutionViewer(handle);
+                        setEditorReady(true);
+                      }}
+                      onRun={() => void run("run")}
+                      onSubmit={() => void run("submit")}
+                      onToggleFocus={toggleFocus}
+                    />
+                  </div>
+                </div>
               </Panel>
               <Separator className={`${resizeHandle} h-px data-[orientation=horizontal]:h-px`} />
               <Panel id="console" panelRef={consolePanel} collapsible collapsedSize={0} minSize="10%" defaultSize="25%">

@@ -15,8 +15,90 @@
   "hiddenTests": "test('attempts = 1 means a single call', async () => {\n  let calls = 0;\n  await expect(retry(async () => { calls++; throw new Error('x'); }, 1)).rejects.toThrow('x');\n  expect(calls).toBe(1);\n});",
   "solutions": [
     {
-      "label": { "sr": "petlja sa try/catch", "en": "loop with try/catch" },
+      "label": {
+        "sr": "petlja sa try/catch",
+        "en": "loop with try/catch"
+      },
       "code": "async function retry<T>(fn: () => Promise<T>, attempts: number): Promise<T> {\n  let lastError: unknown;\n  for (let i = 0; i < attempts; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n    }\n  }\n  throw lastError;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Potpis asinhrone generičke funkcije.\n\n- `async` znači da funkcija uvek vraća promise i da unutar nje sme `await` (čekanje rezultata).\n- `function retry` pravi funkciju sa tim imenom.\n- `<T>` je parametar tipa („promenljiva za tip“): tip rezultata određuje poziv. Ako `fn` vraća `Promise<string>`, i `retry` vraća `Promise<string>`.\n- `fn: () => Promise<T>` je parametar `fn`: funkcija bez parametara koja vraća promise. Pozivamo je iznova, jer promise koji je već odbijen ne može da se „ponovi“.\n- `attempts: number` je najveći broj pokušaja.\n- `: Promise<T>` je tip rezultata.\n- `{` otvara telo; zatvara ga `}` u liniji 11.",
+            "en": "The signature of an async generic function.\n\n- `async` means the function always returns a promise and that `await` (waiting for a result) is allowed inside it.\n- `function retry` creates a function with that name.\n- `<T>` is a type parameter (a “variable for a type”): the call determines the result type. If `fn` returns `Promise<string>`, `retry` returns `Promise<string>` too.\n- `fn: () => Promise<T>` is the parameter `fn`: a function with no parameters that returns a promise. We call it again and again, because a promise that was already rejected cannot be “repeated”.\n- `attempts: number` is the maximum number of attempts.\n- `: Promise<T>` is the result type.\n- `{` opens the body; it is closed by `}` on line 11."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pamtimo poslednju grešku.\n\n- `let lastError` pravi promenljivu čija se vrednost menja kroz petlju.\n- `: unknown` je najbezbedniji tip za nepoznatu vrednost: JavaScript može da baci bilo šta (`throw 5`), ne samo `Error`.\n- Bez početne vrednosti, promenljiva je na početku `undefined`.",
+            "en": "We remember the last error.\n\n- `let lastError` creates a variable whose value changes through the loop.\n- `: unknown` is the safest type for an unknown value: JavaScript can throw anything (`throw 5`), not only an `Error`.\n- Without an initial value, the variable is `undefined` at the start."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja po pokušajima.\n\n- Klasična `for` petlja ima tri dela: `let i = 0` (početak: brojač kreće od nule), `i < attempts` (uslov: nastavi dok je brojač manji od broja pokušaja), `i++` (korak: posle svakog prolaza brojač poraste za 1).\n- `i++` znači „uvećaj `i` za 1“. Ovde je nebitno da li je prefiksno ili postfiksno, jer se vrednost izraza ne koristi.\n- Telo se izvršava najviše `attempts` puta.\n- Za `attempts = 0` petlja se ne izvršava nijednom, pa funkcija odmah baca `undefined` (granični slučaj).\n- `{` otvara telo; zatvara ga `}` u liniji 9.\n\n```\nattempts = 3:  i = 0 → pokušaj 1\n               i = 1 → pokušaj 2\n               i = 2 → pokušaj 3\n               i = 3 → 3 < 3 nije tačno, petlja se završava\n```",
+            "en": "A loop over the attempts.\n\n- A classic `for` loop has three parts: `let i = 0` (start: the counter begins at zero), `i < attempts` (condition: continue while the counter is less than the number of attempts), `i++` (step: after each pass the counter grows by 1).\n- `i++` means “increase `i` by 1”. Here it does not matter whether it is prefix or postfix, because the value of the expression is not used.\n- The body runs at most `attempts` times.\n- For `attempts = 0` the loop does not run at all, so the function immediately throws `undefined` (an edge case).\n- `{` opens the body; it is closed by `}` on line 9.\n\n```\nattempts = 3:  i = 0 → attempt 1\n               i = 1 → attempt 2\n               i = 2 → attempt 3\n               i = 3 → 3 < 3 is not true, the loop ends\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Početak zaštićenog dela.\n\n- `try { ... } catch (...) { ... }` ide u paru: ako se unutar `try` desi greška (ili odbijen `await`), izvršavanje skače na `catch` u liniji 6, umesto da se funkcija prekine.",
+            "en": "The start of the protected part.\n\n- `try { ... } catch (...) { ... }` goes as a pair: if an error occurs inside `try` (or an `await` is rejected), execution jumps to `catch` on line 6, instead of the function being aborted."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Pozivamo funkciju i čekamo rezultat.\n\n- `fn()` poziva funkciju i dobija promise.\n- `await` čeka da se promise završi i vraća njegovu vrednost. Ako je promise odbijen, `await` BACA grešku, što hvata `catch`.\n- `return` izlazi iz cele funkcije `retry` i prekida petlju: kad jedan pokušaj uspe, više nema pokušaja.\n- **Zašto `return await`, a ne samo `return fn()`:** bez `await` funkcija bi odmah vratila promise i napustila `try` pre nego što se promise završi. Odbijanje bi tada zaobišlo `catch` i ponovnog pokušaja ne bi bilo.\n\nTok za `fn` koji dva puta padne, pa uspe (`retry(fn, 5)`):\n\n```\ni = 0 → await fn() baca grešku → catch (linija 6)\ni = 1 → await fn() baca grešku → catch (linija 6)\ni = 2 → await fn() vraća 'done' → return 'done'   (petlja se prekida, fn pozvana 3 puta)\n```",
+            "en": "We call the function and wait for the result.\n\n- `fn()` calls the function and gets a promise.\n- `await` waits for the promise to finish and returns its value. If the promise is rejected, `await` THROWS an error, which `catch` catches.\n- `return` leaves the whole `retry` function and stops the loop: when one attempt succeeds, there are no more attempts.\n- **Why `return await` and not just `return fn()`:** without `await` the function would return the promise immediately and leave `try` before the promise settles. The rejection would then bypass `catch` and there would be no retry.\n\nFlow for an `fn` that fails twice and then succeeds (`retry(fn, 5)`):\n\n```\ni = 0 → await fn() throws an error → catch (line 6)\ni = 1 → await fn() throws an error → catch (line 6)\ni = 2 → await fn() returns 'done'   → return 'done'   (the loop stops, fn was called 3 times)\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Hvatamo grešku.\n\n- `catch (error)` se izvršava samo ako je u `try` nešto pošlo naopako. U `error` je ono što je bačeno.\n- `error` je tipa `unknown` (ili `any`, zavisno od podešavanja kompajlera).",
+            "en": "We catch the error.\n\n- `catch (error)` runs only if something went wrong in `try`. `error` holds what was thrown.\n- `error` is of type `unknown` (or `any`, depending on compiler settings)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Pamtimo grešku i ne radimo ništa drugo.\n\n- `lastError = error` upisuje grešku u promenljivu iz linije 2. Svaki novi neuspeh prepisuje prethodni, pa na kraju ostaje POSLEDNJA greška.\n- Nema `break`, pa petlja prelazi na sledeći pokušaj.",
+            "en": "We remember the error and do nothing else.\n\n- `lastError = error` stores the error in the variable from line 2. Every new failure overwrites the previous one, so in the end the LAST error remains.\n- There is no `break`, so the loop moves on to the next attempt."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara `catch` blok.\n\n- `}` zatvara blok otvoren u liniji 6.",
+            "en": "Closes the `catch` block.\n\n- `}` closes the block opened on line 6."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Svi pokušaji su propali.\n\n- Do ove linije se stiže samo ako nijedan pokušaj nije uspeo, jer uspešan izlazi preko `return` u liniji 5.\n- `throw lastError` baca POSLEDNJU grešku (test traži `'fail 3'`, a ne prvu).\n- U `async` funkciji `throw` znači da se vraćeni promise odbija tom greškom.",
+            "en": "All attempts failed.\n\n- This line is reached only if no attempt succeeded, because a successful one leaves through `return` on line 5.\n- `throw lastError` throws the LAST error (the test requires `'fail 3'`, not the first one).\n- In an `async` function `throw` means the returned promise is rejected with that error."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "`return await` (a ne samo `return`) je bitan: bez `await` greška bi izašla iz funkcije pre nego što je `catch` stigne da je uhvati.",
         "en": "`return await` (not just `return`) matters: without `await` the error would leave the function before `catch` could handle it."

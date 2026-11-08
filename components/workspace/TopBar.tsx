@@ -9,6 +9,8 @@ type Props = {
   resetArmed: boolean;
   focus: boolean;
   solved: boolean;
+  /** Rešeno uz pomoć (otvoreno rešenje): prikazuje se narandžasto umesto zeleno. */
+  helped: boolean;
   elapsedSeconds: number;
   onRun: () => void;
   onSubmit: () => void;
@@ -31,6 +33,7 @@ export function TopBar({
   resetArmed,
   focus,
   solved,
+  helped,
   elapsedSeconds,
   onRun,
   onSubmit,
@@ -46,8 +49,14 @@ export function TopBar({
       <h1 className="min-w-0 flex-1 truncate text-sm font-semibold">{title}</h1>
 
       {solved && (
-        <span className="rounded bg-green-500/15 px-2 py-0.5 text-xs text-green-700 dark:text-green-400">
-          {labels.solvedBadge}
+        <span
+          className={`rounded px-2 py-0.5 text-xs ${
+            helped
+              ? "bg-orange-500/15 text-orange-700 dark:text-orange-400"
+              : "bg-green-500/15 text-green-700 dark:text-green-400"
+          }`}
+        >
+          {helped ? labels.solvedWithHelpBadge : labels.solvedBadge}
         </span>
       )}
 

@@ -85,6 +85,46 @@ describe("parseExerciseFile", () => {
   });
 });
 
+describe("objašnjenje rešenja po linijama", () => {
+  const step = (from: number, to: number) => ({ lines: [from, to], text: { sr: "t", en: "t" } });
+  const withWalkthrough = (code: string, walkthrough: unknown) => ({
+    ...classic,
+    solutions: [{ label: { sr: "a", en: "a" }, code, walkthrough }],
+  });
+  const parse = (code: string, walkthrough: unknown) =>
+    parseExerciseFile("javascript/pocetnik/sum-01.json", raw(withWalkthrough(code, walkthrough)));
+
+  const code = "function f() {\n  return 1;\n\n}";
+
+  it("prihvata potpuno objašnjenje; prazne linije ne moraju da budu pokrivene", () => {
+    expect(() => parse(code, [step(1, 2), step(4, 4)])).not.toThrow();
+  });
+
+  it("opsezi mogu da se preklapaju (isti red objašnjen na dva mesta)", () => {
+    expect(() => parse(code, [step(1, 2), step(2, 2), step(4, 4)])).not.toThrow();
+  });
+
+  it("odbija objašnjenje kome fali linija koja nije prazna, uz brojeve linija", () => {
+    expect(() => parse(code, [step(1, 1), step(4, 4)])).toThrow(/nema objašnjenja za linije: 2/);
+    expect(() => parse(code, [step(1, 2)])).toThrow(/nema objašnjenja za linije: 4/);
+  });
+
+  it("odbija opseg koji izlazi iz koda ili ide unazad", () => {
+    expect(() => parse(code, [step(1, 9)])).toThrow(/ne postoji/);
+    expect(() => parse(code, [step(3, 2)])).toThrow(/unazad/);
+  });
+
+  it("odbija objašnjenje kome fali jedan jezik i opseg sa nulom", () => {
+    const oneLanguage = [{ lines: [1, 4], text: { sr: "samo srpski" } }];
+    expect(() => parse(code, oneLanguage)).toThrow(/text\.en/);
+    expect(() => parse(code, [step(0, 4)])).toThrow(ContentError);
+  });
+
+  it("objašnjenje je opciono: rešenje bez njega prolazi", () => {
+    expect(() => parseExerciseFile("javascript/pocetnik/sum-01.json", raw(classic))).not.toThrow();
+  });
+});
+
 describe("buildCatalog", () => {
   const ex = (id: string) => parseExerciseFile(`javascript/pocetnik/${id}.json`, raw({ ...classic, id }));
 

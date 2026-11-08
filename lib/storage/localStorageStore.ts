@@ -1,4 +1,4 @@
-import { applyAttempt, capAttempts, mergeProgress, newProgress } from "@/lib/progress";
+import { applyAttempt, applySolutionViewed, capAttempts, mergeProgress, newProgress } from "@/lib/progress";
 import { ProgressExportSchema, type Attempt, type ExerciseProgress, type ProgressExport } from "@/types/progress";
 import type { SafeStorage } from "./browser";
 import { parseAttempts, parseProgressMap } from "./parse";
@@ -70,6 +70,16 @@ export function createLocalStorageStore(
       const nowIso = now().toISOString();
       progress[exerciseId] = { ...(existing ?? newProgress(exerciseId, nowIso)), notes: notes || undefined, updatedAt: nowIso };
       write(progress, readAttempts());
+    },
+
+    async markSolutionViewed(exerciseId) {
+      const progress = readProgress();
+      const updated = applySolutionViewed(progress[exerciseId] ?? null, exerciseId, now().toISOString());
+      if (updated !== progress[exerciseId]) {
+        progress[exerciseId] = updated;
+        write(progress, readAttempts());
+      }
+      return updated;
     },
 
     async exportAll(): Promise<ProgressExport> {

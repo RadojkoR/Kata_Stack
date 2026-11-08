@@ -42,7 +42,8 @@
     "recentTitle": "Recent activity",
     "recentEmpty": "No activity yet. Pick an area on the left and solve your first exercise.",
     "continue": "Continue",
-    "inProgress": "In progress"
+    "inProgress": "In progress",
+    "solvedWithHelp": "Solved with help"
   },
   "workspace": {
     "back": "Back",
@@ -73,7 +74,29 @@
     "unsupportedRuntime": "This environment is not supported yet.",
     "tabNotes": "Notes",
     "notesPlaceholder": "What confused you? The note will be shown when this exercise comes back for review.",
-    "solvedBadge": "✓ Solved"
+    "solvedBadge": "✓ Solved",
+    "tabSolutions": "Solutions",
+    "solvedWithHelpBadge": "✓ Solved with help",
+    "solutionsLockedTitle": "The solution is locked",
+    "solutionsLockedText": "Try it yourself first: the solution unlocks once you solve the exercise.",
+    "showSolution": "Show solution",
+    "solutionConfirm": "This is recorded as “solved with help” and the exercise will come back for review more often. Continue?",
+    "solutionConfirmYes": "Show solution",
+    "solutionConfirmNo": "Cancel",
+    "solutionHelpNote": "You opened the solution before solving the exercise, so it counts as solved with help.",
+    "solutionOf": "Solution {n}: {label}",
+    "linesOne": "Line {from}",
+    "linesRange": "Lines {from}–{to}",
+    "fullCode": "Full code",
+    "noSolutions": "This exercise has no solutions.",
+    "noWalkthrough": "This solution has no line-by-line explanation yet.",
+    "openInEditor": "Show in editor",
+    "stepsHint": "Click a step to see it in the editor, with the detailed explanation below the highlighted lines.",
+    "viewingSolution": "Solution {n}: {label}",
+    "backToMyCode": "Back to my code",
+    "prevStep": "Previous step",
+    "nextStep": "Next step",
+    "stepOf": "step {i} of {n}"
   },
   "settings": {
     "title": "Settings",

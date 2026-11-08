@@ -15,8 +15,48 @@
   "hiddenTests": "type Case3 = Expect<Equal<DeepReadonly<{ f: () => void }>['f'], () => void>>;",
   "solutions": [
     {
-      "label": { "sr": "rekurzivni mapirani tip", "en": "recursive mapped type" },
+      "label": {
+        "sr": "rekurzivni mapirani tip",
+        "en": "recursive mapped type"
+      },
       "code": "type DeepReadonly<T> = T extends (...args: never[]) => unknown\n  ? T\n  : T extends object\n    ? { readonly [K in keyof T]: DeepReadonly<T[K]> }\n    : T;",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Prva provera: da li je `T` funkcija?\n\n- `type DeepReadonly<T> = ...` pravi alias sa jednim parametrom tipa. Ceo tip je jedan lanac uslova, kao `if / else if / else`: linije 1 do 5.\n- `T extends (...args: never[]) => unknown` pita: „da li je `T` bilo kakva funkcija?“.\n- `(...args: never[]) => unknown` je tip „funkcija sa bilo kojim parametrima koja vraća bilo šta“. `never[]` se koristi jer parametri funkcija idu u suprotnom smeru: funkcija koja prima bilo šta može da se dodeli onoj koja prima `never`, pa taj tip prihvata sve funkcije.",
+            "en": "The first check: is `T` a function?\n\n- `type DeepReadonly<T> = ...` creates an alias with one type parameter. The whole type is one chain of conditions, like `if / else if / else`: lines 1 to 5.\n- `T extends (...args: never[]) => unknown` asks: “is `T` any kind of function?”.\n- `(...args: never[]) => unknown` is the type “a function with any parameters that returns anything”. `never[]` is used because function parameters go in the opposite direction: a function that accepts anything can be assigned to one that accepts `never`, so this type accepts all functions."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Ako je funkcija, ostaje nepromenjena (`? T`).\n\n- `? T` je grana „da“ iz prethodnog uslova: rezultat je isti tip `T`.\n- Funkcije su u JavaScript-u i objekti, pa bi ih sledeća grana (`extends object`) mapirala i dobili bismo `{}`, čime bi se izgubio potpis funkcije.\n- Zato se funkcije izdvajaju PRE provere za objekte (skriveni test proverava `() => void`).",
+            "en": "If it is a function, it stays unchanged (`? T`).\n\n- `? T` is the “yes” branch of the previous condition: the result is the same type `T`.\n- Functions in JavaScript are objects too, so the next branch (`extends object`) would map them and we would get `{}`, losing the function's signature.\n- That is why functions are separated BEFORE the check for objects (the hidden test checks `() => void`)."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Druga provera: da li je `T` objekat?\n\n- `: T extends object` je „u suprotnom, ako...“ deo lanca.\n- `object` obuhvata obične objekte i nizove. Primitivi (`number`, `string`, `boolean`) nisu objekti.",
+            "en": "The second check: is `T` an object?\n\n- `: T extends object` is the “otherwise, if...” part of the chain.\n- `object` covers plain objects and arrays. Primitives (`number`, `string`, `boolean`) are not objects."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Objekat: svako svojstvo postaje `readonly`, rekurzivno.\n\n- `[K in keyof T]` je mapirani tip: prolazi kroz svaki ključ `K` iz `keyof T` (unija imena svojstava) i pravi svojstvo istog imena.\n- `readonly` ispred zabranjuje promenu tog svojstva posle kreiranja.\n- `DeepReadonly<T[K]>` je **rekurzija**: isti tip se primenjuje na tip svakog svojstva. Zato i ugnježdeni objekti (`b.d.e`) postaju `readonly`, a ne samo prvi nivo.",
+            "en": "An object: every property becomes `readonly`, recursively.\n\n- `[K in keyof T]` is a mapped type: it goes through every key `K` of `keyof T` (a union of the property names) and creates a property with the same name.\n- `readonly` in front forbids changing that property after creation.\n- `DeepReadonly<T[K]>` is **recursion**: the same type is applied to the type of every property. That is why nested objects (`b.d.e`) become `readonly` too, not just the first level."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Sve ostalo ostaje isto (`: T`).\n\n- To su primitivi: `number`, `string`, `boolean`... Njih nema smisla „zaključavati“, jer se ne menjaju iznutra.\n- Ovo je i izlaz iz rekurzije: tipovi bez svojstava se vraćaju takvi kakvi jesu.\n- `;` završava deklaraciju aliasa.\n\nKako se računa `DeepReadonly<{ a: number; b: { c: string } }>`:\n\n```\nT nije funkcija → T je objekat → mapira se svako svojstvo:\n  a: DeepReadonly<number>        → number nije funkcija ni objekat → number\n  b: DeepReadonly<{ c: string }> → objekat → { readonly c: DeepReadonly<string> = string }\n\nrezultat: { readonly a: number; readonly b: { readonly c: string } }\n```",
+            "en": "Everything else stays the same (`: T`).\n\n- These are primitives: `number`, `string`, `boolean`... There is no point in “locking” them, since they cannot be changed from inside.\n- This is also the exit from the recursion: types without properties are returned as they are.\n- `;` ends the alias declaration.\n\nHow `DeepReadonly<{ a: number; b: { c: string } }>` is computed:\n\n```\nT is not a function → T is an object → every property is mapped:\n  a: DeepReadonly<number>        → number is neither a function nor an object → number\n  b: DeepReadonly<{ c: string }> → object → { readonly c: DeepReadonly<string> = string }\n\nresult: { readonly a: number; readonly b: { readonly c: string } }\n```"
+          }
+        }
+      ],
       "note": {
         "sr": "Funkcije se moraju izuzeti pre provere `extends object`, jer su i one objekti, pa bi mapiranje preko njih dalo `{}`.",
         "en": "Functions must be excluded before the `extends object` check, because they are objects too and mapping over them would give `{}`."

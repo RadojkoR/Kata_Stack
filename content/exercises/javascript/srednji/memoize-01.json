@@ -15,8 +15,69 @@
   "hiddenTests": "test('caches undefined results too', () => {\n  let calls = 0;\n  const f = memoize(() => { calls++; return undefined; });\n  f(); f();\n  expect(calls).toBe(1);\n});\ntest('each memoized function has its own cache', () => {\n  let a = 0;\n  let b = 0;\n  const fa = memoize((n) => { a++; return n; });\n  const fb = memoize((n) => { b++; return n; });\n  fa(1); fb(1);\n  expect(a).toBe(1);\n  expect(b).toBe(1);\n});",
   "solutions": [
     {
-      "label": { "sr": "Map + JSON ključ", "en": "Map + JSON key" },
+      "label": {
+        "sr": "Map + JSON ključ",
+        "en": "Map + JSON key"
+      },
       "code": "function memoize(fn) {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (!cache.has(key)) cache.set(key, fn(...args));\n    return cache.get(key);\n  };\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije `memoize`. Memoizacija je pamćenje rezultata: ako funkciju pozovemo sa istim argumentima drugi put, ne računamo ponovo nego vraćamo zapamćeno.\n\n- `fn` je funkcija čije rezultate želimo da zapamtimo (npr. neko sporo računanje).\n- `memoize` vraća novu, keširanu verziju te funkcije. Original se ne menja.\n- `{` otvara telo; zatvara ga `}` u liniji 8.",
+            "en": "Declaration of the function `memoize`. Memoization means remembering results: if we call the function with the same arguments a second time, we do not compute again but return the remembered result.\n\n- `fn` is the function whose results we want to remember (e.g. some slow computation).\n- `memoize` returns a new, cached version of that function. The original is not changed.\n- `{` opens the body; it is closed by `}` on line 8."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo keš: mesto gde čuvamo već izračunate rezultate.\n\n- `new Map()` pravi mapu, tj. rečnik ključ → vrednost, sa metodama `.has(ključ)` (da li postoji), `.get(ključ)` (pročitaj) i `.set(ključ, vrednost)` (upiši).\n- Zašto `Map`, a ne običan objekat `{}`: ključ može biti bilo kog tipa, nema nasleđenih svojstava (kao `constructor`), a ima i metodu `.has` koja nam treba u liniji 5.\n- `const` jer se promenljiva `cache` ne dodeljuje ponovo. Sadržaj mape se menja, što je dozvoljeno.\n- Mapa je napravljena **van** vraćene funkcije, pa je ta funkcija „pamti“ između poziva (closure). Svaki poziv `memoize(...)` pravi svoju mapu, pa memoizovane funkcije ne dele keš (skriveni test).",
+            "en": "We create the cache: the place where we store results that were already computed.\n\n- `new Map()` creates a map, i.e. a key → value dictionary, with the methods `.has(key)` (does it exist), `.get(key)` (read) and `.set(key, value)` (write).\n- Why `Map` and not a plain object `{}`: a key can be of any type, there are no inherited properties (such as `constructor`), and it has the `.has` method we need on line 5.\n- `const` because the variable `cache` is not reassigned. The map's contents change, which is allowed.\n- The map is created **outside** the returned function, so that function “remembers” it between calls (closure). Every call of `memoize(...)` creates its own map, so memoized functions do not share a cache (hidden test)."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Vraćamo keširanu funkciju.\n\n- `(...args)` je **rest parametar**: tri tačke skupljaju sve argumente poziva u niz `args`. Poziv `f(1, 2)` daje `args = [1, 2]`. Zato radi sa bilo kojim brojem argumenata.\n- `=> {` otvara telo strelica funkcije; zatvara ga `}` u liniji 7.",
+            "en": "We return the cached function.\n\n- `(...args)` is a **rest parameter**: the three dots collect all arguments of the call into the array `args`. The call `f(1, 2)` gives `args = [1, 2]`. That is why it works with any number of arguments.\n- `=> {` opens the body of the arrow function; it is closed by `}` on line 7."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Pravimo ključ za keš od argumenata.\n\n- `Map` poredi ključeve po identitetu, a dva niza `[1, 2]` su različiti objekti čak i kad imaju isti sadržaj. Zato niz pretvaramo u tekst.\n- `JSON.stringify([1, 2])` daje string `\"[1,2]\"`. Isti argumenti uvek daju isti string, pa se porede po vrednosti.\n- Ograničenja: ne radi sa funkcijama i kružnim strukturama, a `undefined` unutar niza postaje `null`, pa `f(undefined)` i `f(null)` dele isti zapis u kešu.",
+            "en": "We build the cache key from the arguments.\n\n- `Map` compares keys by identity, and two arrays `[1, 2]` are different objects even when their contents are the same. So we turn the array into text.\n- `JSON.stringify([1, 2])` gives the string `\"[1,2]\"`. The same arguments always give the same string, so they are compared by value.\n- Limitations: it does not work with functions and circular structures, and `undefined` inside an array becomes `null`, so `f(undefined)` and `f(null)` share the same cache entry."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Računamo samo ako rezultat još ne postoji u kešu.\n\n- `cache.has(key)` pita: da li je za ovaj ključ već nešto upisano? Vraća `true` ili `false`.\n- `!` obrće: `!cache.has(key)` je „NIJE u kešu“.\n- Ako nije: `fn(...args)` poziva originalnu funkciju (spread raspakuje niz u zasebne argumente), a `cache.set(key, ...)` upisuje rezultat pod tim ključem.\n- Koristi se `.has`, a ne provera `cache.get(key) === undefined`, jer funkcija može da vrati `undefined` kao potpuno ispravan rezultat. Sa `.has` se i takav rezultat kešira i funkcija se ne poziva ponovo (skriveni test).\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.\n\nTok za `const f = memoize((a, b) => a + b);`:\n\n```\nf(1, 2): key = \"[1,2]\" → nije u kešu → fn(1, 2) = 3, upisuje   (fn pozvana 1 put)\nf(1, 2): key = \"[1,2]\" → JESTE u kešu → fn se ne poziva               (fn pozvana 1 put)\nf(5, 5): key = \"[5,5]\" → nije u kešu → fn(5, 5) = 10, upisuje  (fn pozvana 2 puta)\n```",
+            "en": "We compute only if the result does not exist in the cache yet.\n\n- `cache.has(key)` asks: is something already stored for this key? It returns `true` or `false`.\n- `!` flips: `!cache.has(key)` is “is NOT in the cache”.\n- If not: `fn(...args)` calls the original function (spread unpacks the array into separate arguments), and `cache.set(key, ...)` stores the result under that key.\n- `.has` is used instead of checking `cache.get(key) === undefined`, because a function can return `undefined` as a perfectly valid result. With `.has` such a result is cached too and the function is not called again (hidden test).\n- `if` without curly braces: exactly one statement after the condition belongs to it.\n\nFlow for `const f = memoize((a, b) => a + b);`:\n\n```\nf(1, 2): key = \"[1,2]\" → not in the cache → fn(1, 2) = 3, stores   (fn called 1 time)\nf(1, 2): key = \"[1,2]\" → IS in the cache     → fn is not called       (fn called 1 time)\nf(5, 5): key = \"[5,5]\" → not in the cache → fn(5, 5) = 10, stores  (fn called 2 times)\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Uvek vraćamo vrednost iz keša.\n\n- `cache.get(key)` čita vrednost pod tim ključem.\n- To važi i kad je vrednost tek upisana u liniji 5. Tako postoji samo jedan put kroz kod i nema dupliranja.\n- Zato dva poziva sa istim argumentima vraćaju istu vrednost, a `fn` je pozvana samo jednom.",
+            "en": "We always return the value from the cache.\n\n- `cache.get(key)` reads the value under that key.\n- This holds even when the value was just stored on line 5. This way there is a single path through the code and no duplication.\n- That is why two calls with the same arguments return the same value while `fn` was called only once."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara vraćenu strelica funkciju (otvorenu u liniji 3).\n\n- `}` zatvara telo strelica funkcije.\n- `;` je potreban jer je `return (...) => { ... }` jedna naredba.",
+            "en": "Closes the returned arrow function (opened on line 3).\n\n- `}` closes the body of the arrow function.\n- `;` is needed because `return (...) => { ... }` is one statement."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije `memoize` otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the body of `memoize` opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Koristi se `cache.has`, a ne provera `cache.get(key) !== undefined`, da bi se keširali i rezultati `undefined`.",
         "en": "`cache.has` is used instead of checking `cache.get(key) !== undefined`, so `undefined` results are cached too."

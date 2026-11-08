@@ -42,7 +42,8 @@
     "recentTitle": "Poslednje rađeno",
     "recentEmpty": "Još nema aktivnosti. Izaberi oblast sa leve strane i reši prvi zadatak.",
     "continue": "Nastavi",
-    "inProgress": "U toku"
+    "inProgress": "U toku",
+    "solvedWithHelp": "Rešeno uz pomoć"
   },
   "workspace": {
     "back": "Nazad",
@@ -73,7 +74,29 @@
     "unsupportedRuntime": "Ovo okruženje još nije podržano.",
     "tabNotes": "Beleške",
     "notesPlaceholder": "Šta te je zbunilo? Beleška će ti se prikazati kad se zadatak vrati na ponavljanje.",
-    "solvedBadge": "✓ Rešeno"
+    "solvedBadge": "✓ Rešeno",
+    "tabSolutions": "Rešenja",
+    "solvedWithHelpBadge": "✓ Rešeno uz pomoć",
+    "solutionsLockedTitle": "Rešenje je zaključano",
+    "solutionsLockedText": "Probaj prvo sam: rešenje se otključava kad zadatak rešiš.",
+    "showSolution": "Prikaži rešenje",
+    "solutionConfirm": "Ovo se beleži kao „rešeno uz pomoć“ i zadatak će se češće vraćati na ponavljanje. Nastaviti?",
+    "solutionConfirmYes": "Prikaži rešenje",
+    "solutionConfirmNo": "Odustani",
+    "solutionHelpNote": "Otvorio si rešenje pre nego što si rešio zadatak, pa se on vodi kao rešen uz pomoć.",
+    "solutionOf": "Rešenje {n}: {label}",
+    "linesOne": "Linija {from}",
+    "linesRange": "Linije {from}–{to}",
+    "fullCode": "Ceo kod",
+    "noSolutions": "Za ovaj zadatak nema rešenja.",
+    "noWalkthrough": "Za ovo rešenje još nema objašnjenja po linijama.",
+    "openInEditor": "Prikaži u editoru",
+    "stepsHint": "Klikni na korak da ga vidiš u editoru, sa detaljnim objašnjenjem ispod istaknutih linija.",
+    "viewingSolution": "Rešenje {n}: {label}",
+    "backToMyCode": "Nazad na moj kod",
+    "prevStep": "Prethodni korak",
+    "nextStep": "Sledeći korak",
+    "stepOf": "korak {i} od {n}"
   },
   "settings": {
     "title": "Podešavanja",

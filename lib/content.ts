@@ -30,23 +30,32 @@ function loadCatalog(): Catalog {
   return buildCatalog(exercises, tracks);
 }
 
-// Sinhrono čitanje na nivou modula: uđe u build, a nevalidan sadržaj obara `npm run build`.
-const catalog = loadCatalog();
+let cached: Catalog | undefined;
+
+/**
+ * Sinhrono čitanje fajlova: uđe u build, a nevalidan sadržaj obara `npm run build`.
+ * U razvoju se sadržaj čita iznova pri svakom pristupu (to je 15-ak malih fajlova), da izmena
+ * JSON-a zadatka ne traži restart servera.
+ */
+function catalog(): Catalog {
+  if (process.env.NODE_ENV === "development" || !cached) cached = loadCatalog();
+  return cached;
+}
 
 export function getExercises(filter?: { area?: Area; level?: Level }): Exercise[] {
-  return catalog.exercises.filter(
+  return catalog().exercises.filter(
     (e) => (!filter?.area || e.area === filter.area) && (!filter?.level || e.level === filter.level),
   );
 }
 
 export function getExercise(id: string): Exercise | undefined {
-  return catalog.exercises.find((e) => e.id === id);
+  return catalog().exercises.find((e) => e.id === id);
 }
 
 export function getTracks(): Track[] {
-  return catalog.tracks;
+  return catalog().tracks;
 }
 
 export function getTrack(id: string): Track | undefined {
-  return catalog.tracks.find((t) => t.id === id);
+  return catalog().tracks.find((t) => t.id === id);
 }

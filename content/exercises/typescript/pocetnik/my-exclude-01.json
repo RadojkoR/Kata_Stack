@@ -15,8 +15,20 @@
   "hiddenTests": "type Case3 = Expect<Equal<MyExclude<'a' | 'b', 'a' | 'b'>, never>>;",
   "solutions": [
     {
-      "label": { "sr": "uslovni tip", "en": "conditional type" },
+      "label": {
+        "sr": "uslovni tip",
+        "en": "conditional type"
+      },
       "code": "type MyExclude<T, U> = T extends U ? never : T;",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ceo tip je jedna linija. Čita se kao `if / else` za tipove.\n\n- `type MyExclude<T, U> = ...` pravi **alias**: novo ime za tip. Postoji samo u vreme kompajliranja i ne ostavlja nikakav kod.\n- `<T, U>` su dva parametra tipa („promenljive za tip“): `T` je unija iz koje izbacujemo, `U` je ono što izbacujemo.\n- `T extends U ? never : T` je **uslovni tip**, isto kao ternarni operator `uslov ? a : b`, samo za tipove: „ako se `T` može dodeliti tipu `U`, rezultat je `never`, inače je `T`“. Primer: `'a' extends 'a'` je tačno, pa je rezultat `never`; `'b' extends 'a'` nije tačno, pa je rezultat `'b'`.\n- `never` je prazan tip: nijedna vrednost mu ne pripada. U uniji `never` nestaje: `never | 'b' | 'c'` je isto što i `'b' | 'c'`.\n- **Distributivnost:** kad je `T` „gol“ parametar tipa, a argument je unija, uslov se primenjuje na svaki član unije posebno, pa se rezultati spoje.\n- Kad bismo `T` upakovali (npr. `[T] extends [U]`), distribucije ne bi bilo i uslov bi se proveravao za celu uniju odjednom.\n\nKako se računa `MyExclude<'a' | 'b' | 'c', 'a'>`:\n\n```\n'a' extends 'a' ? never : 'a'  →  never\n'b' extends 'a' ? never : 'b'  →  'b'\n'c' extends 'a' ? never : 'c'  →  'c'\nspojeno: never | 'b' | 'c'     →  'b' | 'c'\n```\n\nAko se izbaci sve, `MyExclude<'a' | 'b', 'a' | 'b'>`:\n\n```\n'a' extends 'a' | 'b' ? never : 'a'  →  never\n'b' extends 'a' | 'b' ? never : 'b'  →  never\nspojeno: never | never                 →  never   (skriveni test)\n```",
+            "en": "The whole type is one line. It reads like `if / else` for types.\n\n- `type MyExclude<T, U> = ...` creates an **alias**: a new name for a type. It exists only at compile time and leaves no code behind.\n- `<T, U>` are two type parameters (“variables for a type”): `T` is the union we remove from, `U` is what we remove.\n- `T extends U ? never : T` is a **conditional type**, just like the ternary operator `condition ? a : b`, but for types: “if `T` is assignable to `U`, the result is `never`, otherwise it is `T`”. Example: `'a' extends 'a'` is true, so the result is `never`; `'b' extends 'a'` is not true, so the result is `'b'`.\n- `never` is the empty type: no value belongs to it. In a union `never` disappears: `never | 'b' | 'c'` is the same as `'b' | 'c'`.\n- **Distributivity:** when `T` is a “naked” type parameter and the argument is a union, the condition is applied to each member of the union separately, and the results are joined.\n- If we wrapped `T` (e.g. `[T] extends [U]`), there would be no distribution and the condition would be checked for the whole union at once.\n\nHow `MyExclude<'a' | 'b' | 'c', 'a'>` is computed:\n\n```\n'a' extends 'a' ? never : 'a'  →  never\n'b' extends 'a' ? never : 'b'  →  'b'\n'c' extends 'a' ? never : 'c'  →  'c'\njoined: never | 'b' | 'c'      →  'b' | 'c'\n```\n\nIf everything is removed, `MyExclude<'a' | 'b', 'a' | 'b'>`:\n\n```\n'a' extends 'a' | 'b' ? never : 'a'  →  never\n'b' extends 'a' | 'b' ? never : 'b'  →  never\njoined: never | never                  →  never   (hidden test)\n```"
+          }
+        }
+      ],
       "note": {
         "sr": "Uslovni tip se nad unijom primenjuje na svaki član posebno (distributivnost), pa članovi koji odgovaraju `U` postaju `never` i nestaju iz unije.",
         "en": "A conditional type is applied to each union member separately (distributivity), so members matching `U` become `never` and disappear from the union."

@@ -15,16 +15,96 @@
   "hiddenTests": "test('negative numbers', () => {\n  expect(sumEvens([-2, -3, 4])).toBe(2);\n});\ntest('does not mutate the input', () => {\n  const input = [1, 2, 3, 4];\n  sumEvens(input);\n  expect(input).toEqual([1, 2, 3, 4]);\n});",
   "solutions": [
     {
-      "label": { "sr": "filter + reduce", "en": "filter + reduce" },
+      "label": {
+        "sr": "filter + reduce",
+        "en": "filter + reduce"
+      },
       "code": "function sumEvens(numbers) {\n  return numbers.filter((n) => n % 2 === 0).reduce((sum, n) => sum + n, 0);\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function` je ključna reč. Kaže JavaScript-u: „sada pravim funkciju“.\n- `sumEvens` je ime funkcije. Test je poziva baš tim imenom, npr. `sumEvens([1, 2, 3, 4])`, pa mora biti napisano tačno ovako. Velika i mala slova se razlikuju: `sumevens` je potpuno drugo ime.\n- `(numbers)` je lista parametara. Parametar je prazno „mesto“ za ulaz. Kad pozovemo `sumEvens([1, 2, 3, 4])`, unutar funkcije `numbers` je niz `[1, 2, 3, 4]`. Ime `numbers` biramo sami.\n- `{` otvara telo funkcije, to jest kod koji se izvršava pri svakom pozivu. Zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function` is a keyword. It tells JavaScript: “I am creating a function now”.\n- `sumEvens` is the function's name. The test calls it by exactly this name, e.g. `sumEvens([1, 2, 3, 4])`, so it must be spelled exactly like this. Letter case matters: `sumevens` is a completely different name.\n- `(numbers)` is the parameter list. A parameter is an empty “slot” for input. When we call `sumEvens([1, 2, 3, 4])`, inside the function `numbers` is the array `[1, 2, 3, 4]`. We choose the name `numbers` ourselves.\n- `{` opens the function body, that is, the code that runs on every call. It is closed by `}` on line 3.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Cela funkcija je jedna naredba koja niže tri koraka (tzv. lančanje). Čitamo je s leva na desno, deo po deo.\n\n- `return` znači: „vrati ovu vrednost onome ko je pozvao funkciju i odmah završi funkciju“. Prvo se izračuna sve što je posle `return`, pa se rezultat vraća.\n- `numbers.filter(...)`: `filter` je metoda koju ima svaki niz. Prolazi kroz elemente i za svaki pita funkciju u zagradama: „da li da ga zadržim?“. Pravi **novi** niz samo od elemenata za koje je odgovor `true`. Originalni niz se ne menja, što zadatak traži.\n- `(n) => n % 2 === 0` je funkcija koju `filter` pita. `=>` je „strelica“: levo od nje su parametri (`n` je trenutni element), a desno je vrednost koju funkcija vraća. Zato ovde nema posebnog `return`.\n- `n % 2`: `%` je „ostatak pri deljenju“. `4 % 2` je `0` (deli se bez ostatka), `5 % 2` je `1` (ostane 1), a `-3 % 2` je `-1`.\n- `=== 0` pita: da li je ostatak tačno nula? `===` poredi i vrednost i tip, bez ikakve konverzije, i daje `true` ili `false`. Parni brojevi daju `true`.\n\nŠta radi `filter` za niz `[1, 2, 3, 4]`:\n\n```\n1 → 1 % 2 = 1 → false → izbacuje se\n2 → 2 % 2 = 0 → true  → ostaje\n3 → 3 % 2 = 1 → false → izbacuje se\n4 → 4 % 2 = 0 → true  → ostaje\nfilter vraća novi niz [2, 4]\n```\n\n- `.reduce(...)` je druga metoda niza. Prolazi kroz niz (ovde `[2, 4]`) i „svodi“ ga na jednu vrednost, pamteći međurezultat.\n- `(sum, n) => sum + n` je funkcija koju `reduce` poziva za svaki element. `sum` je zbir svega do sada, `n` je trenutni element, a funkcija vraća novi zbir `sum + n`.\n- `0` na kraju (posle zareza) je početna vrednost za `sum`.\n\nŠta radi `reduce` nad `[2, 4]`:\n\n```\npočetak:    sum = 0\nelement 2:  sum = 0 + 2 = 2\nelement 4:  sum = 2 + 4 = 6\nrezultat:   6\n```\n\n- Zašto je potrebno `0`: bez početne vrednosti `reduce` nad praznim nizom baca `TypeError` (nema od čega da počne). Sa nulom vraća `0`, što test traži za prazan niz i za niz bez parnih brojeva.\n- `;` na kraju završava naredbu.\n- Ovo rešenje prolazi kroz niz dvaput (jednom `filter`, jednom `reduce`). Zato je kratko i čitljivo, ali malo sporije od drugog rešenja.",
+            "en": "The whole function is one statement that chains three steps. We read it from left to right, part by part.\n\n- `return` means: “give this value to whoever called the function and end the function immediately”. Everything after `return` is computed first, then the result is returned.\n- `numbers.filter(...)`: `filter` is a method every array has. It goes through the elements and for each one asks the function in the parentheses: “should I keep it?”. It creates a **new** array only from the elements for which the answer is `true`. The original array is not changed, which the task requires.\n- `(n) => n % 2 === 0` is the function `filter` asks. `=>` is the “arrow”: to its left are the parameters (`n` is the current element), to its right is the value the function returns. That is why there is no separate `return` here.\n- `n % 2`: `%` is “remainder of division”. `4 % 2` is `0` (divides with no remainder), `5 % 2` is `1` (1 is left over), and `-3 % 2` is `-1`.\n- `=== 0` asks: is the remainder exactly zero? `===` compares both value and type, with no conversion at all, and gives `true` or `false`. Even numbers give `true`.\n\nWhat `filter` does for the array `[1, 2, 3, 4]`:\n\n```\n1 → 1 % 2 = 1 → false → dropped\n2 → 2 % 2 = 0 → true  → kept\n3 → 3 % 2 = 1 → false → dropped\n4 → 4 % 2 = 0 → true  → kept\nfilter returns the new array [2, 4]\n```\n\n- `.reduce(...)` is the second array method. It walks through the array (here `[2, 4]`) and “reduces” it to a single value, remembering an intermediate result.\n- `(sum, n) => sum + n` is the function `reduce` calls for every element. `sum` is the total of everything so far, `n` is the current element, and the function returns the new total `sum + n`.\n- `0` at the end (after the comma) is the starting value for `sum`.\n\nWhat `reduce` does over `[2, 4]`:\n\n```\nstart:      sum = 0\nelement 2:  sum = 0 + 2 = 2\nelement 4:  sum = 2 + 4 = 6\nresult:     6\n```\n\n- Why `0` is needed: without a starting value `reduce` on an empty array throws a `TypeError` (there is nothing to start from). With zero it returns `0`, which the test requires for an empty array and for an array without even numbers.\n- `;` at the end ends the statement.\n- This solution walks through the array twice (once `filter`, once `reduce`). So it is short and readable, but slightly slower than the second solution."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Čitljivo, ali prolazi kroz niz dva puta.",
         "en": "Readable, but it walks the array twice."
       }
     },
     {
-      "label": { "sr": "jedan prolaz", "en": "single pass" },
+      "label": {
+        "sr": "jedan prolaz",
+        "en": "single pass"
+      },
       "code": "function sumEvens(numbers) {\n  let sum = 0;\n  for (const n of numbers) {\n    if (n % 2 === 0) sum += n;\n  }\n  return sum;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function` je ključna reč. Kaže JavaScript-u: „sada pravim funkciju“.\n- `sumEvens` je ime funkcije. Test je poziva baš tim imenom, npr. `sumEvens([1, 2, 3, 4])`, pa mora biti napisano tačno ovako. Velika i mala slova se razlikuju: `sumevens` je potpuno drugo ime.\n- `(numbers)` je lista parametara. Parametar je prazno „mesto“ za ulaz. Kad pozovemo `sumEvens([1, 2, 3, 4])`, unutar funkcije `numbers` je niz `[1, 2, 3, 4]`. Ime `numbers` biramo sami.\n- `{` otvara telo funkcije, to jest kod koji se izvršava pri svakom pozivu. Zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function` is a keyword. It tells JavaScript: “I am creating a function now”.\n- `sumEvens` is the function's name. The test calls it by exactly this name, e.g. `sumEvens([1, 2, 3, 4])`, so it must be spelled exactly like this. Letter case matters: `sumevens` is a completely different name.\n- `(numbers)` is the parameter list. A parameter is an empty “slot” for input. When we call `sumEvens([1, 2, 3, 4])`, inside the function `numbers` is the array `[1, 2, 3, 4]`. We choose the name `numbers` ourselves.\n- `{` opens the function body, that is, the code that runs on every call. It is closed by `}` on line 7.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo promenljivu `sum` u koju ćemo skupljati zbir dok prolazimo kroz niz.\n\n- `let` pravi promenljivu: imenovanu „kutiju“ u koju stavljamo vrednost. `let` znači da vrednost kasnije smemo da menjamo (za razliku od `const`, koji to ne dozvoljava).\n- `sum` je ime kutije.\n- `= 0` stavlja u nju početnu vrednost `0`. Znak `=` je **dodela**, ne poređenje: „stavi desno u levo“.\n- Zašto baš `0`: nula je neutralna za sabiranje, jer dodavanje nule ne menja zbir. Zato prazan niz, ili niz bez parnih brojeva, na kraju vraća `0`, što test traži.\n- `;` završava naredbu.\n- Promenljiva postoji samo unutar ove funkcije. Svaki poziv funkcije pravi novu `sum`, pa uvek počinje od `0`.",
+            "en": "Here we create the variable `sum` in which we collect the total while walking through the array.\n\n- `let` creates a variable: a named “box” in which we put a value. `let` means we may change the value later (unlike `const`, which does not allow that).\n- `sum` is the name of the box.\n- `= 0` puts the starting value `0` into it. The `=` sign is **assignment**, not comparison: “put the right side into the left side”.\n- Why exactly `0`: zero is neutral for addition, since adding zero does not change the total. That is why an empty array, or an array without even numbers, finally returns `0`, which the test requires.\n- `;` ends the statement.\n- The variable exists only inside this function. Every call of the function creates a new `sum`, so it always starts from `0`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja `for...of` ponavlja blok koda (između `{` i `}`) za svaki element niza, redom, od prvog do poslednjeg.\n\n- `for` počinje petlju.\n- `const n` pravi promenljivu `n`. U svakom ponavljanju u nju dolazi vrednost trenutnog elementa. `const` je ovde u redu jer se za svako ponavljanje pravi nova promenljiva `n`, a mi je u telu petlje ne menjamo.\n- `of numbers` kaže kroz šta prolazimo: kroz elemente niza `numbers`.\n- `{` otvara telo petlje. Zatvara ga `}` u liniji 5.\n\nZa `[1, 2, 3, 4]` telo petlje se izvrši četiri puta:\n\n```\nprolaz 1: n = 1\nprolaz 2: n = 2\nprolaz 3: n = 3\nprolaz 4: n = 4\nposle poslednjeg elementa petlja se završava\n```",
+            "en": "The `for...of` loop repeats a block of code (between `{` and `}`) for every element of the array, in order, from the first to the last.\n\n- `for` starts the loop.\n- `const n` creates the variable `n`. In every repetition it receives the value of the current element. `const` is fine here because a new variable `n` is created for every repetition, and we do not change it in the loop body.\n- `of numbers` says what we walk through: the elements of the array `numbers`.\n- `{` opens the loop body. It is closed by `}` on line 5.\n\nFor `[1, 2, 3, 4]` the loop body runs four times:\n\n```\npass 1: n = 1\npass 2: n = 2\npass 3: n = 3\npass 4: n = 4\nafter the last element the loop ends\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Ako je broj paran, dodajemo ga na zbir. Sve se dešava u jednoj liniji.\n\n- `if (uslov) naredba` izvršava naredbu samo ako je uslov `true`. Ako nije, naredba se preskače.\n- `n % 2 === 0`: `%` je ostatak pri deljenju, pa je ovo „da li je ostatak pri deljenju sa 2 jednak nuli?“. To važi samo za parne brojeve.\n- `sum += n` je skraćeno za `sum = sum + n`: uzmi trenutni zbir, dodaj `n`, i rezultat vrati u `sum`.\n- Pošto posle `if (...)` nema vitičastih zagrada, u `if` spada tačno jedna naredba, ovde `sum += n`.\n- Neparni brojevi se jednostavno preskaču: ništa im se ne dešava.\n\nTok za `[1, 2, 3, 4]`:\n\n```\npočetak:  sum = 0\nn = 1  → neparan, preskače se        sum = 0\nn = 2  → paran, sum = 0 + 2          sum = 2\nn = 3  → neparan, preskače se        sum = 2\nn = 4  → paran, sum = 2 + 4          sum = 6\n```",
+            "en": "If the number is even, we add it to the total. Everything happens on one line.\n\n- `if (condition) statement` runs the statement only if the condition is `true`. If not, the statement is skipped.\n- `n % 2 === 0`: `%` is the remainder of division, so this reads “is the remainder of dividing by 2 equal to zero?”. That holds only for even numbers.\n- `sum += n` is short for `sum = sum + n`: take the current total, add `n`, and put the result back into `sum`.\n- Since there are no curly braces after `if (...)`, exactly one statement belongs to the `if`, here `sum += n`.\n- Odd numbers are simply skipped: nothing happens to them.\n\nFlow for `[1, 2, 3, 4]`:\n\n```\nstart:  sum = 0\nn = 1  → odd, skipped                sum = 0\nn = 2  → even, sum = 0 + 2           sum = 2\nn = 3  → odd, skipped                sum = 2\nn = 4  → even, sum = 2 + 4           sum = 6\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje (otvoreno u liniji 3).\n\n- Kad izvršavanje stigne do `}`, petlja se vraća na početak i uzima sledeći element niza.\n- Kad elemenata više nema, izvršavanje nastavlja od prve linije posle petlje, a to je linija 6.",
+            "en": "Closes the loop body (opened on line 3).\n\n- When execution reaches `}`, the loop goes back to the start and takes the next element of the array.\n- When there are no more elements, execution continues from the first line after the loop, which is line 6."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Vraća konačni zbir onome ko je pozvao funkciju.\n\n- `return sum` uzima trenutnu vrednost promenljive `sum` i šalje je kao rezultat poziva. Izvršavanje funkcije se tu završava.\n- Ovo je **namerno izvan petlje**. Da je `return` unutar petlje, funkcija bi se završila već posle prvog elementa i vratila pogrešan zbir.\n- Za prazan niz petlja se nije izvršila nijednom, pa se vraća početnih `0`.",
+            "en": "Returns the final total to whoever called the function.\n\n- `return sum` takes the current value of the variable `sum` and sends it back as the result of the call. The function's execution ends there.\n- This is **deliberately outside the loop**. If `return` were inside the loop, the function would end after the very first element and return a wrong total.\n- For an empty array the loop did not run at all, so the initial `0` is returned."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Jedan prolaz i bez pomoćnih nizova.",
         "en": "One pass and no intermediate arrays."

@@ -15,8 +15,104 @@
   "hiddenTests": "test('rejects without waiting for the others', async () => {\n  let settled = false;\n  const slow = new Promise((resolve) => setTimeout(() => { settled = true; resolve(1); }, 80));\n  const p = promiseAll([slow, rejected('fast')]);\n  await expect(p).rejects.toThrow('fast');\n  expect(settled).toBe(false);\n});",
   "solutions": [
     {
-      "label": { "sr": "brojač preostalih", "en": "remaining counter" },
+      "label": {
+        "sr": "brojač preostalih",
+        "en": "remaining counter"
+      },
       "code": "function promiseAll(promises) {\n  return new Promise((resolve, reject) => {\n    const results = [];\n    let remaining = promises.length;\n    if (remaining === 0) resolve(results);\n    promises.forEach((p, i) => {\n      Promise.resolve(p).then((value) => {\n        results[i] = value;\n        if (--remaining === 0) resolve(results);\n      }, reject);\n    });\n  });\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije `promiseAll`. Radi isto što i ugrađeni `Promise.all`: čeka sve promise-e i vraća njihove rezultate.\n\n- Promise je „obećanje rezultata koji još nije stigao“. Može biti u tri stanja: čeka (*pending*), uspeo je sa vrednošću (*fulfilled*), ili je odbijen sa greškom (*rejected*).\n- `promises` je niz promise-a, ili običnih vrednosti.\n- `{` otvara telo; zatvara ga `}` u liniji 13.",
+            "en": "Declaration of the function `promiseAll`. It does the same as the built-in `Promise.all`: it waits for all promises and returns their results.\n\n- A promise is a “promise of a result that has not arrived yet”. It can be in three states: waiting (*pending*), succeeded with a value (*fulfilled*), or rejected with an error (*rejected*).\n- `promises` is an array of promises, or of plain values.\n- `{` opens the body; it is closed by `}` on line 13."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Vraćamo novi promise koji sami razrešavamo kad budemo spremni.\n\n- `new Promise(...)` pravi promise. Prima funkciju koja se zove „executor“ i dobija dve funkcije: `resolve(vrednost)` ispunjava promise, a `reject(greška)` ga odbija.\n- Executor se izvršava ODMAH i sinhrono, čim se promise napravi.\n- Promise se menja samo jednom: svaki kasniji poziv `resolve` ili `reject` se ignoriše. Zato nije problem ako ih više promise-a pokuša da odbije.\n- `(resolve, reject) => {` otvara telo executor-a; zatvara ga `});` u liniji 12.",
+            "en": "We return a new promise that we resolve ourselves when we are ready.\n\n- `new Promise(...)` creates a promise. It receives a function called the “executor” and is given two functions: `resolve(value)` fulfills the promise and `reject(error)` rejects it.\n- The executor runs IMMEDIATELY and synchronously, as soon as the promise is created.\n- A promise settles only once: every later call of `resolve` or `reject` is ignored. So it is not a problem if several promises try to reject it.\n- `(resolve, reject) => {` opens the executor body; it is closed by `});` on line 12."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Prazan niz u koji ćemo upisivati rezultate.\n\n- `const results = [];` pravi prazan niz. `[]` je prazan niz.\n- Rezultati će u njega ulaziti na mesto koje odgovara redosledu ulaza, ne redosledu kojim stižu.",
+            "en": "An empty array into which we will write the results.\n\n- `const results = [];` creates an empty array. `[]` is an empty array.\n- Results will go into it at the place that matches the order of the input, not the order in which they arrive."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Brojač promise-a koji još čekaju.\n\n- Na početku čekaju svi, pa je to `promises.length` (dužina niza).\n- `let` jer se vrednost smanjuje svaki put kad neki promise stigne.\n- Kad brojač dođe do `0`, svi su gotovi.",
+            "en": "A counter of promises that are still pending.\n\n- At the start all of them are pending, so it is `promises.length` (the length of the array).\n- `let` because the value decreases every time a promise arrives.\n- When the counter reaches `0`, all of them are done."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Poseban slučaj: prazan ulaz.\n\n- `remaining === 0` je tačno samo kad je niz prazan.\n- Kad nema nijednog promise-a, nijedan `.then` ispod se nikad neće izvršiti, pa bi naš promise ostao večno nerazrešen (*pending*).\n- Zato ga odmah razrešavamo praznim nizom `results`, što test traži.",
+            "en": "A special case: an empty input.\n\n- `remaining === 0` is true only when the array is empty.\n- When there are no promises at all, no `.then` below would ever run, so our promise would stay unresolved forever (*pending*).\n- So we resolve it right away with the empty array `results`, which the test requires."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Prolazimo kroz svaki element ulaza.\n\n- `promises.forEach(...)` poziva funkciju za svaki element niza.\n- `(p, i)` su parametri te funkcije: `p` je element (promise ili obična vrednost), a `i` je njegov indeks (0, 1, 2...). Indeks nam treba da rezultat stavimo na pravo mesto.\n- `=> {` otvara telo; zatvara ga `});` u liniji 11.",
+            "en": "We go through every element of the input.\n\n- `promises.forEach(...)` calls the function for every element of the array.\n- `(p, i)` are the parameters of that function: `p` is the element (a promise or a plain value), and `i` is its index (0, 1, 2...). We need the index to put the result in the right place.\n- `=> {` opens the body; it is closed by `});` on line 11."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Čekamo rezultat tog elementa.\n\n- `Promise.resolve(p)` pretvara bilo šta u promise: ako je `p` već promise, vraća ga; ako je obična vrednost (npr. `3`), pravi već razrešen promise. Zato ulaz sme da sadrži i obične vrednosti.\n- `.then(onFulfilled, onRejected)` prima dve funkcije: prva se poziva kad promise uspe (linije 7 do 10), druga kad ne uspe (`reject` u liniji 10).\n- `(value) => {` je prva funkcija, a `value` je rezultat promise-a.\n- Funkcije u `.then` se uvek pozivaju tek posle sadašnjeg koda, čak i za već razrešen promise.",
+            "en": "We wait for the result of that element.\n\n- `Promise.resolve(p)` turns anything into a promise: if `p` is already a promise it returns it; if it is a plain value (e.g. `3`) it creates an already resolved promise. That is why the input may contain plain values too.\n- `.then(onFulfilled, onRejected)` receives two functions: the first is called when the promise succeeds (lines 7 to 10), the second when it fails (`reject` on line 10).\n- `(value) => {` is the first function, and `value` is the result of the promise.\n- Functions in `.then` always run only after the current code, even for an already resolved promise."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Upisujemo rezultat na njegovo mesto.\n\n- `results[i] = value` stavlja vrednost na indeks `i`, a ne na kraj (`push`).\n- Promise-i se ne razrešavaju redom: spori promise na prvom mestu može da stigne poslednji. Rezultat ipak mora da bude u redosledu ulaza, a to garantuje upis po indeksu.\n- JavaScript dozvoljava upis na indeks veći od trenutne dužine; praznine se popune kad stignu ostali rezultati.",
+            "en": "We store the result in its place.\n\n- `results[i] = value` puts the value at index `i`, rather than at the end (`push`).\n- Promises do not resolve in order: a slow promise in first place may arrive last. The result must still be in the order of the input, and writing by index guarantees that.\n- JavaScript allows writing at an index larger than the current length; the gaps are filled when the other results arrive."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Proveravamo da li je stigao poslednji rezultat.\n\n- `--remaining` je prefiksno smanjenje: `--` znači „oduzmi 1 od promenljive“. Prvo smanji `remaining` za 1, pa vrati novu vrednost.\n- `=== 0` pita da li je brojač sada nula, tj. da li su svi stigli.\n- Ako jeste, razrešavamo ceo promise nizom rezultata.\n\nTok za `promiseAll([Promise.resolve(1), spori, 3])`, gde spori promise daje `2` posle 20 ms:\n\n```\npočetak:                          results = [],         remaining = 3\nelement 0 (Promise.resolve(1)):   results = [1],        remaining = 2\nelement 2 (obična vrednost 3):    results = [1, , 3],   remaining = 1\nelement 1 (spori, posle 20 ms):   results = [1, 2, 3],  remaining = 0 → resolve([1, 2, 3])\n```",
+            "en": "We check whether the last result has arrived.\n\n- `--remaining` is a prefix decrement: `--` means “subtract 1 from the variable”. It first decreases `remaining` by 1, then returns the new value.\n- `=== 0` asks whether the counter is now zero, i.e. whether all of them have arrived.\n- If so, we resolve the whole promise with the array of results.\n\nFlow for `promiseAll([Promise.resolve(1), slow, 3])`, where the slow promise gives `2` after 20 ms:\n\n```\nstart:                            results = [],         remaining = 3\nelement 0 (Promise.resolve(1)):   results = [1],        remaining = 2\nelement 2 (plain value 3):        results = [1, , 3],   remaining = 1\nelement 1 (slow, after 20 ms):    results = [1, 2, 3],  remaining = 0 → resolve([1, 2, 3])\n```"
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Kraj prve funkcije i obrada greške.\n\n- `}` zatvara funkciju iz linije 7.\n- `, reject` je drugi argument za `.then`: ako promise bude odbijen, poziva se `reject(greška)` i naš promise se odmah odbija tom istom greškom.\n- Ne čekamo ostale: prvo odbijanje odlučuje (skriveni test). Kasnija odbijanja se ignorišu, jer se promise menja samo jednom.\n- `)` zatvara poziv `.then(`, a `;` završava naredbu.",
+            "en": "The end of the first function and error handling.\n\n- `}` closes the function from line 7.\n- `, reject` is the second argument of `.then`: if the promise is rejected, `reject(error)` is called and our promise is rejected immediately with that same error.\n- We do not wait for the others: the first rejection decides (hidden test). Later rejections are ignored because a promise settles only once.\n- `)` closes the call `.then(`, and `;` ends the statement."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Zatvara funkciju za `forEach` (otvorenu u liniji 6).\n\n- `}` zatvara telo funkcije.\n- `)` zatvara poziv `forEach(`.\n- `;` završava naredbu.",
+            "en": "Closes the function for `forEach` (opened on line 6).\n\n- `}` closes the function body.\n- `)` closes the call `forEach(`.\n- `;` ends the statement."
+          }
+        },
+        {
+          "lines": [12, 12],
+          "text": {
+            "sr": "Zatvara executor (otvoren u liniji 2).\n\n- `}` zatvara telo executor-a.\n- `)` zatvara poziv `new Promise(`.\n- `;` završava naredbu `return`.",
+            "en": "Closes the executor (opened on line 2).\n\n- `}` closes the executor body.\n- `)` closes the call `new Promise(`.\n- `;` ends the `return` statement."
+          }
+        },
+        {
+          "lines": [13, 13],
+          "text": {
+            "sr": "Zatvara telo funkcije `promiseAll` otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the body of `promiseAll` opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Rezultat se upisuje na indeks `i`, a ne sa `push`, jer promise-i ne moraju da se razreše redom.",
         "en": "The result is stored at index `i` instead of using `push`, because promises do not have to resolve in order."

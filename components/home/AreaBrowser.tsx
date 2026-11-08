@@ -10,13 +10,13 @@ import {
   countSolved,
   filterItems,
   levelStats,
+  solvedSets,
   type BrowseItem,
   type Filter,
 } from "@/lib/browse";
 import { interpolate } from "@/lib/runner/messages";
 import { useProgressMap } from "@/lib/storage/use-progress";
 import { LEVELS, type Area } from "@/types/exercise";
-import { isSolved } from "@/types/progress";
 import { Bar } from "./Bar";
 
 type Props = {
@@ -40,12 +40,9 @@ export function AreaBrowser({ area, items, locale, labels }: Props) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const progress = useProgressMap();
 
-  const solvedIds = useMemo(
-    () => new Set(Object.values(progress).filter(isSolved).map((p) => p.exerciseId)),
-    [progress],
-  );
-  const stats = useMemo(() => levelStats(items, solvedIds)[area], [items, solvedIds, area]);
-  const total = countSolved(items, solvedIds);
+  const { solvedIds, helpedIds } = useMemo(() => solvedSets(progress), [progress]);
+  const stats = useMemo(() => levelStats(items, solvedIds, helpedIds)[area], [items, solvedIds, helpedIds, area]);
+  const total = countSolved(items, solvedIds, helpedIds);
   const soon = COMING_SOON_AREAS.includes(area);
 
   const shown = filterItems(items, filter);
@@ -192,7 +189,14 @@ export function AreaBrowser({ area, items, locale, labels }: Props) {
                       e.title
                     )}
                     {solvedIds.has(e.id) && (
-                      <span className="ml-2 rounded bg-green-500/15 px-1.5 py-0.5 text-xs font-normal text-green-700 dark:text-green-400">
+                      <span
+                        title={helpedIds.has(e.id) ? home.solvedWithHelp : home.solved}
+                        className={`ml-2 rounded px-1.5 py-0.5 text-xs font-normal ${
+                          helpedIds.has(e.id)
+                            ? "bg-orange-500/15 text-orange-700 dark:text-orange-400"
+                            : "bg-green-500/15 text-green-700 dark:text-green-400"
+                        }`}
+                      >
                         ✓
                       </span>
                     )}

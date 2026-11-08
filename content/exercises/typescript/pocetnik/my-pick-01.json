@@ -15,8 +15,34 @@
   "hiddenTests": "type Case3 = Expect<Equal<MyPick<{ a: string }, 'a'>, { a: string }>>;",
   "solutions": [
     {
-      "label": { "sr": "mapirani tip", "en": "mapped type" },
+      "label": {
+        "sr": "mapirani tip",
+        "en": "mapped type"
+      },
       "code": "type MyPick<T, K extends keyof T> = {\n  [P in K]: T[P];\n};",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Početak aliasa i ograničenje ključeva.\n\n- `type MyPick<T, K extends keyof T> = {` pravi alias (novo ime za tip) sa dva parametra tipa.\n- `T` je tip objekta iz koga biramo svojstva, npr. `User`.\n- `keyof T` je unija imena svih svojstava tipa `T`. Za `User = { id: number; name: string; age: number }` to je `'id' | 'name' | 'age'`.\n- `K extends keyof T` znači: `K` mora biti podskup tih imena. Zato je `MyPick<User, 'email'>` greška, jer `'email'` ne postoji u `User`.\n- `= {` otvara objektni tip koji se završava u liniji 3.",
+            "en": "The start of the alias and the key constraint.\n\n- `type MyPick<T, K extends keyof T> = {` creates an alias (a new name for a type) with two type parameters.\n- `T` is the type of the object we pick properties from, e.g. `User`.\n- `keyof T` is the union of the names of all properties of `T`. For `User = { id: number; name: string; age: number }` it is `'id' | 'name' | 'age'`.\n- `K extends keyof T` means: `K` must be a subset of those names. That is why `MyPick<User, 'email'>` is an error, because `'email'` does not exist in `User`.\n- `= {` opens an object type that ends on line 3."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Mapirani tip: ovde nastaje rezultat.\n\n- `[P in K]` prolazi kroz svaki član unije `K` i za svaki pravi jedno svojstvo čije je ime `P`. Za `K = 'id' | 'name'` nastaju svojstva `id` i `name`.\n- `T[P]` je **indeksni pristup**: tip svojstva `P` u originalnom tipu `T`. Tako svojstvo zadržava svoj tip (`id` ostaje `number`).\n- `;` završava član objektnog tipa.\n\nKako se računa `MyPick<User, 'id' | 'name'>`:\n\n```\nT = { id: number; name: string; age: number }\nK = 'id' | 'name'\n\nP = 'id'   → svojstvo id:   T['id']   = number\nP = 'name' → svojstvo name: T['name'] = string\n\nrezultat: { id: number; name: string }   (age je izostavljen)\n```",
+            "en": "A mapped type: this is where the result is created.\n\n- `[P in K]` goes through each member of the union `K` and creates one property for each, named `P`. For `K = 'id' | 'name'` the properties `id` and `name` are created.\n- `T[P]` is an **indexed access**: the type of property `P` in the original type `T`. This way the property keeps its type (`id` stays `number`).\n- `;` ends a member of the object type.\n\nHow `MyPick<User, 'id' | 'name'>` is computed:\n\n```\nT = { id: number; name: string; age: number }\nK = 'id' | 'name'\n\nP = 'id'   → property id:   T['id']   = number\nP = 'name' → property name: T['name'] = string\n\nresult: { id: number; name: string }   (age is left out)\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara objektni tip.\n\n- `}` zatvara tip otvoren u liniji 1.\n- `;` završava deklaraciju aliasa.",
+            "en": "Closes the object type.\n\n- `}` closes the type opened on line 1.\n- `;` ends the alias declaration."
+          }
+        }
+      ],
       "note": {
         "sr": "Mapirani tip prolazi kroz svaki ključ iz `K` i uzima njegov tip iz `T`.",
         "en": "A mapped type iterates over every key in `K` and takes its type from `T`."

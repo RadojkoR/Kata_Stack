@@ -15,8 +15,76 @@
   "hiddenTests": "test('length equals n', () => {\n  expect(fizzBuzz(15)).toHaveLength(15);\n});\ntest('nine is Fizz and ten is Buzz', () => {\n  const result = fizzBuzz(10);\n  expect(result[8]).toBe('Fizz');\n  expect(result[9]).toBe('Buzz');\n});",
   "solutions": [
     {
-      "label": { "sr": "Array.from", "en": "Array.from" },
+      "label": {
+        "sr": "Array.from",
+        "en": "Array.from"
+      },
       "code": "function fizzBuzz(n) {\n  return Array.from({ length: n }, (_, i) => {\n    const k = i + 1;\n    if (k % 15 === 0) return 'FizzBuzz';\n    if (k % 3 === 0) return 'Fizz';\n    if (k % 5 === 0) return 'Buzz';\n    return String(k);\n  });\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije `fizzBuzz`.\n\n- `function fizzBuzz` pravi funkciju sa tim imenom; test je poziva baš tako.\n- `(n)` je parametar: do kog broja idemo. `fizzBuzz(5)` znači da je unutar funkcije `n` jednako `5`.\n- `{` otvara telo; zatvara ga `}` u liniji 9.",
+            "en": "Declaration of the function `fizzBuzz`.\n\n- `function fizzBuzz` creates a function with that name; the test calls it exactly like this.\n- `(n)` is the parameter: the number we count up to. `fizzBuzz(5)` means that inside the function `n` equals `5`.\n- `{` opens the body; it is closed by `}` on line 9."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo niz dužine `n`, a svaki element računamo funkcijom koja je u zagradama.\n\n- `return` vraća rezultat; to je ovde ceo novi niz.\n- `Array.from(...)` pravi niz iz „nečega što liči na niz“, uz mogućnost da se svaki element izračuna funkcijom.\n- `{ length: n }` je običan objekat sa jednim svojstvom `length`. `Array.from` ga tretira kao niz od `n` praznih mesta. Za `n = 0` dobija se prazan niz `[]`, što test traži.\n- Drugi argument je funkcija koja se poziva jednom za svako mesto i vraća vrednost tog elementa.\n- `(_, i)` su parametri te funkcije. Prvi je trenutna vrednost mesta (ovde uvek `undefined`, ne treba nam, pa ga zovemo `_` kao znak „ne koristim“). Drugi, `i`, je indeks mesta i kreće od `0`.\n- `=> {` otvara telo funkcije sa vitičastim zagradama. Pošto su ovde `{}`, mora izričito da se napiše `return` za vrednost elementa. Telo se zatvara u liniji 8.\n\nZa `n = 3` funkcija se poziva tri puta:\n\n```\ni = 0 → računa se element 1\ni = 1 → računa se element 2\ni = 2 → računa se element 3\n```",
+            "en": "We create an array of length `n`, and compute each element with the function in the parentheses.\n\n- `return` returns the result; here that is the whole new array.\n- `Array.from(...)` creates an array from “something that looks like an array”, with the option to compute each element with a function.\n- `{ length: n }` is a plain object with one property `length`. `Array.from` treats it as an array of `n` empty slots. For `n = 0` we get an empty array `[]`, which the test requires.\n- The second argument is a function called once for every slot that returns the value of that element.\n- `(_, i)` are the parameters of that function. The first is the slot's current value (always `undefined` here, we do not need it, so we call it `_` as a “not used” marker). The second, `i`, is the slot's index and starts at `0`.\n- `=> {` opens the function body with curly braces. Since there are `{}` here, `return` must be written explicitly for the element's value. The body closes on line 8.\n\nFor `n = 3` the function is called three times:\n\n```\ni = 0 → element 1 is computed\ni = 1 → element 2 is computed\ni = 2 → element 3 is computed\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Pretvaramo indeks u broj koji obrađujemo.\n\n- Indeks `i` počinje od `0`, a brojevi u zadatku od `1`. Zato je `k = i + 1`.\n- `const` pravi promenljivu koja se ne menja u telu. To je u redu jer se za svaki element izvršava novo telo funkcije, pa se pravi nova promenljiva `k`.\n\n```\ni = 0 → k = 1\ni = 1 → k = 2\ni = 2 → k = 3\n```",
+            "en": "We turn the index into the number we process.\n\n- The index `i` starts at `0`, and the numbers in the task start at `1`. That is why `k = i + 1`.\n- `const` creates a variable that does not change in the body. That is fine because a new function body runs for each element, so a new variable `k` is created.\n\n```\ni = 0 → k = 1\ni = 1 → k = 2\ni = 2 → k = 3\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Prvo proveravamo da li je broj deljiv i sa 3 i sa 5.\n\n- `k % 15 === 0` pita: da li je ostatak pri deljenju sa 15 jednak nuli? `%` je ostatak pri deljenju. Broj je deljiv i sa 3 i sa 5 tačno onda kad je deljiv sa 15.\n- `return 'FizzBuzz'` vraća vrednost TOG elementa niza i prekida funkciju iz linije 2. Ne izlazi iz cele `fizzBuzz`.\n- Ova provera mora da bude **prva**. Da je prva provera deljivosti sa 3, broj 15 bi dobio `'Fizz'` i do `'FizzBuzz'` nikad ne bismo stigli, jer `return` prekida dalje provere.\n\n```\nk = 15 → 15 % 15 = 0 → true → element je 'FizzBuzz'\nk = 9  →  9 % 15 = 9 → false → ide na sledeću proveru\n```",
+            "en": "First we check whether the number is divisible by both 3 and 5.\n\n- `k % 15 === 0` asks: is the remainder of dividing by 15 equal to zero? `%` is the remainder of division. A number is divisible by both 3 and 5 exactly when it is divisible by 15.\n- `return 'FizzBuzz'` returns the value of THAT array element and ends the function from line 2. It does not leave the whole `fizzBuzz`.\n- This check must come **first**. If the first check were divisibility by 3, the number 15 would get `'Fizz'` and we would never reach `'FizzBuzz'`, because `return` stops the further checks.\n\n```\nk = 15 → 15 % 15 = 0 → true  → the element is 'FizzBuzz'\nk = 9  →  9 % 15 = 9 → false → goes on to the next check\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Deljivo sa 3: element je `'Fizz'`.\n\n- Do ove linije stižu samo brojevi koji nisu deljivi sa 15 (inače bi već izašli u liniji 4), pa je ovde ispravno proveriti samo deljivost sa 3.\n- `k % 3 === 0`: ostatak pri deljenju sa 3 je nula, tj. `3, 6, 9, 12...`.",
+            "en": "Divisible by 3: the element is `'Fizz'`.\n\n- Only numbers that are not divisible by 15 reach this line (otherwise they would have left on line 4), so it is correct to check only divisibility by 3 here.\n- `k % 3 === 0`: the remainder of dividing by 3 is zero, i.e. `3, 6, 9, 12...`."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Deljivo sa 5: element je `'Buzz'`.\n\n- Isto razmišljanje kao u liniji 5: brojevi deljivi sa 3 ili 15 su već izašli.\n- `k % 5 === 0`: ostatak pri deljenju sa 5 je nula, tj. `5, 10, 20...` (15 je već obrađen).",
+            "en": "Divisible by 5: the element is `'Buzz'`.\n\n- The same reasoning as on line 5: numbers divisible by 3 or 15 have already left.\n- `k % 5 === 0`: the remainder of dividing by 5 is zero, i.e. `5, 10, 20...` (15 is already handled)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Svi ostali brojevi se vraćaju kao string.\n\n- `String(k)` pretvara broj u tekst: broj `4` postaje string `'4'`.\n- To je bitno: test poredi sa `['1', '2', 'Fizz', '4', 'Buzz']`, a broj `1` nije isto što i string `'1'` (poređenje `toEqual` ih razlikuje).\n- Ovo je poslednja linija koju niz proverava: kad nijedan raniji `return` nije stigao do izvršavanja, element postaje tekst broja.",
+            "en": "All other numbers are returned as a string.\n\n- `String(k)` turns a number into text: the number `4` becomes the string `'4'`.\n- This matters: the test compares with `['1', '2', 'Fizz', '4', 'Buzz']`, and the number `1` is not the same as the string `'1'` (the `toEqual` comparison tells them apart).\n- This is the last line the function reaches: when none of the earlier `return`s ran, the element becomes the text of the number."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Tri znaka zatvaranja, a svaki ima svoju ulogu.\n\n- `}` zatvara telo funkcije koja je otvorena u liniji 2.\n- `)` zatvara poziv `Array.from(` iz linije 2.\n- `;` završava naredbu `return`.",
+            "en": "Three closing characters, each with its own role.\n\n- `}` closes the body of the function opened on line 2.\n- `)` closes the call `Array.from(` from line 2.\n- `;` ends the `return` statement."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo funkcije `fizzBuzz` otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the body of `fizzBuzz` opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Najpre se proverava deljivost sa 15, inače bi `Fizz` ili `Buzz` \"pojeli\" slučaj kad su oba tačna.",
         "en": "Divisibility by 15 is checked first, otherwise `Fizz` or `Buzz` would swallow the case where both apply."

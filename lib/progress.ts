@@ -35,6 +35,16 @@ export function applyAttempt(prev: ExerciseProgress | null, attempt: Attempt): E
   return next;
 }
 
+/**
+ * Otvaranje rešenja pre nego što je zadatak rešen: beleži se najviši nivo pomoći (3), pa će kasniji uspešan
+ * Submit biti `solved_with_help`. Već rešen zadatak se ne menja (nema "snižavanja" ocene).
+ */
+export function applySolutionViewed(prev: ExerciseProgress | null, exerciseId: string, now: string): ExerciseProgress {
+  const progress = prev ?? newProgress(exerciseId, now);
+  if (progress.status !== "in_progress" || progress.hintLevel === 3) return progress;
+  return { ...progress, hintLevel: 3, updatedAt: now };
+}
+
 /** Zadržava poslednjih `max` pokušaja po zadatku; redosled ostaje od starijeg ka novijem. */
 export function capAttempts(attempts: Attempt[], max = MAX_ATTEMPTS_PER_EXERCISE): Attempt[] {
   const counts = new Map<string, number>();

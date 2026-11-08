@@ -51,6 +51,16 @@ async function ExerciseContent({ params }: { params: Params }) {
           starterCode: exercise.starterCode,
           tests: exercise.tests,
           hiddenTests: exercise.hiddenTests,
+          solutions: exercise.solutions.map((s) => ({
+            label: localize(s.label, locale),
+            code: s.code,
+            note: s.note && localize(s.note, locale),
+            steps: s.walkthrough?.map((w) => ({
+              from: w.lines[0],
+              to: w.lines[1],
+              text: localize(w.text, locale),
+            })),
+          })),
         }}
       />
     </>

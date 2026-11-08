@@ -29,3 +29,12 @@ describe.each(getExercises().filter((e) => e.type === "classic" && ["worker", "w
     });
   },
 );
+
+describe("objašnjenje rešenja", () => {
+  it("svako rešenje svakog klasičnog zadatka ima objašnjenje po linijama", () => {
+    const missing = getExercises().flatMap((e) =>
+      e.type === "classic" ? e.solutions.flatMap((s, i) => (s.walkthrough ? [] : [`${e.id} (rešenje ${i + 1})`])) : [],
+    );
+    expect(missing).toEqual([]);
+  });
+});

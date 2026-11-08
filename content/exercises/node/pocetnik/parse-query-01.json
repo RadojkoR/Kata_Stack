@@ -15,8 +15,125 @@
   "hiddenTests": "test('decodes percent-encoding and plus signs', () => {\n  expect(parseQuery('q=hello%20world&n=a+b')).toEqual({ q: 'hello world', n: 'a b' });\n});\ntest('a key without a value', () => {\n  expect(parseQuery('flag')).toEqual({ flag: '' });\n});\ntest('a value may contain =', () => {\n  expect(parseQuery('eq=a=b')).toEqual({ eq: 'a=b' });\n});",
   "solutions": [
     {
-      "label": { "sr": "split po & i prvom =", "en": "split on & and the first =" },
+      "label": {
+        "sr": "split po & i prvom =",
+        "en": "split on & and the first ="
+      },
       "code": "function parseQuery(query: string): Record<string, string | string[]> {\n  const result: Record<string, string | string[]> = {};\n  const text = query.startsWith('?') ? query.slice(1) : query;\n  if (!text) return result;\n\n  const decode = (s: string) => decodeURIComponent(s.replace(/\\+/g, ' '));\n\n  for (const pair of text.split('&')) {\n    const i = pair.indexOf('=');\n    const key = decode(i < 0 ? pair : pair.slice(0, i));\n    const value = i < 0 ? '' : decode(pair.slice(i + 1));\n\n    const existing = result[key];\n    if (existing === undefined) result[key] = value;\n    else if (Array.isArray(existing)) existing.push(value);\n    else result[key] = [existing, value];\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Potpis funkcije.\n\n- `function parseQuery` pravi funkciju sa tim imenom; test je poziva baš tako.\n- `query: string` je parametar sa tipom: ulaz je string, npr. `'?a=1&b=2'`.\n- `: Record<string, string | string[]>` je tip rezultata: objekat čiji su ključevi stringovi, a vrednosti string ILI niz stringova (kad se ključ ponavlja). `string[]` je niz stringova.\n- Tipovi postoje samo dok se kod piše i proverava. Pri izvršavanju se brišu, pa u JavaScript-u ostaje običan kod bez njih.\n- `{` otvara telo; zatvara ga `}` u liniji 19.",
+            "en": "The function signature.\n\n- `function parseQuery` creates a function with that name; the test calls it exactly like this.\n- `query: string` is a parameter with a type: the input is a string, e.g. `'?a=1&b=2'`.\n- `: Record<string, string | string[]>` is the result type: an object whose keys are strings and whose values are a string OR an array of strings (when a key repeats). `string[]` is an array of strings.\n- Types exist only while the code is written and checked. They are erased at runtime, so plain code without them remains in JavaScript.\n- `{` opens the body; it is closed by `}` on line 19."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo prazan objekat u koji upisujemo rezultat.\n\n- `const result` pravi promenljivu koja se ne dodeljuje ponovo; `{}` je prazan objekat.\n- Tip posle dvotačke se mora izričito navesti: bez njega bi TypeScript zaključio `{}`, pa bi upis `result[key] = ...` bio greška.\n- Napomena: za ključ `__proto__` običan objekat ima poseban smisao. U ozbiljnom kodu bi se koristio `Map` ili `Object.create(null)`.",
+            "en": "We create an empty object into which we write the result.\n\n- `const result` creates a variable that is not reassigned; `{}` is an empty object.\n- The type after the colon has to be stated explicitly: without it TypeScript would infer `{}`, and writing `result[key] = ...` would be an error.\n- Note: for the key `__proto__` a plain object has a special meaning. In serious code you would use a `Map` or `Object.create(null)`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Uklanjamo vodeći `?`, ako ga ima.\n\n- `uslov ? a : b` je ternarni operator: uslov, vrednost ako je tačan, vrednost ako nije.\n- `query.startsWith('?')` proverava da li string počinje upitnikom.\n- `query.slice(1)` vraća string bez prvog znaka. Stringovi su nepromenljivi, pa `query` ostaje isti, a mi dobijamo novi string.\n- `?` u uslovu je deo ternarnog operatora, a `'?'` u navodnicima je samo znak koji tražimo.\n\n```\nquery = '?a=1'  → počinje sa '?' → text = 'a=1'\nquery = 'a=1'   → ne počinje        → text = 'a=1'\n```",
+            "en": "We remove the leading `?`, if there is one.\n\n- `condition ? a : b` is the ternary operator: a condition, a value if it is true, a value if it is not.\n- `query.startsWith('?')` checks whether the string starts with a question mark.\n- `query.slice(1)` returns the string without its first character. Strings are immutable, so `query` stays the same and we get a new string.\n- The `?` in the condition is part of the ternary operator, while `'?'` in quotes is just the character we are looking for.\n\n```\nquery = '?a=1'  → starts with '?' → text = 'a=1'\nquery = 'a=1'   → does not        → text = 'a=1'\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Rani izlaz za prazan ulaz.\n\n- `!text` je tačno za prazan string (i za ulaz `'?'`, koji je posle uklanjanja upitnika prazan).\n- `return result` odmah vraća prazan objekat `{}`.\n- Bez ovoga bi `''.split('&')` vratio `['']`, pa bismo dobili jedan ključ sa praznim imenom.",
+            "en": "An early exit for empty input.\n\n- `!text` is true for an empty string (and for the input `'?'`, which is empty after removing the question mark).\n- `return result` immediately returns the empty object `{}`.\n- Without this, `''.split('&')` would return `['']`, and we would get one key with an empty name."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Pomoćna funkcija za dekodiranje.\n\n- `const decode = (s: string) => ...` pravi strelica funkciju sa parametrom `s` (string) i čuva je u promenljivoj `decode`.\n- `s.replace(/\\+/g, ' ')` zamenjuje svaki `+` razmakom: u query stringu `+` znači razmak. Regularni izraz `\\+` je bukvalni plus (u regexu je `+` poseban znak, pa se „escape-uje“ kosom crtom), a `g` znači „sve pojave“, ne samo prvu.\n- `decodeURIComponent(...)` pretvara `%20` u razmak, a `%C5%A1` u `š`.\n- Redosled je bitan: prvo se menja `+`, pa tek onda dekodira. Obrnuto bi `%2B` (kodiran plus) prvo postao `+`, a zatim razmak, što je pogrešno.\n- Funkcija baca `URIError` za neispravan niz (npr. `%E0%A4%A`). Ovo rešenje to ne hvata.\n\n```\ndecode('hello%20world') → 'hello world'\ndecode('a+b')          → 'a b'\ndecode('a%2Bb')        → 'a+b'   (kodiran plus ostaje plus)\n```",
+            "en": "A helper function for decoding.\n\n- `const decode = (s: string) => ...` creates an arrow function with the parameter `s` (a string) and keeps it in the variable `decode`.\n- `s.replace(/\\+/g, ' ')` replaces every `+` with a space: in a query string `+` means a space. The regular expression `\\+` is a literal plus (in a regex `+` is a special character, so it is “escaped” with a backslash), and `g` means “all occurrences”, not just the first.\n- `decodeURIComponent(...)` turns `%20` into a space, and `%C5%A1` into `š`.\n- The order matters: first `+` is replaced, and only then decoded. The other way round, `%2B` (an encoded plus) would first become `+` and then a space, which is wrong.\n- The function throws a `URIError` for an invalid string (e.g. `%E0%A4%A`). This solution does not catch that.\n\n```\ndecode('hello%20world') → 'hello world'\ndecode('a+b')          → 'a b'\ndecode('a%2Bb')        → 'a+b'   (an encoded plus stays a plus)\n```"
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Petlja po parovima.\n\n- `text.split('&')` seče string na parove oblika `ključ=vrednost`. Za `'a=1&b=2'` to je `['a=1', 'b=2']`.\n- `for (const pair of ...)` uzima jedan po jedan par; u `pair` je trenutni par.\n- `{` otvara telo; zatvara ga `}` u liniji 17.",
+            "en": "A loop over the pairs.\n\n- `text.split('&')` cuts the string into pairs of the form `key=value`. For `'a=1&b=2'` that is `['a=1', 'b=2']`.\n- `for (const pair of ...)` takes the pairs one by one; `pair` is the current pair.\n- `{` opens the body; it is closed by `}` on line 17."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Tražimo gde je `=`.\n\n- `pair.indexOf('=')` vraća poziciju PRVOG znaka `=` (brojanje od nule), ili `-1` ako ga nema.\n\n```\n'a=1'.indexOf('=')   → 1\n'flag'.indexOf('=')  → -1\n'eq=a=b'.indexOf('=') → 2   (prvi znak =)\n```",
+            "en": "We look for where the `=` is.\n\n- `pair.indexOf('=')` returns the position of the FIRST `=` character (counting from zero), or `-1` if there is none.\n\n```\n'a=1'.indexOf('=')   → 1\n'flag'.indexOf('=')  → -1\n'eq=a=b'.indexOf('=') → 2   (the first =)\n```"
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Izdvajamo ključ.\n\n- Ako nema `=` (`i < 0`), ceo `pair` je ključ (npr. `flag`).\n- Inače je ključ deo pre `=`: `pair.slice(0, i)` uzima od početka do pozicije `i`, bez nje.\n- Rezultat se dekodira funkcijom `decode`.",
+            "en": "We extract the key.\n\n- If there is no `=` (`i < 0`), the whole `pair` is the key (e.g. `flag`).\n- Otherwise the key is the part before `=`: `pair.slice(0, i)` takes from the start up to position `i`, excluding it.\n- The result is decoded with the function `decode`."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Izdvajamo vrednost.\n\n- Bez `=` vrednost je prazan string (`''`).\n- Inače je to sve posle PRVOG `=`: `pair.slice(i + 1)`. Zato `eq=a=b` daje vrednost `a=b`, a ne samo `a` (skriveni test). Da smo koristili `pair.split('=')`, vrednost bi bila presečena.\n\n```\n'a=1'     → key = 'a',    value = '1'\n'flag'    → key = 'flag', value = ''\n'eq=a=b'  → key = 'eq',   value = 'a=b'\n```",
+            "en": "We extract the value.\n\n- Without `=` the value is an empty string (`''`).\n- Otherwise it is everything after the FIRST `=`: `pair.slice(i + 1)`. That is why `eq=a=b` gives the value `a=b`, not just `a` (hidden test). If we had used `pair.split('=')`, the value would be cut off.\n\n```\n'a=1'     → key = 'a',    value = '1'\n'flag'    → key = 'flag', value = ''\n'eq=a=b'  → key = 'eq',   value = 'a=b'\n```"
+          }
+        },
+        {
+          "lines": [13, 13],
+          "text": {
+            "sr": "Gledamo šta je već upisano za taj ključ.\n\n- `result[key]` je `undefined` ako ključ još nije viđen.\n- Tip je `string | string[] | undefined`: može biti običan string (jedna vrednost), niz stringova (više vrednosti) ili ništa.",
+            "en": "We look at what is already stored for that key.\n\n- `result[key]` is `undefined` if the key has not been seen yet.\n- The type is `string | string[] | undefined`: it can be a plain string (one value), an array of strings (several values) or nothing."
+          }
+        },
+        {
+          "lines": [14, 14],
+          "text": {
+            "sr": "Prvo pojavljivanje ključa: upisujemo običan string.\n\n- `existing === undefined` znači da ključ do sada nije postojao.\n- `result[key] = value` upisuje vrednost kao običan string.",
+            "en": "The first occurrence of the key: we store a plain string.\n\n- `existing === undefined` means the key did not exist so far.\n- `result[key] = value` stores the value as a plain string."
+          }
+        },
+        {
+          "lines": [15, 15],
+          "text": {
+            "sr": "Treće i svako sledeće pojavljivanje: već je niz.\n\n- `Array.isArray(existing)` proverava da li je vrednost niz. Ne koristi se `typeof`, jer je `typeof` niza `'object'`. TypeScript posle te provere zna da je `existing` tipa `string[]`.\n- `existing.push(value)` dodaje vrednost u postojeći niz (menja ga na mestu).",
+            "en": "The third and every following occurrence: it is already an array.\n\n- `Array.isArray(existing)` checks whether the value is an array. `typeof` is not used, because the `typeof` of an array is `'object'`. After this check TypeScript knows `existing` is of type `string[]`.\n- `existing.push(value)` adds the value to the existing array (modifying it in place)."
+          }
+        },
+        {
+          "lines": [16, 16],
+          "text": {
+            "sr": "Drugo pojavljivanje: pretvaramo string u niz od dva elementa.\n\n- Do sada je bio običan string, a sada je `[prethodna, nova]`.\n- Ovde TypeScript zna da je `existing` tipa `string` (jer nije `undefined` i nije niz).\n\nTok za `'t=a&t=b&t=c'`:\n\n```\npair 't=a' → existing je undefined → result.t = 'a'\npair 't=b' → existing je 'a' (string) → result.t = ['a', 'b']\npair 't=c' → existing je niz           → push('c') → ['a', 'b', 'c']\n```",
+            "en": "The second occurrence: we turn the string into an array of two elements.\n\n- Until now it was a plain string, and now it is `[previous, new]`.\n- Here TypeScript knows `existing` is of type `string` (since it is neither `undefined` nor an array).\n\nFlow for `'t=a&t=b&t=c'`:\n\n```\npair 't=a' → existing is undefined → result.t = 'a'\npair 't=b' → existing is 'a' (a string) → result.t = ['a', 'b']\npair 't=c' → existing is an array        → push('c') → ['a', 'b', 'c']\n```"
+          }
+        },
+        {
+          "lines": [17, 17],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 8.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 8.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [18, 18],
+          "text": {
+            "sr": "Vraćamo popunjen objekat.\n\n- `return result` šalje rezultat pozivaocu i završava funkciju.",
+            "en": "We return the filled object.\n\n- `return result` sends the result to the caller and ends the function."
+          }
+        },
+        {
+          "lines": [19, 19],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Deli se po prvom `=` (`indexOf`), a ne `split('=')`, da vrednost koja sadrži `=` ostane cela.",
         "en": "It splits on the first `=` (`indexOf`) rather than `split('=')`, so a value containing `=` stays intact."

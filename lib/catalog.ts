@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ExerciseSchema, TrackSchema, type Exercise, type Track } from "@/types/exercise";
+import { ExerciseSchema, TrackSchema, type Exercise, type Solution, type Track } from "@/types/exercise";
 
 export class ContentError extends Error {
   constructor(message: string) {
@@ -39,7 +39,34 @@ export function parseExerciseFile(file: string, raw: string): Exercise {
       `${file}: fajl je u folderu ${area}/${level}, a zadatak kaže ${exercise.area}/${exercise.level}`,
     );
   }
+
+  if (exercise.type === "classic") {
+    for (const [i, solution] of exercise.solutions.entries()) {
+      const problem = walkthroughProblem(solution.code, solution.walkthrough);
+      if (problem) throw new ContentError(`${file}: rešenje ${i + 1}, objašnjenje po linijama: ${problem}`);
+    }
+  }
   return exercise;
+}
+
+/**
+ * Objašnjenje po linijama mora da bude potpuno: svaki opseg je unutar koda i ide od manjeg ka većem broju,
+ * a svaka linija koja nije prazna je pokrivena bar jednim opsegom. Vraća opis problema ili `null`.
+ */
+export function walkthroughProblem(code: string, walkthrough: Solution["walkthrough"]): string | null {
+  if (!walkthrough) return null;
+
+  const lines = code.split("\n");
+  const covered = new Set<number>();
+  for (const [i, step] of walkthrough.entries()) {
+    const [from, to] = step.lines;
+    if (from > to) return `korak ${i + 1}: opseg ${from}–${to} ide unazad`;
+    if (to > lines.length) return `korak ${i + 1}: linija ${to} ne postoji (kod ima ${lines.length} linija)`;
+    for (let n = from; n <= to; n++) covered.add(n);
+  }
+
+  const missing = lines.flatMap((line, i) => (line.trim() !== "" && !covered.has(i + 1) ? [i + 1] : []));
+  return missing.length ? `nema objašnjenja za linije: ${missing.join(", ")}` : null;
 }
 
 export function parseTrackFile(file: string, raw: string): Track {

@@ -50,16 +50,41 @@ export function filterItems(items: BrowseItem[], filter: Filter): BrowseItem[] {
   );
 }
 
-export type Stats = { solved: number; total: number };
+/** `solved` uključuje i zadatke rešene uz pomoć; `helped` je samo njihov broj (prikazuju se drugom bojom). */
+export type Stats = { solved: number; helped: number; total: number };
 
-export function countSolved(items: BrowseItem[], solvedIds: ReadonlySet<string>): Stats {
-  return { solved: items.filter((i) => solvedIds.has(i.id)).length, total: items.length };
+/** Rešeni zadaci iz napretka: svi rešeni, i među njima oni rešeni uz pomoć. */
+export function solvedSets(progress: Record<string, ExerciseProgress>): {
+  solvedIds: Set<string>;
+  helpedIds: Set<string>;
+} {
+  const solvedIds = new Set<string>();
+  const helpedIds = new Set<string>();
+  for (const p of Object.values(progress)) {
+    if (p.status === "in_progress") continue;
+    solvedIds.add(p.exerciseId);
+    if (p.status === "solved_with_help") helpedIds.add(p.exerciseId);
+  }
+  return { solvedIds, helpedIds };
+}
+
+export function countSolved(
+  items: BrowseItem[],
+  solvedIds: ReadonlySet<string>,
+  helpedIds: ReadonlySet<string> = new Set(),
+): Stats {
+  return {
+    solved: items.filter((i) => solvedIds.has(i.id)).length,
+    helped: items.filter((i) => solvedIds.has(i.id) && helpedIds.has(i.id)).length,
+    total: items.length,
+  };
 }
 
 /** Brojevi za svaku oblast i nivo, uključujući prazne ćelije (0 od 0). */
 export function levelStats(
   items: BrowseItem[],
   solvedIds: ReadonlySet<string>,
+  helpedIds: ReadonlySet<string> = new Set(),
 ): Record<Area, Record<Level, Stats>> {
   const result = {} as Record<Area, Record<Level, Stats>>;
   for (const area of AREAS) {
@@ -68,6 +93,7 @@ export function levelStats(
       result[area][level] = countSolved(
         items.filter((i) => i.area === area && i.level === level),
         solvedIds,
+        helpedIds,
       );
     }
   }
@@ -105,6 +131,12 @@ export function recentActivity(
     .slice(0, limit);
 }
 
-export function percent({ solved, total }: Stats): number {
+export function percent({ solved, total }: Pick<Stats, "solved" | "total">): number {
   return total === 0 ? 0 : Math.round((solved / total) * 100);
+}
+
+/** Širina zelenog (samostalno rešeno) i narandžastog (uz pomoć) dela trake, u procentima. */
+export function barSegments({ solved, helped, total }: Stats): { solo: number; helped: number } {
+  if (total === 0) return { solo: 0, helped: 0 };
+  return { solo: ((solved - helped) / total) * 100, helped: (helped / total) * 100 };
 }

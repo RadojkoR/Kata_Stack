@@ -15,8 +15,34 @@
   "hiddenTests": "test('works with strings', () => {\n  const s: string | undefined = first(['a', 'b']);\n  expect(s).toBe('a');\n});",
   "solutions": [
     {
-      "label": { "sr": "indeksiranje", "en": "indexing" },
+      "label": {
+        "sr": "indeksiranje",
+        "en": "indexing"
+      },
       "code": "function first<T>(items: T[]): T | undefined {\n  return items[0];\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija generičke funkcije. „Generička“ znači da radi sa više tipova, a da se tip ne izgubi.\n\n- `function first` pravi funkciju sa imenom `first`.\n- `<T>` je **parametar tipa**. To je „promenljiva za tip“: `T` može biti `number`, `string` ili bilo šta drugo. Kad pozovemo `first([1, 2])`, TypeScript sam zaključuje `T = number`, a za `first(['a'])` zaključuje `T = string`.\n- `items: T[]` je parametar `items`, a `: T[]` je njegov tip: niz elemenata tipa `T`. `T[]` je isto što i `Array<T>`.\n- `: T | undefined` posle zagrada je tip rezultata. `|` znači „ili“ (unija): rezultat je ili element tipa `T`, ili `undefined`. `undefined` je potreban jer prazan niz nema prvi element. Kompajler tako primorava pozivaoca da obradi i prazan slučaj.\n- Tipovi postoje samo dok se kod piše i proverava. Pri izvršavanju se brišu, pa u JavaScript-u ostaje običan kod bez njih.\n- `{` otvara telo; zatvara ga `}` u liniji 3.\n\nKako TypeScript računa tip rezultata:\n\n```\nfirst([1, 2, 3])   → T = number  → rezultat je number | undefined\nfirst(['a', 'b'])  → T = string  → rezultat je string | undefined\nfirst([])          → T = never   → rezultat je undefined\n```",
+            "en": "Declaration of a generic function. “Generic” means it works with several types without losing the type.\n\n- `function first` creates a function named `first`.\n- `<T>` is a **type parameter**. It is a “variable for a type”: `T` can be `number`, `string` or anything else. When we call `first([1, 2])`, TypeScript infers `T = number` by itself, and for `first(['a'])` it infers `T = string`.\n- `items: T[]` is the parameter `items`, and `: T[]` is its type: an array of elements of type `T`. `T[]` is the same as `Array<T>`.\n- `: T | undefined` after the parentheses is the result type. `|` means “or” (a union): the result is either an element of type `T`, or `undefined`. `undefined` is needed because an empty array has no first element. The compiler thus forces the caller to handle the empty case too.\n- Types exist only while the code is written and checked. They are erased at runtime, so plain code without them remains in JavaScript.\n- `{` opens the body; it is closed by `}` on line 3.\n\nHow TypeScript computes the result type:\n\n```\nfirst([1, 2, 3])   → T = number  → the result is number | undefined\nfirst(['a', 'b'])  → T = string  → the result is string | undefined\nfirst([])          → T = never   → the result is undefined\n```"
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Vraćamo prvi element niza.\n\n- `return` vraća vrednost pozivaocu i završava funkciju.\n- `items[0]` čita element na indeksu 0. Brojanje u nizovima kreće od nule: prvi element je na indeksu `0`, drugi na `1`...\n- Za prazan niz `items[0]` je `undefined`. To se poklapa i sa tipom `T | undefined` i sa testom, pa nije potrebna posebna provera `items.length === 0`.\n- Napomena: TypeScript po podrazumevanim podešavanjima smatra da je `items[0]` tipa `T` (ne `T | undefined`). Zato je `| undefined` izričito napisan u povratnom tipu: tako tip kaže istinu.\n\n```\nitems = [10, 20, 30]  → items[0] = 10\nitems = []              → items[0] = undefined\n```",
+            "en": "We return the first element of the array.\n\n- `return` gives a value to the caller and ends the function.\n- `items[0]` reads the element at index 0. Counting in arrays starts at zero: the first element is at index `0`, the second at `1`...\n- For an empty array `items[0]` is `undefined`. That matches both the type `T | undefined` and the test, so no extra check `items.length === 0` is needed.\n- Note: with default settings TypeScript considers `items[0]` to be of type `T` (not `T | undefined`). That is why `| undefined` is written explicitly in the return type: this way the type tells the truth.\n\n```\nitems = [10, 20, 30]  → items[0] = 10\nitems = []              → items[0] = undefined\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Za prazan niz `items[0]` je `undefined`, što se poklapa sa tipom rezultata.",
         "en": "For an empty array `items[0]` is `undefined`, which matches the result type."

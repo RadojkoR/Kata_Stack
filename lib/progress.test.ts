@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyAttempt, capAttempts, mergeProgress, newProgress } from "./progress";
+import { applyAttempt, applySolutionViewed, capAttempts, mergeProgress, newProgress } from "./progress";
 import type { Attempt, ExerciseProgress } from "@/types/progress";
 
 const at = (n: number) => new Date(Date.UTC(2026, 0, 1, 0, 0, n)).toISOString();
@@ -51,6 +51,28 @@ describe("applyAttempt", () => {
     const prev = newProgress("sum-01", at(0));
     applyAttempt(prev, attempt());
     expect(prev.status).toBe("in_progress");
+  });
+});
+
+describe("applySolutionViewed", () => {
+  it("nerešen zadatak dobija nivo pomoći 3 i osvežava vreme aktivnosti", () => {
+    const p = applySolutionViewed(null, "sum-01", at(5));
+    expect(p).toMatchObject({ exerciseId: "sum-01", status: "in_progress", hintLevel: 3, updatedAt: at(5) });
+  });
+
+  it("posle otvaranja rešenja uspešan Submit je solved_with_help", () => {
+    const viewed = applySolutionViewed(null, "sum-01", at(1));
+    expect(applyAttempt(viewed, attempt({ createdAt: at(2) })).status).toBe("solved_with_help");
+  });
+
+  it("već rešen zadatak se ne menja (nema snižavanja ocene)", () => {
+    const solved = applyAttempt(null, attempt());
+    expect(applySolutionViewed(solved, "sum-01", at(9))).toBe(solved);
+  });
+
+  it("ponovno otvaranje ne menja ništa, ni updatedAt", () => {
+    const once = applySolutionViewed(null, "sum-01", at(1));
+    expect(applySolutionViewed(once, "sum-01", at(9))).toBe(once);
   });
 });
 

@@ -15,8 +15,69 @@
   "hiddenTests": "test('multiple spaces between words', () => {\n  expect(countWords('a   b  a')).toEqual({ a: 2, b: 1 });\n});\ntest('leading and trailing spaces', () => {\n  expect(countWords('  a b  ')).toEqual({ a: 1, b: 1 });\n});",
   "solutions": [
     {
-      "label": { "sr": "split + for", "en": "split + for" },
+      "label": {
+        "sr": "split + for",
+        "en": "split + for"
+      },
       "code": "function countWords(text) {\n  const counts = {};\n  for (const word of text.toLowerCase().split(/\\s+/)) {\n    if (!word) continue;\n    counts[word] = (counts[word] ?? 0) + 1;\n  }\n  return counts;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije `countWords`.\n\n- `function countWords` pravi funkciju sa tim imenom; test je poziva baš tako.\n- `(text)` je parametar: string u kome brojimo reči. Kad pozovemo `countWords('a b a')`, unutar funkcije je `text` jednako `'a b a'`.\n- `{` otvara telo; zatvara ga `}` u liniji 8.",
+            "en": "Declaration of the function `countWords`.\n\n- `function countWords` creates a function with that name; the test calls it exactly like this.\n- `(text)` is the parameter: the string in which we count words. When we call `countWords('a b a')`, inside the function `text` equals `'a b a'`.\n- `{` opens the body; it is closed by `}` on line 8."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo prazan objekat koji služi kao rečnik: ključ je reč, a vrednost je broj njenih pojavljivanja.\n\n- `const` pravi promenljivu koja se ne može ponovo dodeliti (ne možemo napisati `counts = nešto drugo`).\n- `{}` je prazan objekat. Posle punjenja izgledaće npr. `{ a: 2, b: 1 }`.\n- Sadržaj objekta se i dalje može menjati (dodajemo ključeve u petlji), jer `const` štiti samo vezu između imena i objekta, ne sadržaj objekta.\n- Napredna napomena: običan objekat nasleđuje svojstva, pa je `counts.constructor` funkcija, a ne `undefined`. Za reč `constructor` bi ovaj kod dao pogrešan rezultat. Testovi to ne proveravaju, ali u praksi bi se koristio `Map` ili `Object.create(null)`.",
+            "en": "We create an empty object that serves as a dictionary: the key is the word, and the value is the number of its occurrences.\n\n- `const` creates a variable that cannot be reassigned (we cannot write `counts = something else`).\n- `{}` is an empty object. After filling it will look like `{ a: 2, b: 1 }`.\n- The object's contents can still change (we add keys in the loop), because `const` protects only the link between the name and the object, not the object's contents.\n- Advanced note: a plain object inherits properties, so `counts.constructor` is a function, not `undefined`. For the word `constructor` this code would give a wrong result. The tests do not check that, but in practice you would use a `Map` or `Object.create(null)`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja koja prolazi kroz sve reči teksta, jednu po jednu.\n\n- `text.toLowerCase()` pretvara ceo tekst u mala slova, da `Hello` i `hello` budu ista reč (to zadatak traži). Stringovi su nepromenljivi, pa dobijamo novi string, a `text` ostaje isti.\n- `.split(/\\s+/)` seče string na niz reči. `/\\s+/` je regularni izraz (šablon za traženje): `\\s` je bilo koji beli znak (razmak, tab, novi red), a `+` znači „jedan ili više uzastopnih“. Zato više razmaka zaredom deluje kao jedan razdelnik i ne prave se prazne reči između.\n- `for (const word of ...)` uzima jedan po jedan element tog niza; u `word` je u svakom prolazu trenutna reč.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 6.\n\nZa tekst `'Hello hello'`:\n\n```\ntoLowerCase()  → 'hello hello'\nsplit(/\\s+/)   → ['hello', 'hello']\nprolaz 1: word = 'hello'\nprolaz 2: word = 'hello'\n```",
+            "en": "A loop that goes through all the words of the text, one by one.\n\n- `text.toLowerCase()` converts the whole text to lowercase, so `Hello` and `hello` are the same word (the task requires this). Strings are immutable, so we get a new string and `text` stays the same.\n- `.split(/\\s+/)` cuts the string into an array of words. `/\\s+/` is a regular expression (a search pattern): `\\s` is any whitespace character (space, tab, newline), and `+` means “one or more in a row”. So several spaces in a row act as one separator and no empty words are created between them.\n- `for (const word of ...)` takes the elements of that array one by one; in `word` there is the current word on each pass.\n- `{` opens the loop body; it is closed by `}` on line 6.\n\nFor the text `'Hello hello'`:\n\n```\ntoLowerCase()  → 'hello hello'\nsplit(/\\s+/)   → ['hello', 'hello']\npass 1: word = 'hello'\npass 2: word = 'hello'\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Preskačemo prazne stringove, da se ne broje kao reči.\n\n- `split` ume da vrati prazan string. `''.split(/\\s+/)` vraća `['']` (niz sa jednim praznim stringom), a tekst sa razmakom na početku ili kraju, kao `' a b '`, daje prazne elemente na krajevima: `['', 'a', 'b', '']`.\n- `!word` je „nije word“. `!` obrće istinitost. Prazan string se u JavaScript-u ponaša kao „neistinit“ (falsy), pa je `!''` jednako `true`.\n- `continue` znači: „preskoči ostatak tela petlje i pređi na sledeći element“. Zato se prazan string nikad ne upiše u `counts`.\n- Skriveni testovi proveravaju baš ovo (više razmaka, razmaci na krajevima).",
+            "en": "We skip empty strings so they are not counted as words.\n\n- `split` can return an empty string. `''.split(/\\s+/)` returns `['']` (an array with one empty string), and text with a space at the start or end, like `' a b '`, gives empty elements at the ends: `['', 'a', 'b', '']`.\n- `!word` is “not word”. `!` flips truthiness. In JavaScript an empty string behaves as “falsy”, so `!''` equals `true`.\n- `continue` means: “skip the rest of the loop body and move on to the next element”. That is why an empty string is never written into `counts`.\n- The hidden tests check exactly this (several spaces, spaces at the ends)."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Povećavamo brojač za trenutnu reč za jedan.\n\n- `counts[word]` čita svojstvo objekta čije je ime u promenljivoj `word`. Uglaste zagrade koristimo jer ime nije fiksno nego se menja. Ako reč još nije viđena, svojstvo ne postoji i vrednost je `undefined`.\n- `??` (nullish coalescing) vraća desnu stranu samo ako je leva `null` ili `undefined`. Ovde: ako reč nije viđena, računamo od `0`; ako jeste, koristimo već upisani broj.\n- `+ 1` dodaje jedan, a `=` na početku upisuje rezultat nazad u `counts[word]`.\n- Zagrade su važne: `counts[word] ?? 0 + 1` bi se pročitalo kao `counts[word] ?? (0 + 1)`, jer `+` ima viši prioritet od `??`. Brojač tada nikad ne bi rastao iznad prve vrednosti.\n\nTok za `'a b a'`:\n\n```\nword = 'a' → counts['a'] je undefined → (undefined ?? 0) + 1 = 1   counts = { a: 1 }\nword = 'b' → counts['b'] je undefined → (undefined ?? 0) + 1 = 1   counts = { a: 1, b: 1 }\nword = 'a' → counts['a'] je 1         → (1 ?? 0) + 1         = 2   counts = { a: 2, b: 1 }\n```",
+            "en": "We increase the counter for the current word by one.\n\n- `counts[word]` reads the object's property whose name is in the variable `word`. We use square brackets because the name is not fixed but changes. If the word has not been seen yet, the property does not exist and the value is `undefined`.\n- `??` (nullish coalescing) returns the right side only if the left is `null` or `undefined`. Here: if the word has not been seen, we count from `0`; if it has, we use the number already stored.\n- `+ 1` adds one, and the `=` at the start writes the result back into `counts[word]`.\n- The parentheses matter: `counts[word] ?? 0 + 1` would be read as `counts[word] ?? (0 + 1)`, because `+` has higher precedence than `??`. The counter would then never grow beyond its first value.\n\nFlow for `'a b a'`:\n\n```\nword = 'a' → counts['a'] is undefined → (undefined ?? 0) + 1 = 1   counts = { a: 1 }\nword = 'b' → counts['b'] is undefined → (undefined ?? 0) + 1 = 1   counts = { a: 1, b: 1 }\nword = 'a' → counts['a'] is 1         → (1 ?? 0) + 1         = 2   counts = { a: 2, b: 1 }\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Vraća popunjen rečnik.\n\n- Za prazan tekst petlja nije dodala nijedan ključ (sve su preskočene), pa je rezultat `{}`, što test traži.\n- `return` odmah završava funkciju i šalje `counts` pozivaocu.",
+            "en": "Returns the filled dictionary.\n\n- For empty text the loop added no keys (everything was skipped), so the result is `{}`, which the test requires.\n- `return` ends the function immediately and sends `counts` to the caller."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Prazne stringove treba preskočiti jer `''.split(/\\s+/)` vraća `['']`.",
         "en": "Empty strings must be skipped because `''.split(/\\s+/)` returns `['']`."

@@ -565,9 +565,32 @@ Radi se odmah, pre radnog ekrana: sve što sledi (UI, poruke, zadaci) ima tekst,
 - [x] Oblasti bez gotovog okruženja prikazane kao "uskoro"
 - [x] **15 zadataka**: JavaScript, TypeScript i čista logika Node-a (svaki sa srpskim i engleskim tekstom; AI napravi nacrt drugog jezika, ja proverim)
 
-**Urađeno** (135 testova, `tsc`, lint i build prolaze): 15 zadataka (JavaScript 8, TypeScript 5, Node.js 2), svaki dvojezičan; test proverava da svako rešenje prolazi, a početni kod pada. Početna ima oblasti × nivoi sa trakama napretka, filtere po tipu i temi i oznaku "uskoro" za React/Next.js. Filter tipa se prikazuje tek kad postoji više tipova (za sada su svi `classic`). **Čeka proveru u browseru.** Napomena: zadaci se učitavaju pri pokretanju servera, pa posle dodavanja JSON fajla treba restartovati `npm run dev`.
+**Završeno i provereno u browseru** (137 testova, `tsc`, lint i build prolaze). 15 zadataka (JavaScript 8, TypeScript 5, Node.js 2), svaki dvojezičan; test proverava da svako rešenje prolazi, a početni kod pada.
+
+Izgled je tokom provere promenjen u odnosu na prvobitni plan, po tvojim željama:
+- **Fiksna gornja traka** (logo, ukupni napredak, jezik i tema; na telefonu meni ☰).
+- **Bočni meni** (uži): Pregled na vrhu, ispod oblasti sa brojem rešenih, Podešavanja na dnu. Samo na stranicama pregleda; radni ekran je preko cele širine. Na telefonu je to horizontalna traka iznad sadržaja.
+- **Pregled** (glavni dashboard, cela širina): ukupni napredak, "Poslednje rađeno" sa dugmetom "Nastavi" i kartice oblasti sa trakama po nivoima.
+- **Stranica oblasti** (`/{lang}/area/{area}`): trake po nivoima na vrhu (klik filtrira), ispod lista zadataka; filteri po temi su iza dugmeta, a po tipu se pojavljuju tek kad postoji više tipova (za sada su svi `classic`). React/Next.js je "uskoro".
+
+Napomena: zadaci se učitavaju pri pokretanju servera, pa posle dodavanja JSON fajla treba restartovati `npm run dev`.
 
 **Gotovo kad:** svaki dan otvorim sajt i radim, bez ičega što me usporava. **MVP je gotov.**
+
+#### Korak 8b: Rešenja sa objašnjenjem po linijama
+Kartica **Rešenja** u levom panelu, pored Zadatka i Beleški.
+- [x] Šema: `solutions[].walkthrough` = lista koraka `{ lines: [od, do], text: { sr, en } }` (opciono po rešenju)
+- [x] Provera pri build-u (`walkthroughProblem` u `lib/catalog.ts`): opsezi su unutar koda i idu unapred, a **svaka linija koja nije prazna je objašnjena**; inače build pada sa brojevima linija koje fale
+- [x] Zaključavanje: rešenje je vidljivo kad je zadatak rešen ili kad je već otvoreno; pre toga dugme "Prikaži rešenje" traži potvrdu
+- [x] Otvaranje pre rešavanja beleži `hintLevel = 3`, pa uspešan Submit daje `solved_with_help` (`applySolutionViewed`); već rešen zadatak se ne "snižava"
+- [x] **Rešeno uz pomoć je narandžasto, rešeno samostalno zeleno**: oznake (traka zadatka, lista, Pregled) i trake napretka u dve boje (`Stats.helped`, `barSegments`)
+- [x] Prvi zadatak urađen do kraja: `sum-evens-01` (oba rešenja, svaka linija na oba jezika)
+- [x] Ostalih 14 zadataka: svih 15 zadataka (16 rešenja) ima objašnjenje svake linije na srpskom i engleskom
+- [x] `walkthrough` je obavezan za svako rešenje (`lib/content.test.ts` pada ako neko fali)
+- [x] **Klik na korak otvara rešenje u editoru**: kod rešenja samo za čitanje, istaknute linije i detaljno objašnjenje upisano ispod njih (Monaco view zone), traka sa navigacijom kroz korake i dugmetom "Nazad na moj kod" (`lib/monaco/solution-view.tsx`). Run/Submit tokom pregleda izvršavaju korisnikov kod, a Format, Reset i klik na grešku tipa prvo zatvaraju pregled
+- [x] Sadržaj zadataka se u razvoju čita iznova (`lib/content.ts`), pa izmena JSON-a ne traži restart servera
+
+**Gotovo kad:** svih 15 zadataka ima objašnjenje po linijama, a build pada ako neka linija ostane neobjašnjena. **Čeka proveru u browseru:** otvaranje koraka u editoru (Monaco integracija nije isprobana).
 
 #### Korak 9: Stvarno vežbanje (1–2 nedelje)
 - [ ] Vežbam svaki dan na živom sajtu

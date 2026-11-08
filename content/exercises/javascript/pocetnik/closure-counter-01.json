@@ -15,8 +15,41 @@
   "hiddenTests": "test('counters are independent', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});",
   "solutions": [
     {
-      "label": { "sr": "closure nad promenljivom", "en": "closure over a variable" },
+      "label": {
+        "sr": "closure nad promenljivom",
+        "en": "closure over a variable"
+      },
       "code": "function createCounter(start = 0) {\n  let count = start;\n  return () => ++count;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije koja pravi brojač. Svaki poziv `createCounter` vraća novi, nezavisan brojač.\n\n- `function createCounter` pravi funkciju sa imenom `createCounter`. Test je poziva tim imenom.\n- `(start = 0)` je parametar sa **podrazumevanom vrednošću**. Ako funkciju pozovemo bez argumenta (`createCounter()`) ili sa `undefined`, `start` je `0`. Ako je pozovemo sa `createCounter(10)`, `start` je `10`.\n- Obrati pažnju: samo `undefined` aktivira podrazumevanu vrednost. `createCounter(null)` bi dalo `start = null`.\n- `{` otvara telo; zatvara ga `}` u liniji 4.",
+            "en": "Declaration of the function that creates a counter. Every call of `createCounter` returns a new, independent counter.\n\n- `function createCounter` creates a function named `createCounter`. The test calls it by that name.\n- `(start = 0)` is a parameter with a **default value**. If we call the function without an argument (`createCounter()`) or with `undefined`, `start` is `0`. If we call it with `createCounter(10)`, `start` is `10`.\n- Note: only `undefined` triggers the default value. `createCounter(null)` would give `start = null`.\n- `{` opens the body; it is closed by `}` on line 4."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo promenljivu `count`: ona čuva trenutnu vrednost brojača.\n\n- `let` pravi promenljivu čija se vrednost može menjati. Mora `let`, jer `const` ne bi dozvolio da je uvećavamo.\n- `= start` kopira vrednost parametra `start` u `count`. Brojevi se kopiraju po vrednosti, pa kasnije menjanje `count` ne menja `start`.\n- Ova promenljiva pripada ovom jednom pozivu funkcije `createCounter`. Svaki novi poziv pravi svoj, poseban `count`. Zato su brojači nezavisni: uvećanje jednog ne utiče na drugi (skriveni test to proverava).\n\nDva brojača, dve nezavisne promenljive:\n\n```\nconst a = createCounter();    // a ima svoj count = 0\nconst b = createCounter(10);  // b ima svoj count = 10\n```",
+            "en": "We create the variable `count`: it holds the counter's current value.\n\n- `let` creates a variable whose value can change. It has to be `let`, because `const` would not allow us to increase it.\n- `= start` copies the value of the parameter `start` into `count`. Numbers are copied by value, so changing `count` later does not change `start`.\n- This variable belongs to this one call of `createCounter`. Every new call creates its own, separate `count`. That is why the counters are independent: increasing one does not affect the other (the hidden test checks this).\n\nTwo counters, two independent variables:\n\n```\nconst a = createCounter();    // a has its own count = 0\nconst b = createCounter(10);  // b has its own count = 10\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Vraćamo funkciju. To je ono što dobijamo kad pozovemo `createCounter`, i što kasnije zovemo `c()`.\n\n- `return` vraća vrednost, a ta vrednost je ovde funkcija.\n- `() => ...` je strelica funkcija bez parametara (prazne zagrade). Desno od strelice je vrednost koju vraća, pa nema posebnog `return` ni vitičastih zagrada.\n- To je **closure**: vraćena funkcija i dalje „vidi“ promenljivu `count`, iako je `createCounter` davno završila. Promenljiva ostaje živa dokle god postoji funkcija koja je koristi.\n- `++count` je **prefiksno uvećanje**. `++` znači „dodaj 1 na promenljivu“. Dakle `++count` radi dve stvari, tim redom: 1) uveća `count` za 1, 2) vrati NOVU vrednost. Pri svakom pozivu vraćene funkcije `count` raste za još jedan, pa brojač stalno ide: 1, 2, 3...\n- Zašto ne `count++`: to je **postfiksno** uvećanje, koje takođe uveća `count` za 1, ali vrati STARU vrednost (onu pre uvećanja). Prvi poziv bi tada dao `0` umesto `1`. To je česta greška.\n\nTok za `const c = createCounter();` pa tri poziva:\n\n```\npre poziva:      count = 0\nc() → ++count:   count postaje 1, vraća 1\nc() → ++count:   count postaje 2, vraća 2\nc() → ++count:   count postaje 3, vraća 3\n```\n\nA sa `count++` bi bilo:\n\n```\nc() → count++:   vraća 0 (staru vrednost), pa count postaje 1\nc() → count++:   vraća 1, pa count postaje 2\n```",
+            "en": "We return a function. That is what we get when we call `createCounter`, and what we later call as `c()`.\n\n- `return` returns a value, and here that value is a function.\n- `() => ...` is an arrow function with no parameters (empty parentheses). To the right of the arrow is the value it returns, so there is no separate `return` or curly braces.\n- This is a **closure**: the returned function still “sees” the variable `count` even though `createCounter` finished long ago. The variable stays alive as long as a function that uses it exists.\n- `++count` is a **prefix increment**. `++` means “add 1 to the variable”. So `++count` does two things, in this order: 1) it increases `count` by 1, 2) it returns the NEW value. On every call of the returned function `count` grows by one more, so the counter keeps going: 1, 2, 3...\n- Why not `count++`: that is the **postfix** increment, which also increases `count` by 1 but returns the OLD value (the one before the increase). The first call would then give `0` instead of `1`. This is a common mistake.\n\nFlow for `const c = createCounter();` followed by three calls:\n\n```\nbefore the call: count = 0\nc() → ++count:   count becomes 1, returns 1\nc() → ++count:   count becomes 2, returns 2\nc() → ++count:   count becomes 3, returns 3\n```\n\nAnd with `count++` it would be:\n\n```\nc() → count++:   returns 0 (the old value), then count becomes 1\nc() → count++:   returns 1, then count becomes 2\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Zatvara telo funkcije `createCounter` otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the body of `createCounter` opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Vraćena funkcija \"pamti\" promenljivu `count` iz okruženja u kome je napravljena.",
         "en": "The returned function \"remembers\" the `count` variable from the scope it was created in."

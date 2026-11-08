@@ -86,6 +86,20 @@ describe("localStorageStore", () => {
     expect((await store.get("sum-01"))?.notes).toBeUndefined();
   });
 
+  it("otvaranje rešenja pre rešavanja daje solved_with_help, a posle rešavanja ništa ne menja", async () => {
+    const viewed = await store.markSolutionViewed("sum-01");
+    expect(viewed).toMatchObject({ status: "in_progress", hintLevel: 3 });
+
+    const solved = await store.recordAttempt(submit());
+    expect(solved.status).toBe("solved_with_help");
+
+    // zadatak rešen samostalno: otvaranje rešenja ga ne "snižava"
+    await store.recordAttempt(submit({ exerciseId: "b" }));
+    const after = await store.markSolutionViewed("b");
+    expect(after.status).toBe("solved");
+    expect(after.hintLevel).toBe(0);
+  });
+
   it("oštećeni zapisi se preskaču uz upozorenje, a kopija se čuva", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     storage.setItem(PROGRESS_KEY, JSON.stringify({ a: { nije: "validan zapis" } }));

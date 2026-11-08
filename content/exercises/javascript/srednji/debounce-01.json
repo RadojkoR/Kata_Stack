@@ -15,8 +15,62 @@
   "hiddenTests": "test('passes the arguments of the last call', async () => {\n  let got;\n  const d = debounce((x) => { got = x; }, 20);\n  d(1); d(2); d(3);\n  await wait(80);\n  expect(got).toBe(3);\n});\ntest('every call restarts the timer', async () => {\n  let calls = 0;\n  const d = debounce(() => { calls++; }, 60);\n  d();\n  await wait(35);\n  d();\n  await wait(35);\n  expect(calls).toBe(0);\n  await wait(90);\n  expect(calls).toBe(1);\n});",
   "solutions": [
     {
-      "label": { "sr": "clearTimeout + setTimeout", "en": "clearTimeout + setTimeout" },
+      "label": {
+        "sr": "clearTimeout + setTimeout",
+        "en": "clearTimeout + setTimeout"
+      },
       "code": "function debounce(fn, ms) {\n  let timer;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), ms);\n  };\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Deklaracija funkcije `debounce`. „Debounce“ znači: sačekaj da se pozivi smire, pa izvrši samo poslednji.\n\n- Primer iz prakse: korisnik kuca u polje za pretragu. Ne želimo upit serveru posle svakog slova, nego tek kad prestane da kuca.\n- `fn` je funkcija čije pozive odlažemo (npr. slanje upita).\n- `ms` je pauza u milisekundama koju čekamo posle POSLEDNJEG poziva. `1000 ms` je jedna sekunda.\n- Funkcija ne poziva `fn` sama, nego vraća novu funkciju (linija 3) koju korisnik poziva umesto `fn`.\n- `{` otvara telo; zatvara ga `}` u liniji 7.",
+            "en": "Declaration of the function `debounce`. “Debounce” means: wait for the calls to settle down, then run only the last one.\n\n- A practical example: a user types in a search box. We do not want a request to the server after every letter, only once they stop typing.\n- `fn` is the function whose calls we delay (e.g. sending the request).\n- `ms` is the pause in milliseconds we wait after the LAST call. `1000 ms` is one second.\n- The function does not call `fn` itself, but returns a new function (line 3) that the user calls instead of `fn`.\n- `{` opens the body; it is closed by `}` on line 7."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo promenljivu `timer` koja pamti tekući, još neisteklo zakazan poziv.\n\n- `let` pravi promenljivu čija se vrednost menja kroz vreme. Mora `let`, jer `timer` dobija novu vrednost pri svakom pozivu.\n- `let timer;` bez `=` znači da je `timer` na početku `undefined`: još nema zakazanog poziva.\n- Deklarisana je **van** vraćene funkcije. Zato je vraćena funkcija „pamti“ između poziva (to je closure), i svi pozivi jednog `debounce(...)` dele isti `timer`. To je upravo ono što nam treba da bismo mogli da otkažemo prethodni poziv.\n- Svaki poziv `debounce(...)` pravi svoj poseban `timer`, pa dva različita debounce-a ne smetaju jedan drugom.",
+            "en": "We create the variable `timer`, which remembers the current, not yet expired scheduled call.\n\n- `let` creates a variable whose value changes over time. It has to be `let`, because `timer` gets a new value on every call.\n- `let timer;` without `=` means `timer` is `undefined` at the start: there is no scheduled call yet.\n- It is declared **outside** the returned function. That is why the returned function “remembers” it between calls (this is a closure), and all calls of one `debounce(...)` share the same `timer`. That is exactly what we need to be able to cancel the previous call.\n- Every call of `debounce(...)` creates its own separate `timer`, so two different debounces do not interfere with each other."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Vraćamo novu funkciju: to je ono što pozivalac zapravo koristi umesto `fn`.\n\n- `return` vraća vrednost, a ovde je ta vrednost funkcija.\n- `(...args)` je **rest parametar**: tri tačke skupljaju SVE argumente poziva u jedan pravi niz `args`. Poziv `d(1, 'a')` daje `args = [1, 'a']`. Tako možemo da ih kasnije prosledimo funkciji `fn`, koliko god ih bilo.\n- `=>` je strelica funkcije, a `{` otvara njeno telo. Zatvara ga `}` u liniji 6.",
+            "en": "We return a new function: it is what the caller actually uses instead of `fn`.\n\n- `return` returns a value, and here that value is a function.\n- `(...args)` is a **rest parameter**: the three dots collect ALL arguments of the call into one real array `args`. The call `d(1, 'a')` gives `args = [1, 'a']`. This way we can pass them to `fn` later, however many there are.\n- `=>` is the arrow of the function, and `{` opens its body. It is closed by `}` on line 6."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Otkazujemo prethodno zakazan poziv. Ovo je suština debounce-a: svaki novi poziv poništava prethodni.\n\n- `clearTimeout(timer)` zaustavlja tajmer koji još nije istekao. Funkcija koja je bila zakazana zbog njega se neće izvršiti.\n- Kad je `timer` `undefined` (prvi poziv), `clearTimeout` ne radi ništa i ne baca grešku, pa nije potrebna posebna provera.\n- Ako je tajmer već istekao (poziv je već izvršen), `clearTimeout` takođe ne radi ništa.",
+            "en": "We cancel the previously scheduled call. This is the essence of debounce: every new call cancels the previous one.\n\n- `clearTimeout(timer)` stops a timer that has not expired yet. The function that was scheduled because of it will not run.\n- When `timer` is `undefined` (the first call), `clearTimeout` does nothing and does not throw, so no extra check is needed.\n- If the timer has already expired (the call has already run), `clearTimeout` does nothing as well."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zakazujemo novi poziv funkcije `fn` za `ms` milisekundi kasnije.\n\n- `setTimeout(callback, ms)` kaže pregledaču: „izvrši `callback` posle `ms` milisekundi“. Vraća identifikator tajmera.\n- `timer = ...` čuva taj identifikator, da bi ga sledeći poziv mogao da otkaže u liniji 4.\n- `() => fn(...args)` je `callback`: strelica funkcija koja poziva `fn`.\n- `...args` ovde (u pozivu) je **spread**: raspakuje niz u zasebne argumente. `fn(...[1, 'a'])` je isto što i `fn(1, 'a')`.\n- Pošto su stariji tajmeri otkazani, na kraju se izvrši samo poziv sa argumentima POSLEDNJEG poziva (skriveni test proverava baš to).\n- Ova funkcija ne prosleđuje `this` pozivaoca. Za ovaj zadatak to nije potrebno, ali kod metoda objekata bi trebalo voditi računa o tome.\n\nVremenski tok za `debounce(fn, 50)` i tri brza poziva:\n\n```\nt=0   d('a')  → zakazuje fn('a') za t=50\nt=20  d('b')  → otkazuje prethodno, zakazuje fn('b') za t=70\nt=40  d('c')  → otkazuje prethodno, zakazuje fn('c') za t=90\nt=90  fn('c') se izvršava: to je jedini poziv\n```",
+            "en": "We schedule a new call of `fn` for `ms` milliseconds later.\n\n- `setTimeout(callback, ms)` tells the browser: “run `callback` after `ms` milliseconds”. It returns a timer identifier.\n- `timer = ...` stores that identifier, so the next call can cancel it on line 4.\n- `() => fn(...args)` is the `callback`: an arrow function that calls `fn`.\n- `...args` here (in a call) is **spread**: it unpacks an array into separate arguments. `fn(...[1, 'a'])` is the same as `fn(1, 'a')`.\n- Since older timers were cancelled, only the call with the arguments of the LAST call runs in the end (the hidden test checks exactly this).\n- This function does not pass the caller's `this`. That is not needed for this task, but with object methods you would have to take care of it.\n\nTimeline for `debounce(fn, 50)` and three quick calls:\n\n```\nt=0   d('a')  → schedules fn('a') for t=50\nt=20  d('b')  → cancels the previous one, schedules fn('b') for t=70\nt=40  d('c')  → cancels the previous one, schedules fn('c') for t=90\nt=90  fn('c') runs: it is the only call\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara vraćenu strelica funkciju (otvorenu u liniji 3).\n\n- `}` zatvara telo strelica funkcije.\n- `;` je potreban jer je `return (...) => { ... }` jedna naredba, a ona se završava tek ovde.",
+            "en": "Closes the returned arrow function (opened on line 3).\n\n- `}` closes the body of the arrow function.\n- `;` is needed because `return (...) => { ... }` is one statement, and it only ends here."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije `debounce` otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, JavaScript uopšte ne može da pročita kod (`SyntaxError`).",
+            "en": "Closes the body of `debounce` opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, JavaScript cannot read the code at all (`SyntaxError`)."
+          }
+        }
+      ],
       "note": {
         "sr": "Promenljiva `timer` živi u closure-u, pa svaki poziv može da otkaže prethodni tajmer.",
         "en": "The `timer` variable lives in the closure, so every call can cancel the previous timer."
