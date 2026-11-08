@@ -1,0 +1,111 @@
+{
+  "id": "flatten-01",
+  "title": {
+    "sr": "Poravnaj ugnježdene nizove",
+    "en": "Flatten nested arrays"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": ["arrays", "recursion"],
+  "description": {
+    "sr": "Napiši funkciju `flatten(items)` koja ugnježdene nizove, na bilo kojoj dubini, pretvara u jedan ravan niz. Redosled elemenata ostaje isti.\n\nNe koristi `Array.prototype.flat`: cilj je da sam napišeš rekurziju.\n\nPrimeri:\n- `flatten([1, [2, [3, [4]]]])` → `[1, 2, 3, 4]`\n- `flatten([[], [[]]])` → `[]`\n- `flatten([])` → `[]`\n\nOriginalni niz se ne menja.",
+    "en": "Write a function `flatten(items)` that turns nested arrays, at any depth, into one flat array. The order of the elements stays the same.\n\nDo not use `Array.prototype.flat`: the goal is to write the recursion yourself.\n\nExamples:\n- `flatten([1, [2, [3, [4]]]])` → `[1, 2, 3, 4]`\n- `flatten([[], [[]]])` → `[]`\n- `flatten([])` → `[]`\n\nThe original array is not changed."
+  },
+  "starterCode": "function flatten(items) {\n  // your code\n}",
+  "tests": "test({ sr: 'poravnava ugnježdene nizove', en: 'flattens nested arrays' }, () => {\n  expect(flatten([1, [2, [3, [4]]]])).toEqual([1, 2, 3, 4]);\n});\ntest({ sr: 'prazni nizovi nestaju', en: 'empty arrays disappear' }, () => {\n  expect(flatten([[], [[]]])).toEqual([]);\n});\ntest({ sr: 'prazan niz daje prazan niz', en: 'an empty array gives an empty array' }, () => {\n  expect(flatten([])).toEqual([]);\n});",
+  "hiddenTests": "test('already flat arrays stay the same', () => {\n  expect(flatten([1, 2, 3])).toEqual([1, 2, 3]);\n});\ntest('does not change the input', () => {\n  const input = [1, [2, [3]]];\n  flatten(input);\n  expect(input).toEqual([1, [2, [3]]]);\n});\ntest('strings and objects are not flattened', () => {\n  expect(flatten(['ab', [{ a: 1 }, ['c']]])).toEqual(['ab', { a: 1 }, 'c']);\n});\ntest('very deep nesting', () => {\n  let nested = [0];\n  for (let i = 1; i <= 200; i++) nested = [i, nested];\n  expect(flatten(nested)).toHaveLength(201);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "rekurzija",
+        "en": "recursion"
+      },
+      "code": "function flatten(items) {\n  const result = [];\n  for (const item of items) {\n    if (Array.isArray(item)) {\n      result.push(...flatten(item));\n    } else {\n      result.push(item);\n    }\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function flatten` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `flatten([1, [2, 3]])`, unutar funkcije je `items` taj niz.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 11.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function flatten` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items)` is the parameter list. A parameter is an empty “slot” for input: when we call `flatten([1, [2, 3]])`, inside the function `items` is that array.\n- `{` opens the function body, and `}` on line 11 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prazan niz u koji skupljamo ravne elemente.\n\n- `const result = [];` pravi prazan niz; `[]` je prazan niz.\n- `const` jer se promenljiva ne dodeljuje ponovo. Sadržaj niza se menja (dodajemo elemente), što je dozvoljeno.\n- Pravimo novi niz, a ulazni ne diramo, pa se original ne menja.\n- Svaki poziv funkcije (uključujući rekurzivne pozive) ima svoj `result`.",
+            "en": "An empty array in which we collect the flat elements.\n\n- `const result = [];` creates an empty array; `[]` is an empty array.\n- `const` because the variable is not reassigned. The array's contents change (we add elements), which is allowed.\n- We create a new array and do not touch the input, so the original is not changed.\n- Every call of the function (including recursive calls) has its own `result`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Prolazimo kroz svaki element ulaza, redom.\n\n- `for (const item of items)` uzima jedan po jedan element; u `item` je trenutni element, koji može biti običan element ili ugnježdeni niz.\n- Redosled se čuva, pa je i redosled u rezultatu isti.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 9.",
+            "en": "We go through each element of the input, in order.\n\n- `for (const item of items)` takes the elements one by one; `item` is the current element, which can be an ordinary element or a nested array.\n- The order is preserved, so the order in the result is the same.\n- `{` opens the loop body; it is closed by `}` on line 9."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Odlučujemo: da li je element niz?\n\n- `Array.isArray(item)` vraća `true` ako je `item` niz. Ne koristi se `typeof`, jer je `typeof` niza `'object'`, kao i za obične objekte.\n- Zato se objekti (`{ a: 1 }`) i stringovi (`'ab'`) NE smatraju nizovima i ne poravnavaju se (skriveni test).\n- `{` otvara granu „da“; zatvara je `} else {` u liniji 6.",
+            "en": "We decide: is the element an array?\n\n- `Array.isArray(item)` returns `true` if `item` is an array. `typeof` is not used, because the `typeof` of an array is `'object'`, just like for plain objects.\n- That is why objects (`{ a: 1 }`) and strings (`'ab'`) are NOT considered arrays and are not flattened (hidden test).\n- `{` opens the “yes” branch; it is closed by `} else {` on line 6."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Ako je niz, poravnavamo ga istom funkcijom i dodajemo rezultat. To je **rekurzija**.\n\n- Rekurzija: funkcija poziva samu sebe za manji deo problema. `flatten(item)` poravnava ugnježdeni niz `item`, koji može sadržati svoje ugnježdene nizove, i tako redom.\n- Izlaz iz rekurzije postoji: niz koji nema ugnježdenih nizova prolazi kroz petlju bez ikakvog rekurzivnog poziva i vraća se.\n- `result.push(...)` dodaje elemente na kraj niza `result`. `push` prima koliko god argumenata.\n- `...flatten(item)` je **spread**: raspakuje vraćeni ravan niz u zasebne argumente, pa je `push(...[2, 3])` isto što i `push(2, 3)`.\n- Zašto spread: `result.push(flatten(item))` bi dodao ceo niz kao JEDAN element, pa rezultat ne bi bio ravan.\n\nTok za `flatten([1, [2, [3]]])`:\n\n```\nflatten([1, [2, [3]]])\n  item = 1        → nije niz → result = [1]\n  item = [2, [3]] → niz → flatten([2, [3]])\n      item = 2    → result = [2]\n      item = [3]  → niz → flatten([3]) vraća [3] → result = [2, 3]\n      vraća [2, 3]\n  result = [1, 2, 3]\n```",
+            "en": "If it is an array, we flatten it with the same function and add the result. This is **recursion**.\n\n- Recursion: a function calls itself for a smaller part of the problem. `flatten(item)` flattens the nested array `item`, which may contain its own nested arrays, and so on.\n- There is an exit from the recursion: an array that has no nested arrays goes through the loop with no recursive call and is returned.\n- `result.push(...)` adds elements to the end of the array `result`. `push` accepts any number of arguments.\n- `...flatten(item)` is **spread**: it unpacks the returned flat array into separate arguments, so `push(...[2, 3])` is the same as `push(2, 3)`.\n- Why spread: `result.push(flatten(item))` would add the whole array as ONE element, so the result would not be flat.\n\nFlow for `flatten([1, [2, [3]]])`:\n\n```\nflatten([1, [2, [3]]])\n  item = 1        → not an array → result = [1]\n  item = [2, [3]] → an array → flatten([2, [3]])\n      item = 2    → result = [2]\n      item = [3]  → an array → flatten([3]) returns [3] → result = [2, 3]\n      returns [2, 3]\n  result = [1, 2, 3]\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Početak grane „inače“.\n\n- `} else {` zatvara granu „da“ iz linije 4 i otvara granu koja se izvršava kad uslov NIJE tačan, tj. kad `item` nije niz. Zatvara se u liniji 8.",
+            "en": "The start of the “otherwise” branch.\n\n- `} else {` closes the “yes” branch from line 4 and opens the branch that runs when the condition is NOT true, i.e. when `item` is not an array. It closes on line 8."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Običan element se samo dodaje.\n\n- `result.push(item)` dodaje taj jedan element na kraj niza `result`, tačno na mesto koje mu po redosledu pripada.",
+            "en": "An ordinary element is simply added.\n\n- `result.push(item)` adds that one element to the end of the array `result`, exactly in the place it belongs to by order."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara granu „inače“ (otvorenu u liniji 6).\n\n- `}` zatvara `else` blok. Posle njega petlja prelazi na sledeći element.",
+            "en": "Closes the “otherwise” branch (opened on line 6).\n\n- `}` closes the `else` block. After it the loop moves on to the next element."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Vraća ravan niz.\n\n- `return result` šalje sve prikupljene elemente pozivaocu. Za prazan ulaz ili ulaz od samih praznih nizova, `result` je ostao prazan, pa se vraća `[]`.\n- U rekurzivnom pozivu, onaj ko poziva je sama funkcija `flatten` iz linije 5, koja taj rezultat raspakuje spread-om.",
+            "en": "Returns the flat array.\n\n- `return result` sends all the collected elements to the caller. For an empty input or an input of only empty arrays, `result` stayed empty, so `[]` is returned.\n- In a recursive call, the caller is the function `flatten` itself from line 5, which unpacks that result with spread."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Svaki nivo ugnježdenja se rešava istom funkcijom; izlaz iz rekurzije je niz bez ugnježdenih nizova.",
+        "en": "Every nesting level is solved by the same function; the exit from the recursion is an array with no nested arrays."
+      }
+    }
+  ]
+}

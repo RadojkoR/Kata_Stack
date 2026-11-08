@@ -164,6 +164,9 @@
     "conditional-types": "uslovni tipovi",
     "mapped-types": "mapirani tipovi",
     "parsing": "parsiranje",
-    "errors": "greške"
+    "errors": "greške",
+    "regex": "regularni izrazi",
+    "sets": "skupovi",
+    "recursion": "rekurzija"
   }
 }

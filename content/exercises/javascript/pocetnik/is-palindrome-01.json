@@ -1,0 +1,62 @@
+{
+  "id": "is-palindrome-01",
+  "title": {
+    "sr": "Palindrom",
+    "en": "Palindrome"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "regex"],
+  "description": {
+    "sr": "Napiši funkciju `isPalindrome(text)` koja vraća `true` ako se tekst isto čita sa obe strane.\n\nVelika i mala slova se ne razlikuju, a razmaci i znaci interpunkcije se ignorišu (računaju se samo slova a-z i cifre).\n\nPrimeri:\n- `isPalindrome('level')` → `true`\n- `isPalindrome('A man, a plan, a canal: Panama')` → `true`\n- `isPalindrome('hello')` → `false`",
+    "en": "Write a function `isPalindrome(text)` that returns `true` if the text reads the same from both ends.\n\nLetter case does not matter, and spaces and punctuation are ignored (only the letters a-z and digits count).\n\nExamples:\n- `isPalindrome('level')` → `true`\n- `isPalindrome('A man, a plan, a canal: Panama')` → `true`\n- `isPalindrome('hello')` → `false`"
+  },
+  "starterCode": "function isPalindrome(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'prepoznaje palindrom', en: 'recognizes a palindrome' }, () => {\n  expect(isPalindrome('level')).toBe(true);\n});\ntest({ sr: 'odbacuje običnu reč', en: 'rejects an ordinary word' }, () => {\n  expect(isPalindrome('hello')).toBe(false);\n});\ntest({ sr: 'ignoriše velika slova, razmake i interpunkciju', en: 'ignores case, spaces and punctuation' }, () => {\n  expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);\n});\ntest({ sr: 'prazan tekst je palindrom', en: 'empty text is a palindrome' }, () => {\n  expect(isPalindrome('')).toBe(true);\n});",
+  "hiddenTests": "test('two different characters', () => {\n  expect(isPalindrome('ab')).toBe(false);\n});\ntest('a sentence with a question mark', () => {\n  expect(isPalindrome('Was it a car or a cat I saw?')).toBe(true);\n});\ntest('digits count too', () => {\n  expect(isPalindrome('12321')).toBe(true);\n  expect(isPalindrome('12345')).toBe(false);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "očisti pa uporedi sa obrnutim",
+        "en": "clean, then compare with the reverse"
+      },
+      "code": "function isPalindrome(text) {\n  const cleaned = text.toLowerCase().replace(/[^a-z0-9]/g, '');\n  return cleaned === [...cleaned].reverse().join('');\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function isPalindrome` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `isPalindrome('level')`, unutar funkcije je `text` jednako `'level'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function isPalindrome` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `isPalindrome('level')`, inside the function `text` equals `'level'`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo „očišćenu“ verziju teksta: sve malim slovima, bez razmaka i interpunkcije.\n\n- `const cleaned` pravi promenljivu koja se ne dodeljuje ponovo.\n- `text.toLowerCase()` pretvara sva slova u mala, pa `A` i `a` postaju ista stvar. Stringovi su nepromenljivi, pa dobijamo novi string.\n- `.replace(/[^a-z0-9]/g, '')` zamenjuje delove teksta koji odgovaraju šablonu. Šablon `/[^a-z0-9]/g` je regularni izraz: `[ ]` je skup znakova, `a-z` i `0-9` su opsezi (slova i cifre), a `^` na početku skupa znači „sve osim“. Dakle, „bilo koji znak koji NIJE malo slovo ili cifra“.\n- `g` na kraju znači „globalno“: zameni sve pojave, ne samo prvu.\n- `''` je zamena: prazan string, tj. te znakove brišemo.\n- Redosled je bitan: prvo `toLowerCase`, pa onda `replace`. Da je obrnuto, velika slova bi bila obrisana jer nisu u opsegu `a-z`.\n- Ograničenje: slova van engleske abecede (č, š, ž) se brišu, jer nisu u `a-z`.\n\nPrimer:\n\n```\n'A man, a plan' → toLowerCase → 'a man, a plan'\n               → replace      → 'amanaplan'\n```",
+            "en": "We build a “cleaned” version of the text: all lowercase, without spaces and punctuation.\n\n- `const cleaned` creates a variable that is not reassigned.\n- `text.toLowerCase()` converts all letters to lowercase, so `A` and `a` become the same thing. Strings are immutable, so we get a new string.\n- `.replace(/[^a-z0-9]/g, '')` replaces the parts of the text that match the pattern. The pattern `/[^a-z0-9]/g` is a regular expression: `[ ]` is a set of characters, `a-z` and `0-9` are ranges (letters and digits), and `^` at the start of the set means “anything except”. So, “any character that is NOT a lowercase letter or a digit”.\n- `g` at the end means “global”: replace all occurrences, not just the first.\n- `''` is the replacement: an empty string, i.e. we delete those characters.\n- The order matters: first `toLowerCase`, then `replace`. The other way round, capital letters would be deleted because they are not in the range `a-z`.\n- Limitation: letters outside the English alphabet (č, š, ž) are deleted, because they are not in `a-z`.\n\nExample:\n\n```\n'A man, a plan' → toLowerCase → 'a man, a plan'\n               → replace      → 'amanaplan'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Poredimo očišćeni tekst sa njegovom obrnutom verzijom.\n\n- `[...cleaned].reverse().join('')` pravi obrnuti string: spread rastavlja na znakove, `reverse` okreće redosled, `join('')` spaja nazad (isto kao u zadatku „Obrni string“).\n- `===` poredi dva stringa po vrednosti i vraća `true` ili `false`. Taj rezultat se direktno vraća, pa nije potreban `if`.\n- Za prazan tekst je `cleaned` jednako `''`, a `'' === ''` je `true`, što test traži.\n\n```\ncleaned = 'amanaplanacanalpanama'\nobrnuto = 'amanaplanacanalpanama'   → true\n\ncleaned = 'hello'\nobrnuto = 'olleh'                   → false\n```",
+            "en": "We compare the cleaned text with its reversed version.\n\n- `[...cleaned].reverse().join('')` builds the reversed string: spread splits into characters, `reverse` reverses the order, `join('')` joins back (the same as in the “Reverse a string” exercise).\n- `===` compares two strings by value and returns `true` or `false`. That result is returned directly, so no `if` is needed.\n- For empty text `cleaned` is `''`, and `'' === ''` is `true`, which the test requires.\n\n```\ncleaned = 'amanaplanacanalpanama'\nreversed = 'amanaplanacanalpanama'  → true\n\ncleaned = 'hello'\nreversed = 'olleh'                  → false\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Prvo se tekst normalizuje (mala slova, bez znakova), pa se poredi sa svojom obrnutom verzijom.",
+        "en": "The text is normalized first (lowercase, no symbols), then compared with its own reversed version."
+      }
+    }
+  ]
+}

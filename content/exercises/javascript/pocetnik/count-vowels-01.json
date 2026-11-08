@@ -1,0 +1,83 @@
+{
+  "id": "count-vowels-01",
+  "title": {
+    "sr": "Broj samoglasnika",
+    "en": "Count the vowels"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "loops"],
+  "description": {
+    "sr": "Napiši funkciju `countVowels(text)` koja vraća broj samoglasnika (`a`, `e`, `i`, `o`, `u`) u tekstu.\n\nVelika i mala slova se ne razlikuju.\n\nPrimeri:\n- `countVowels('hello')` → `2`\n- `countVowels('HELLO')` → `2`\n- `countVowels('rhythm')` → `0`",
+    "en": "Write a function `countVowels(text)` that returns the number of vowels (`a`, `e`, `i`, `o`, `u`) in the text.\n\nLetter case does not matter.\n\nExamples:\n- `countVowels('hello')` → `2`\n- `countVowels('HELLO')` → `2`\n- `countVowels('rhythm')` → `0`"
+  },
+  "starterCode": "function countVowels(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'broji samoglasnike', en: 'counts vowels' }, () => {\n  expect(countVowels('hello')).toBe(2);\n});\ntest({ sr: 'velika slova se računaju', en: 'capital letters count' }, () => {\n  expect(countVowels('HELLO')).toBe(2);\n});\ntest({ sr: 'reč bez samoglasnika daje 0', en: 'a word without vowels gives 0' }, () => {\n  expect(countVowels('rhythm')).toBe(0);\n});\ntest({ sr: 'prazan tekst daje 0', en: 'empty text gives 0' }, () => {\n  expect(countVowels('')).toBe(0);\n});",
+  "hiddenTests": "test('every vowel in both cases', () => {\n  expect(countVowels('AEIOU aeiou')).toBe(10);\n});\ntest('only consonants and symbols', () => {\n  expect(countVowels('xyz 123 !?')).toBe(0);\n});\ntest('a repeated vowel counts each time', () => {\n  expect(countVowels('aaaa')).toBe(4);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja i includes",
+        "en": "loop and includes"
+      },
+      "code": "function countVowels(text) {\n  let count = 0;\n  for (const char of text.toLowerCase()) {\n    if ('aeiou'.includes(char)) count++;\n  }\n  return count;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countVowels` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `countVowels('hello')`, unutar funkcije je `text` jednako `'hello'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countVowels` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `countVowels('hello')`, inside the function `text` equals `'hello'`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Brojač koji ćemo uvećavati za svaki samoglasnik.\n\n- `let count` pravi promenljivu čija se vrednost menja.\n- `= 0` je početna vrednost: dok nismo ništa našli, samoglasnika je nula. Ako tekst ne sadrži nijedan, ostaje `0`, što test traži.\n- Promenljiva postoji samo unutar funkcije, pa svaki poziv počinje od nule.",
+            "en": "A counter that we will increase for every vowel.\n\n- `let count` creates a variable whose value changes.\n- `= 0` is the starting value: until we have found anything, there are zero vowels. If the text contains none, it stays `0`, which the test requires.\n- The variable exists only inside the function, so every call starts from zero."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja koja prolazi kroz svaki znak teksta.\n\n- `text.toLowerCase()` pretvara tekst u mala slova, pa `A` i `a` postaju isto i proveravamo samo male samoglasnike.\n- `for (const char of ...)` uzima jedan po jedan znak stringa (string se može proći petljom kao niz znakova); u `char` je u svakom prolazu trenutni znak.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.\n\nZa `'Hello'`:\n\n```\ntoLowerCase() → 'hello'\nprolazi: 'h', 'e', 'l', 'l', 'o'\n```",
+            "en": "A loop that goes through each character of the text.\n\n- `text.toLowerCase()` converts the text to lowercase, so `A` and `a` become the same and we only check lowercase vowels.\n- `for (const char of ...)` takes the string's characters one by one (a string can be looped over like an array of characters); `char` is the current character on each pass.\n- `{` opens the loop body; it is closed by `}` on line 5.\n\nFor `'Hello'`:\n\n```\ntoLowerCase() → 'hello'\nvisits: 'h', 'e', 'l', 'l', 'o'\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Ako je znak samoglasnik, uvećavamo brojač.\n\n- `'aeiou'.includes(char)` pita: da li string `'aeiou'` sadrži `char`? Pošto je `char` jedan znak, to je isto što i „da li je `char` jedan od samoglasnika“. Vraća `true` ili `false`.\n- `count++` je **postfiksno uvećanje**: `++` znači „dodaj 1“, pa je to isto što i `count = count + 1`. Ovde se vrednost izraza ne koristi, pa je svejedno da li je `count++` ili `++count`.\n- Nema vitičastih zagrada, pa u `if` spada samo `count++`.\n- Napomena: `'aeiou'.includes('')` bi bilo `true`, ali `char` nikad nije prazan string.\n\nTok za `'hello'`:\n\n```\nh → 'aeiou' ne sadrži 'h'  → count = 0\ne → sadrži                    → count = 1\nl → ne sadrži                 → count = 1\nl → ne sadrži                 → count = 1\no → sadrži                    → count = 2\n```",
+            "en": "If the character is a vowel, we increase the counter.\n\n- `'aeiou'.includes(char)` asks: does the string `'aeiou'` contain `char`? Since `char` is one character, that is the same as “is `char` one of the vowels”. It returns `true` or `false`.\n- `count++` is the **postfix increment**: `++` means “add 1”, so it is the same as `count = count + 1`. Here the value of the expression is not used, so it makes no difference whether it is `count++` or `++count`.\n- There are no curly braces, so only `count++` belongs to the `if`.\n- Note: `'aeiou'.includes('')` would be `true`, but `char` is never an empty string.\n\nFlow for `'hello'`:\n\n```\nh → 'aeiou' does not contain 'h'  → count = 0\ne → contains                         → count = 1\nl → does not contain                 → count = 1\nl → does not contain                 → count = 1\no → contains                         → count = 2\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Vraća konačan broj.\n\n- `return count` šalje vrednost brojača kao rezultat. Namerno je izvan petlje, da se izvrši tek kad se prođu svi znakovi.",
+            "en": "Returns the final number.\n\n- `return count` sends the counter's value as the result. It is deliberately outside the loop, so it runs only after all characters have been visited."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Jednostavna petlja sa brojačem; `includes` na stringu `'aeiou'` zamenjuje pet poređenja.",
+        "en": "A simple loop with a counter; `includes` on the string `'aeiou'` replaces five comparisons."
+      }
+    }
+  ]
+}

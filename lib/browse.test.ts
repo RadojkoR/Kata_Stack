@@ -132,9 +132,13 @@ describe("isPlayable", () => {
 });
 
 describe("sadržaj", () => {
-  it("ima 15 zadataka, svi su rešivi u ovom trenutku, a svaki nivo koji je u planu ima bar jedan", () => {
+  it("JavaScript ima 15 zadataka (10 početnih, 4 srednja, 1 expert), a svi zadaci su rešivi u ovom trenutku", () => {
     const all = getExercises();
-    expect(all).toHaveLength(15);
+    const js = getExercises({ area: "javascript" });
+    expect(js).toHaveLength(15);
+    expect(getExercises({ area: "javascript", level: "pocetnik" })).toHaveLength(10);
+    expect(getExercises({ area: "javascript", level: "srednji" })).toHaveLength(4);
+    expect(getExercises({ area: "javascript", level: "expert" })).toHaveLength(1);
     expect(all.every((e) => isPlayable(e))).toBe(true);
     const cells = new Set(all.map((e) => `${e.area}/${e.level}`));
     for (const cell of ["javascript/pocetnik", "javascript/srednji", "javascript/expert", "typescript/pocetnik", "typescript/srednji", "node/pocetnik", "node/srednji"]) {

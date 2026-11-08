@@ -1,0 +1,90 @@
+{
+  "id": "max-in-array-01",
+  "title": {
+    "sr": "Najveći broj u nizu",
+    "en": "The largest number in an array"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays", "loops"],
+  "description": {
+    "sr": "Napiši funkciju `findMax(numbers)` koja vraća najveći broj u nizu, ili `undefined` ako je niz prazan.\n\nNe koristi `Math.max`: cilj je da sam napišeš petlju.\n\nPrimeri:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`",
+    "en": "Write a function `findMax(numbers)` that returns the largest number in the array, or `undefined` if the array is empty.\n\nDo not use `Math.max`: the goal is to write the loop yourself.\n\nExamples:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`"
+  },
+  "starterCode": "function findMax(numbers) {\n  // your code\n}",
+  "tests": "test({ sr: 'nalazi najveći broj', en: 'finds the largest number' }, () => {\n  expect(findMax([3, 7, 2])).toBe(7);\n});\ntest({ sr: 'radi sa negativnim brojevima', en: 'works with negative numbers' }, () => {\n  expect(findMax([-5, -2, -9])).toBe(-2);\n});\ntest({ sr: 'prazan niz daje undefined', en: 'an empty array gives undefined' }, () => {\n  expect(findMax([])).toBe(undefined);\n});",
+  "hiddenTests": "test('a single element', () => {\n  expect(findMax([4])).toBe(4);\n});\ntest('the largest value at the start and at the end', () => {\n  expect(findMax([9, 1, 2])).toBe(9);\n  expect(findMax([1, 2, 9])).toBe(9);\n});\ntest('repeated maximum values', () => {\n  expect(findMax([5, 5, 5])).toBe(5);\n});\ntest('does not change the input', () => {\n  const input = [3, 1, 2];\n  findMax(input);\n  expect(input).toEqual([3, 1, 2]);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja i trenutni maksimum",
+        "en": "loop and the current maximum"
+      },
+      "code": "function findMax(numbers) {\n  if (numbers.length === 0) return undefined;\n  let max = numbers[0];\n  for (const n of numbers) {\n    if (n > max) max = n;\n  }\n  return max;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function findMax` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(numbers)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `findMax([3, 7, 2])`, unutar funkcije je `numbers` niz `[3, 7, 2]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 8.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function findMax` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(numbers)` is the parameter list. A parameter is an empty “slot” for input: when we call `findMax([3, 7, 2])`, inside the function `numbers` is the array `[3, 7, 2]`.\n- `{` opens the function body, and `}` on line 8 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prazan niz je poseban slučaj: nema najvećeg broja, pa odmah vraćamo `undefined`.\n\n- `numbers.length` je broj elemenata u nizu. `=== 0` pita da li je niz prazan.\n- `return undefined` odmah završava funkciju. Ostatak koda se ne izvršava.\n- Zašto ne `Math.max(...numbers)`: za prazan niz `Math.max()` vraća `-Infinity`, a ne `undefined`, što test ne dozvoljava.\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.",
+            "en": "An empty array is a special case: there is no largest number, so we immediately return `undefined`.\n\n- `numbers.length` is the number of elements in the array. `=== 0` asks whether the array is empty.\n- `return undefined` ends the function immediately. The rest of the code does not run.\n- Why not `Math.max(...numbers)`: for an empty array `Math.max()` returns `-Infinity`, not `undefined`, which the test does not allow.\n- `if` without curly braces: exactly one statement after the condition belongs to it."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Pretpostavljamo da je prvi element najveći do sada.\n\n- `let max` pravi promenljivu čija se vrednost menja, jer ćemo je ažurirati kad naiđemo na veći broj.\n- `numbers[0]` je prvi element (brojanje u nizu kreće od nule).\n- Počinjemo od prvog elementa, a ne od `0`, zbog negativnih brojeva: da smo krenuli od `0`, za `[-5, -2, -9]` bi rezultat bio `0`, a ne `-2`.",
+            "en": "We assume the first element is the largest so far.\n\n- `let max` creates a variable whose value changes, because we will update it when we meet a larger number.\n- `numbers[0]` is the first element (counting in an array starts at zero).\n- We start from the first element, not from `0`, because of negative numbers: had we started from `0`, for `[-5, -2, -9]` the result would be `0`, not `-2`."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Prolazimo kroz sve brojeve.\n\n- `for (const n of numbers)` uzima jedan po jedan element niza; u `n` je u svakom prolazu trenutni broj.\n- Prvi prolaz poredi prvi element sa samim sobom, što je bezopasno.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 6.",
+            "en": "We go through all the numbers.\n\n- `for (const n of numbers)` takes the array's elements one by one; `n` is the current number on each pass.\n- The first pass compares the first element with itself, which is harmless.\n- `{` opens the loop body; it is closed by `}` on line 6."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Ako je trenutni broj veći od najvećeg do sada, on postaje novi najveći.\n\n- `n > max` pita: da li je `n` veće od `max`? Daje `true` ili `false`.\n- `max = n` je dodela: u `max` stavlja vrednost `n`. Znak `=` je dodela, a ne poređenje.\n- Nema vitičastih zagrada, pa u `if` spada samo `max = n`. Ako uslov nije tačan, ne radi se ništa.\n\nTok za `[3, 7, 2]`:\n\n```\nmax = 3\nn = 3  → 3 > 3? ne\nn = 7  → 7 > 3? da → max = 7\nn = 2  → 2 > 7? ne\nkraj petlje, max = 7\n```",
+            "en": "If the current number is larger than the largest so far, it becomes the new largest.\n\n- `n > max` asks: is `n` greater than `max`? It gives `true` or `false`.\n- `max = n` is an assignment: it puts the value of `n` into `max`. The `=` sign is assignment, not comparison.\n- There are no curly braces, so only `max = n` belongs to the `if`. If the condition is not true, nothing is done.\n\nFlow for `[3, 7, 2]`:\n\n```\nmax = 3\nn = 3  → 3 > 3? no\nn = 7  → 7 > 3? yes → max = 7\nn = 2  → 2 > 7? no\nend of the loop, max = 7\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo petlje (otvoreno u liniji 4).\n\n- Kad izvršavanje stigne do `}`, petlja uzima sledeći element. Kad elemenata više nema, nastavlja se od linije 7.",
+            "en": "Closes the loop body (opened on line 4).\n\n- When execution reaches `}`, the loop takes the next element. When there are none left, execution continues from line 7."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Vraća najveći broj koji smo našli.\n\n- `return max` šalje trenutnu vrednost promenljive `max` kao rezultat.\n- Ovo je namerno izvan petlje: da je unutar nje, funkcija bi se završila posle prvog elementa.",
+            "en": "Returns the largest number we found.\n\n- `return max` sends the current value of the variable `max` as the result.\n- This is deliberately outside the loop: if it were inside, the function would end after the first element."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Jedan prolaz kroz niz, a za prazan niz se vraća `undefined` kako zadatak traži.",
+        "en": "One pass through the array, and for an empty array `undefined` is returned as the task requires."
+      }
+    }
+  ]
+}

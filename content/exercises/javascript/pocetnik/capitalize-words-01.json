@@ -1,0 +1,76 @@
+{
+  "id": "capitalize-words-01",
+  "title": {
+    "sr": "Veliko početno slovo svake reči",
+    "en": "Capitalize every word"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "arrays"],
+  "description": {
+    "sr": "Napiši funkciju `capitalizeWords(text)` koja svaku reč piše sa velikim početnim slovom, a ostala slova malim. Reči se razdvajaju razmakom.\n\nPrimeri:\n- `capitalizeWords('hello world')` → `'Hello World'`\n- `capitalizeWords('hELLO wORLD')` → `'Hello World'`\n- `capitalizeWords('')` → `''`\n\nRazmaci ostaju kakvi jesu, pa `'a  b'` (dva razmaka) daje `'A  B'`.",
+    "en": "Write a function `capitalizeWords(text)` that writes every word with a capital first letter and the other letters in lowercase. Words are separated by a space.\n\nExamples:\n- `capitalizeWords('hello world')` → `'Hello World'`\n- `capitalizeWords('hELLO wORLD')` → `'Hello World'`\n- `capitalizeWords('')` → `''`\n\nSpaces stay as they are, so `'a  b'` (two spaces) gives `'A  B'`."
+  },
+  "starterCode": "function capitalizeWords(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'prvo slovo svake reči je veliko', en: 'the first letter of every word is capital' }, () => {\n  expect(capitalizeWords('hello world')).toBe('Hello World');\n});\ntest({ sr: 'ostala slova postaju mala', en: 'the other letters become lowercase' }, () => {\n  expect(capitalizeWords('hELLO wORLD')).toBe('Hello World');\n});\ntest({ sr: 'prazan tekst daje prazan tekst', en: 'empty text gives empty text' }, () => {\n  expect(capitalizeWords('')).toBe('');\n});",
+  "hiddenTests": "test('multiple spaces are preserved', () => {\n  expect(capitalizeWords('a  b')).toBe('A  B');\n});\ntest('a single letter', () => {\n  expect(capitalizeWords('a')).toBe('A');\n});\ntest('leading and trailing spaces are preserved', () => {\n  expect(capitalizeWords(' hi there ')).toBe(' Hi There ');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "split, map, join",
+        "en": "split, map, join"
+      },
+      "code": "function capitalizeWords(text) {\n  return text\n    .split(' ')\n    .map((word) => (word ? word[0].toUpperCase() + word.slice(1).toLowerCase() : word))\n    .join(' ');\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function capitalizeWords` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `capitalizeWords('hello world')`, unutar funkcije je `text` jednako `'hello world'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 6.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function capitalizeWords` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `capitalizeWords('hello world')`, inside the function `text` equals `'hello world'`.\n- `{` opens the function body, and `}` on line 6 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Počinje izraz koji se nastavlja u sledećim linijama.\n\n- `return text` ne završava naredbu na kraju linije: sledeća linija počinje tačkom (`.split`), pa JavaScript zna da se izraz nastavlja. Tako se lanac metoda piše preko više linija radi čitljivosti.\n- Zamka: da je `return` sam u liniji, a `text` u sledećoj, JavaScript bi automatski dodao tačku-zarez posle `return` i funkcija bi vratila `undefined`. Zato `text` mora da bude u istoj liniji kao `return`.\n- Tok izraza: tekst → niz reči → niz reči sa velikim početnim slovom → nazad u tekst.",
+            "en": "The start of an expression that continues in the following lines.\n\n- `return text` does not end the statement at the end of the line: the next line starts with a dot (`.split`), so JavaScript knows the expression continues. This is how a chain of methods is written across several lines for readability.\n- A trap: if `return` were alone on a line and `text` on the next, JavaScript would automatically insert a semicolon after `return` and the function would return `undefined`. That is why `text` has to be on the same line as `return`.\n- The flow of the expression: text → array of words → array of capitalized words → back to text."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Sečemo tekst na reči.\n\n- `.split(' ')` seče string svuda gde se nalazi jedan razmak i vraća niz delova. `'hello world'` postaje `['hello', 'world']`.\n- Svaki razmak je razdelnik, pa dva razmaka zaredom daju prazan string između: `'a  b'` postaje `['a', '', 'b']`. To se koristi kasnije da razmaci ostanu sačuvani.",
+            "en": "We cut the text into words.\n\n- `.split(' ')` cuts the string everywhere there is a single space and returns an array of pieces. `'hello world'` becomes `['hello', 'world']`.\n- Every space is a separator, so two spaces in a row give an empty string between them: `'a  b'` becomes `['a', '', 'b']`. This is used later so the spaces are preserved."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Svaku reč pretvaramo u reč sa velikim početnim slovom.\n\n- `.map(...)` poziva funkciju za svaki element niza i pravi **novi** niz od vraćenih vrednosti. `(word) => ...` je ta funkcija; `word` je trenutna reč.\n- `word ? A : word` je ternarni operator: ako je `word` „istinit“ (neprazan string), računa se `A`; inače se vraća `word` kakav jeste. Prazan string je neistinit, pa prazni delovi (od dvostrukih razmaka) ostaju prazni.\n- To štiti od greške: `''[0]` je `undefined`, a `undefined.toUpperCase()` baca `TypeError`.\n- `A` je `word[0].toUpperCase() + word.slice(1).toLowerCase()`. `word[0]` je prvo slovo, a `.toUpperCase()` ga pretvara u veliko.\n- `word.slice(1)` je ostatak reči od indeksa 1 nadalje, a `.toLowerCase()` ga pretvara u mala slova.\n- `+` između dva stringa ih spaja (nadovezuje).\n- Spoljne zagrade oko ternarnog izraza služe samo čitljivosti.\n\nTok za `'hELLO'`:\n\n```\nword[0]                    → 'h'  → toUpperCase → 'H'\nword.slice(1)              → 'ELLO' → toLowerCase → 'ello'\n'H' + 'ello'               → 'Hello'\n```",
+            "en": "We turn each word into a word with a capital first letter.\n\n- `.map(...)` calls a function for each element of the array and creates a **new** array from the returned values. `(word) => ...` is that function; `word` is the current word.\n- `word ? A : word` is the ternary operator: if `word` is “truthy” (a non-empty string), `A` is computed; otherwise `word` is returned as it is. An empty string is falsy, so the empty pieces (from double spaces) stay empty.\n- That protects from an error: `''[0]` is `undefined`, and `undefined.toUpperCase()` throws a `TypeError`.\n- `A` is `word[0].toUpperCase() + word.slice(1).toLowerCase()`. `word[0]` is the first letter, and `.toUpperCase()` turns it into a capital.\n- `word.slice(1)` is the rest of the word from index 1 onward, and `.toLowerCase()` turns it into lowercase.\n- `+` between two strings joins them (concatenates).\n- The outer parentheses around the ternary expression are only for readability.\n\nFlow for `'hELLO'`:\n\n```\nword[0]                    → 'h'   → toUpperCase → 'H'\nword.slice(1)              → 'ELLO' → toLowerCase → 'ello'\n'H' + 'ello'               → 'Hello'\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Spajamo reči nazad u jedan tekst.\n\n- `.join(' ')` spaja elemente niza u string, a između njih ubacuje jedan razmak.\n- Pošto su prazni delovi ostali u nizu, oni daju uzastopne razmake: `['A', '', 'B'].join(' ')` je `'A  B'`. Zato se razmaci čuvaju, uključujući one na početku i kraju.\n- `;` završava celu naredbu `return` koja počinje u liniji 2.",
+            "en": "We join the words back into one text.\n\n- `.join(' ')` joins the array's elements into a string, putting a single space between them.\n- Since the empty pieces stayed in the array, they produce consecutive spaces: `['A', '', 'B'].join(' ')` is `'A  B'`. That is why spaces are preserved, including those at the start and the end.\n- `;` ends the whole `return` statement that starts on line 2."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Lanac `split` → `map` → `join` je čest obrazac: tekst u niz, obrada svakog elementa, pa nazad u tekst.",
+        "en": "The `split` → `map` → `join` chain is a common pattern: text to an array, processing each element, then back to text."
+      }
+    }
+  ]
+}

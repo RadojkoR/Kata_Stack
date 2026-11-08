@@ -1,0 +1,55 @@
+{
+  "id": "unique-values-01",
+  "title": {
+    "sr": "Ukloni duplikate",
+    "en": "Remove duplicates"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays", "sets"],
+  "description": {
+    "sr": "Napiši funkciju `unique(items)` koja vraća novi niz bez duplikata. Redosled prvog pojavljivanja se čuva.\n\nPrimeri:\n- `unique([1, 2, 2, 3, 1])` → `[1, 2, 3]`\n- `unique(['a', 'a'])` → `['a']`\n- `unique([])` → `[]`\n\nOriginalni niz se ne menja.",
+    "en": "Write a function `unique(items)` that returns a new array without duplicates. The order of first occurrence is kept.\n\nExamples:\n- `unique([1, 2, 2, 3, 1])` → `[1, 2, 3]`\n- `unique(['a', 'a'])` → `['a']`\n- `unique([])` → `[]`\n\nThe original array is not changed."
+  },
+  "starterCode": "function unique(items) {\n  // your code\n}",
+  "tests": "test({ sr: 'uklanja duplikate brojeva', en: 'removes duplicate numbers' }, () => {\n  expect(unique([1, 2, 2, 3, 1])).toEqual([1, 2, 3]);\n});\ntest({ sr: 'radi sa stringovima', en: 'works with strings' }, () => {\n  expect(unique(['a', 'a'])).toEqual(['a']);\n});\ntest({ sr: 'prazan niz daje prazan niz', en: 'an empty array gives an empty array' }, () => {\n  expect(unique([])).toEqual([]);\n});",
+  "hiddenTests": "test('keeps the order of first occurrence', () => {\n  expect(unique([3, 1, 3, 2, 1])).toEqual([3, 1, 2]);\n});\ntest('does not change the input', () => {\n  const input = [1, 1, 2];\n  unique(input);\n  expect(input).toEqual([1, 1, 2]);\n});\ntest('the number 1 and the string 1 are different values', () => {\n  expect(unique([1, '1', 1])).toEqual([1, '1']);\n});\ntest('NaN is treated as one value', () => {\n  expect(unique([NaN, NaN])).toEqual([NaN]);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Set",
+        "en": "Set"
+      },
+      "code": "function unique(items) {\n  return [...new Set(items)];\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function unique` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `unique([1, 2, 2, 3])`, unutar funkcije je `items` niz `[1, 2, 2, 3]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function unique` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items)` is the parameter list. A parameter is an empty “slot” for input: when we call `unique([1, 2, 2, 3])`, inside the function `items` is the array `[1, 2, 2, 3]`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Dve operacije: napravi skup (koji ne dozvoljava duplikate), pa ga vrati u niz.\n\n- `new Set(items)` pravi **Set**: kolekciju u kojoj svaka vrednost postoji najviše jednom. Kad joj damo niz, dodaje elemente jedan po jedan, a duplikate ignoriše.\n- Set pamti redosled ubacivanja, pa ostaje redosled prvog pojavljivanja.\n- Set poredi vrednosti strogo: `1` i `'1'` su različiti, a `NaN` se računa kao ista vrednost samo sa sobom (skriveni testovi).\n- `[...skup]` pretvara Set nazad u niz: Set se može proći petljom, pa ga spread „raspakuje“ element po element u nove uglaste zagrade.\n- Originalni niz `items` se ne menja: Set je nova struktura, a spread pravi nov niz.\n\nTok za `[3, 1, 3, 2, 1]`:\n\n```\nnew Set([3, 1, 3, 2, 1])  → Set { 3, 1, 2 }    (duplikati odbačeni, redosled prvog pojavljivanja)\n[...Set { 3, 1, 2 }]      → [3, 1, 2]\n```",
+            "en": "Two operations: build a set (which does not allow duplicates), then turn it back into an array.\n\n- `new Set(items)` creates a **Set**: a collection in which each value exists at most once. When we give it an array, it adds the elements one by one and ignores duplicates.\n- A Set remembers insertion order, so the order of first occurrence is kept.\n- A Set compares values strictly: `1` and `'1'` are different, and `NaN` counts as the same value only with itself (hidden tests).\n- `[...set]` turns the Set back into an array: a Set can be looped over, so spread “unpacks” it element by element into new square brackets.\n- The original array `items` is not changed: a Set is a new structure, and spread creates a new array.\n\nFlow for `[3, 1, 3, 2, 1]`:\n\n```\nnew Set([3, 1, 3, 2, 1])  → Set { 3, 1, 2 }    (duplicates dropped, order of first occurrence)\n[...Set { 3, 1, 2 }]      → [3, 1, 2]\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kratko i brzo: Set sam odbacuje duplikate i čuva redosled ubacivanja.",
+        "en": "Short and fast: a Set drops duplicates by itself and keeps insertion order."
+      }
+    }
+  ]
+}

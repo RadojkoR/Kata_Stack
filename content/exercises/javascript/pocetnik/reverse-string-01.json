@@ -1,0 +1,55 @@
+{
+  "id": "reverse-string-01",
+  "title": {
+    "sr": "Obrni string",
+    "en": "Reverse a string"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "arrays"],
+  "description": {
+    "sr": "Napiši funkciju `reverseString(text)` koja vraća string napisan unazad.\n\nPrimeri:\n- `reverseString('abc')` → `'cba'`\n- `reverseString('a b')` → `'b a'`\n- `reverseString('')` → `''`",
+    "en": "Write a function `reverseString(text)` that returns the string written backwards.\n\nExamples:\n- `reverseString('abc')` → `'cba'`\n- `reverseString('a b')` → `'b a'`\n- `reverseString('')` → `''`"
+  },
+  "starterCode": "function reverseString(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'obrće običan tekst', en: 'reverses plain text' }, () => {\n  expect(reverseString('abc')).toBe('cba');\n});\ntest({ sr: 'čuva razmake', en: 'keeps spaces' }, () => {\n  expect(reverseString('a b')).toBe('b a');\n});\ntest({ sr: 'prazan string daje prazan string', en: 'an empty string gives an empty string' }, () => {\n  expect(reverseString('')).toBe('');\n});",
+  "hiddenTests": "test('a palindrome stays the same', () => {\n  expect(reverseString('level')).toBe('level');\n});\ntest('a single character', () => {\n  expect(reverseString('x')).toBe('x');\n});\ntest('emoji are not broken', () => {\n  expect(reverseString('a😀b')).toBe('b😀a');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "spread + reverse + join",
+        "en": "spread + reverse + join"
+      },
+      "code": "function reverseString(text) {\n  return [...text].reverse().join('');\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function reverseString` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `reverseString('abc')`, unutar funkcije je `text` jednako `'abc'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function reverseString` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `reverseString('abc')`, inside the function `text` equals `'abc'`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Tri koraka u lancu: rastavi string na znakove, okreni ih, spoji nazad.\n\n- `return` vraća vrednost izraza onome ko je pozvao funkciju i završava funkciju.\n- `[...text]` pravi niz od znakova stringa. Uglaste zagrade `[ ]` prave niz, a tri tačke `...` su **spread**: „raspakuj“ string znak po znak. Zato je `[...'abc']` jednako `['a', 'b', 'c']`.\n- Zašto spread, a ne `text.split('')`: `split('')` seče string na UTF-16 jedinice, pa se emoji (koji zauzima dve jedinice) pokvari. Spread ide po stvarnim znakovima, pa `'a😀b'` ostaje ispravan (skriveni test).\n- `.reverse()` okreće redosled elemenata niza **na mestu**, tj. menja taj niz. Ovde je to bezbedno jer je niz nov (napravljen u prvom koraku), pa originalni `text` ostaje netaknut. Stringovi su ionako nepromenljivi.\n- `.join('')` spaja elemente niza u jedan string, a između njih ubacuje ono što je u zagradi. Ovde je to prazan string, dakle ništa.\n\nTok za `'abc'`:\n\n```\ntext = 'abc'\n[...text]   → ['a', 'b', 'c']\n.reverse()  → ['c', 'b', 'a']\n.join('')   → 'cba'\n```\n\nZa prazan string `[...'']` je prazan niz, a `[].join('')` je `''`, što test traži.",
+            "en": "Three steps in a chain: split the string into characters, reverse them, join them back.\n\n- `return` gives the value of the expression to whoever called the function and ends the function.\n- `[...text]` creates an array of the string's characters. The square brackets `[ ]` create an array, and the three dots `...` are **spread**: “unpack” the string character by character. So `[...'abc']` equals `['a', 'b', 'c']`.\n- Why spread and not `text.split('')`: `split('')` cuts the string into UTF-16 units, so an emoji (which takes two units) breaks. Spread goes by real characters, so `'a😀b'` stays correct (hidden test).\n- `.reverse()` reverses the order of the array's elements **in place**, i.e. it modifies that array. Here that is safe because the array is new (created in the first step), so the original `text` stays untouched. Strings are immutable anyway.\n- `.join('')` joins the array's elements into one string, putting between them whatever is in the parentheses. Here that is an empty string, so nothing.\n\nFlow for `'abc'`:\n\n```\ntext = 'abc'\n[...text]   → ['a', 'b', 'c']\n.reverse()  → ['c', 'b', 'a']\n.join('')   → 'cba'\n```\n\nFor an empty string `[...'']` is an empty array, and `[].join('')` is `''`, which the test requires."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kratko i ispravno čak i za emoji, jer spread ide po znakovima, a ne po UTF-16 jedinicama.",
+        "en": "Short and correct even for emoji, because spread goes by characters, not by UTF-16 units."
+      }
+    }
+  ]
+}

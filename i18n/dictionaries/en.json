@@ -164,6 +164,9 @@
     "conditional-types": "conditional types",
     "mapped-types": "mapped types",
     "parsing": "parsing",
-    "errors": "errors"
+    "errors": "errors",
+    "regex": "regular expressions",
+    "sets": "sets",
+    "recursion": "recursion"
   }
 }
