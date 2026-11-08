@@ -1,0 +1,55 @@
+{
+  "id": "insert-at-01",
+  "title": {
+    "sr": "Ubaci element na poziciju",
+    "en": "Insert an item at a position"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays", "spread"],
+  "description": {
+    "sr": "Napiši funkciju `insertAt(items, index, item)` koja vraća **novi** niz u koji je `item` ubačen na poziciju `index`. Elementi posle te pozicije pomeraju se udesno.\n\n- Ako je `index` veći od dužine niza, `item` se dodaje na kraj.\n- Originalni niz se ne menja.\n\nPrimeri:\n- `insertAt(['a', 'c'], 1, 'b')` → `['a', 'b', 'c']`\n- `insertAt([1, 2], 0, 0)` → `[0, 1, 2]`\n- `insertAt([1, 2], 9, 3)` → `[1, 2, 3]`\n\nOgraničenje: `index` je ceo broj, 0 ili veći.",
+    "en": "Write a function `insertAt(items, index, item)` that returns a **new** array with `item` inserted at position `index`. The elements after that position move to the right.\n\n- If `index` is greater than the length of the array, `item` is added to the end.\n- The original array is not changed.\n\nExamples:\n- `insertAt(['a', 'c'], 1, 'b')` → `['a', 'b', 'c']`\n- `insertAt([1, 2], 0, 0)` → `[0, 1, 2]`\n- `insertAt([1, 2], 9, 3)` → `[1, 2, 3]`\n\nConstraint: `index` is a whole number, 0 or greater."
+  },
+  "starterCode": "function insertAt(items, index, item) {\n  // your code\n}",
+  "tests": "test({ sr: 'ubacuje u sredinu', en: 'inserts in the middle' }, () => {\n  expect(insertAt(['a', 'c'], 1, 'b')).toEqual(['a', 'b', 'c']);\n});\ntest({ sr: 'ubacuje na početak', en: 'inserts at the start' }, () => {\n  expect(insertAt([1, 2], 0, 0)).toEqual([0, 1, 2]);\n});\ntest({ sr: 'pozicija iza kraja dodaje na kraj', en: 'a position past the end adds to the end' }, () => {\n  expect(insertAt([1, 2], 9, 3)).toEqual([1, 2, 3]);\n});",
+  "hiddenTests": "test('the original array is not changed', () => {\n  const input = ['a', 'c'];\n  insertAt(input, 1, 'b');\n  expect(input).toEqual(['a', 'c']);\n});\ntest('an empty array', () => {\n  expect(insertAt([], 0, 'x')).toEqual(['x']);\n});\ntest('inserting at the end', () => {\n  expect(insertAt([1, 2], 2, 3)).toEqual([1, 2, 3]);\n});\ntest('the result is a new array', () => {\n  const input = [1];\n  expect(insertAt(input, 0, 0)).not.toBe(input);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "spread i slice",
+        "en": "spread and slice"
+      },
+      "code": "function insertAt(items, index, item) {\n  return [...items.slice(0, index), item, ...items.slice(index)];\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function insertAt` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, index, item)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz, `index` je pozicija na koju ubacujemo, a `item` je vrednost koju ubacujemo. Poziv `insertAt(['a', 'c'], 1, 'b')` daje `items = ['a', 'c']`, `index = 1` i `item = 'b'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function insertAt` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, index, item)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array, `index` is the position where we insert, and `item` is the value we insert. The call `insertAt(['a', 'c'], 1, 'b')` gives `items = ['a', 'c']`, `index = 1` and `item = 'b'`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo novi niz od tri dela: deo pre pozicije, novu vrednost i deo posle pozicije.\n\n- `items.slice(0, index)` uzima elemente od početka do pozicije `index`, bez nje.\n- `...` je **spread**: raspakuje niz u pojedinačne elemente. Npr. `[...['a', 'b'], 'c']` je `['a', 'b', 'c']`.\n- `item` je jedna vrednost koja ide u sredinu.\n- `items.slice(index)` uzima elemente od pozicije `index` do kraja.\n- Uglaste zagrade `[ ]` spajaju sve u jedan novi niz.\n- Za `insertAt(['a', 'c'], 1, 'b')`: `slice(0, 1)` daje `['a']`, `slice(1)` daje `['c']`, a rezultat je `['a', 'b', 'c']`.\n- Za `insertAt([1, 2], 9, 3)`: `slice(0, 9)` daje `[1, 2]`, a `slice(9)` daje `[]`, pa je rezultat `[1, 2, 3]`: ubacivanje iza kraja dodaje na kraj.\n\n```\ninsertAt(['a', 'c'], 1, 'b')\nitems.slice(0, 1)  → ['a']\nitems.slice(1)     → ['c']\n[...['a'], 'b', ...['c']] → ['a', 'b', 'c']\n```",
+            "en": "We build a new array from three parts: the part before the position, the new value, and the part after the position.\n\n- `items.slice(0, index)` takes the elements from the start up to the position `index`, excluding it.\n- `...` is **spread**: it unpacks an array into separate elements. E.g. `[...['a', 'b'], 'c']` is `['a', 'b', 'c']`.\n- `item` is one value that goes into the middle.\n- `items.slice(index)` takes the elements from the position `index` to the end.\n- The square brackets `[ ]` join everything into one new array.\n- For `insertAt(['a', 'c'], 1, 'b')`: `slice(0, 1)` gives `['a']`, `slice(1)` gives `['c']`, and the result is `['a', 'b', 'c']`.\n- For `insertAt([1, 2], 9, 3)`: `slice(0, 9)` gives `[1, 2]`, and `slice(9)` gives `[]`, so the result is `[1, 2, 3]`: inserting past the end adds to the end.\n\n```\ninsertAt(['a', 'c'], 1, 'b')\nitems.slice(0, 1)  → ['a']\nitems.slice(1)     → ['c']\n[...['a'], 'b', ...['c']] → ['a', 'b', 'c']\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Originalni niz ostaje netaknut, jer `slice` i spread prave nove nizove. `splice` bi menjao ulaz, a zadatak to ne dozvoljava.",
+        "en": "The original array stays untouched, because `slice` and spread create new arrays. `splice` would change the input, which the task does not allow."
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "to-number-safe-01",
+  "title": {
+    "sr": "Bezbedna konverzija u broj",
+    "en": "Safe conversion to a number"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["types", "conversion"],
+  "description": {
+    "sr": "Napiši funkciju `toNumberOr(value, fallback)` koja pretvara `value` u broj pomoću `Number(value)`. Ako rezultat nije broj (tj. dobije se `NaN`), vraća `fallback`.\n\nPrimeri:\n- `toNumberOr('42', 0)` → `42`\n- `toNumberOr('abc', -1)` → `-1`\n- `toNumberOr(undefined, 7)` → `7`\n\nNapomena: `Number('')` i `Number(null)` su `0`, pa tako i ovde (to je ponašanje jezika, ne greška).",
+    "en": "Write a function `toNumberOr(value, fallback)` that converts `value` to a number using `Number(value)`. If the result is not a number (that is, it is `NaN`), it returns `fallback`.\n\nExamples:\n- `toNumberOr('42', 0)` → `42`\n- `toNumberOr('abc', -1)` → `-1`\n- `toNumberOr(undefined, 7)` → `7`\n\nNote: `Number('')` and `Number(null)` are `0`, so it is the same here (that is how the language behaves, not a mistake)."
+  },
+  "starterCode": "function toNumberOr(value, fallback) {\n  // your code\n}",
+  "tests": "test({ sr: 'tekst sa brojem postaje broj', en: 'text with a number becomes a number' }, () => {\n  expect(toNumberOr('42', 0)).toBe(42);\n});\ntest({ sr: 'tekst koji nije broj daje fallback', en: 'text that is not a number gives the fallback' }, () => {\n  expect(toNumberOr('abc', -1)).toBe(-1);\n});\ntest({ sr: 'undefined daje fallback', en: 'undefined gives the fallback' }, () => {\n  expect(toNumberOr(undefined, 7)).toBe(7);\n});",
+  "hiddenTests": "test('an empty string becomes 0, not the fallback', () => {\n  expect(toNumberOr('', 9)).toBe(0);\n});\ntest('spaces around the number are ignored', () => {\n  expect(toNumberOr(' 7 ', 0)).toBe(7);\n});\ntest('null becomes 0', () => {\n  expect(toNumberOr(null, 3)).toBe(0);\n});\ntest('negative numbers and a number that is already a number', () => {\n  expect(toNumberOr('-4', 0)).toBe(-4);\n  expect(toNumberOr(12, 0)).toBe(12);\n});\ntest('Infinity is a number, so the fallback is not used', () => {\n  expect(toNumberOr('Infinity', 0)).toBe(Infinity);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Number i Number.isNaN",
+        "en": "Number and Number.isNaN"
+      },
+      "code": "function toNumberOr(value, fallback) {\n  const number = Number(value);\n  return Number.isNaN(number) ? fallback : number;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function toNumberOr` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(value, fallback)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `value` je vrednost koju pretvaramo u broj, a `fallback` je broj koji vraćamo ako pretvaranje ne uspe. Poziv `toNumberOr('42', 0)` daje `value = '42'` i `fallback = 0`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function toNumberOr` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(value, fallback)` is the parameter list. A parameter is an empty “slot” for input: `value` is the value we convert to a number, and `fallback` is the number we return if the conversion fails. The call `toNumberOr('42', 0)` gives `value = '42'` and `fallback = 0`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pokušavamo da pretvorimo vrednost u broj.\n\n- `const number` pravi promenljivu koja se ne dodeljuje ponovo.\n- `Number(value)` je ugrađena funkcija koja pokušava da pretvori bilo šta u broj. Ako ne ume, vraća `NaN` („Not a Number“, specijalna vrednost koja znači „ovo nije broj“).\n- Ne bacaju se greške: neuspeh se prepoznaje samo po `NaN`.\n\nŠta daje `Number(...)`:\n\n```\nNumber('42')        → 42\nNumber(' 7 ')       → 7      (razmaci sa strana se ignorišu)\nNumber('-4')        → -4\nNumber('')          → 0      (prazan string je 0)\nNumber(null)        → 0\nNumber(true)        → 1\nNumber('abc')       → NaN\nNumber(undefined)   → NaN\n```",
+            "en": "We try to convert the value to a number.\n\n- `const number` creates a variable that is not reassigned.\n- `Number(value)` is a built-in function that tries to convert anything to a number. If it cannot, it returns `NaN` (“Not a Number”, a special value meaning “this is not a number”).\n- No errors are thrown: failure is recognized only by `NaN`.\n\nWhat `Number(...)` gives:\n\n```\nNumber('42')        → 42\nNumber(' 7 ')       → 7      (spaces at the sides are ignored)\nNumber('-4')        → -4\nNumber('')          → 0      (an empty string is 0)\nNumber(null)        → 0\nNumber(true)        → 1\nNumber('abc')       → NaN\nNumber(undefined)   → NaN\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Vraćamo rezultat, ili `fallback` ako konverzija nije uspela.\n\n- `Number.isNaN(number)` vraća `true` ako je `number` tačno `NaN`.\n- Zašto ne `number === NaN`: `NaN` nije jednak ni samom sebi, pa to poređenje uvek daje `false`. Zato postoji posebna funkcija.\n- `Number.isNaN` je pouzdanija od starije globalne `isNaN`, koja prvo pretvara argument u broj, pa daje neočekivane odgovore za tekst: `isNaN('')` je `false`, iako prazan string nije broj. U ovom kodu bi i `isNaN` radio, jer je `number` već pretvoren u broj; razlika postoji tek kad se proverava vrednost koja još nije pretvorena.\n- `uslov ? a : b` je ternarni operator: ako je uslov tačan, rezultat je `a`, inače `b`. Ovde: ako je `NaN`, vraća se `fallback`, inače `number`.\n- `return` vraća rezultat izraza i završava funkciju.\n\nTok:\n\n```\ntoNumberOr('42', 0)      → number = 42  → Number.isNaN(42) = false  → 42\ntoNumberOr('abc', -1)    → number = NaN → Number.isNaN(NaN) = true  → -1\ntoNumberOr('', 9)        → number = 0   → Number.isNaN(0) = false   → 0\n```",
+            "en": "We return the result, or `fallback` if the conversion failed.\n\n- `Number.isNaN(number)` returns `true` if `number` is exactly `NaN`.\n- Why not `number === NaN`: `NaN` is not equal even to itself, so that comparison always gives `false`. That is why there is a dedicated function.\n- `Number.isNaN` is more reliable than the older global `isNaN`, which first converts its argument to a number, so it gives unexpected answers for text: `isNaN('')` is `false`, even though an empty string is not a number. In this code `isNaN` would work too, because `number` is already converted to a number; the difference appears only when checking a value that has not been converted yet.\n- `condition ? a : b` is the ternary operator: if the condition is true the result is `a`, otherwise `b`. Here: if it is `NaN`, `fallback` is returned, otherwise `number`.\n- `return` returns the result of the expression and ends the function.\n\nFlow:\n\n```\ntoNumberOr('42', 0)      → number = 42  → Number.isNaN(42) = false  → 42\ntoNumberOr('abc', -1)    → number = NaN → Number.isNaN(NaN) = true  → -1\ntoNumberOr('', 9)        → number = 0   → Number.isNaN(0) = false   → 0\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`NaN` se prepoznaje samo funkcijom `Number.isNaN`, jer `NaN === NaN` nikad nije tačno.",
+        "en": "`NaN` is recognized only with `Number.isNaN`, because `NaN === NaN` is never true."
+      }
+    }
+  ]
+}

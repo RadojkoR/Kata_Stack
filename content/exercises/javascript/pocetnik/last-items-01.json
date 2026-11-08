@@ -1,0 +1,62 @@
+{
+  "id": "last-items-01",
+  "title": {
+    "sr": "Poslednjih nekoliko elemenata",
+    "en": "The last few items"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays"],
+  "description": {
+    "sr": "Napiši funkciju `lastItems(items, count)` koja vraća poslednjih `count` elemenata niza.\n\n- Ako je `count` veći od dužine niza, vraća se ceo niz.\n- Ako je `count` jednak 0, vraća se prazan niz.\n- Originalni niz se ne menja.\n\nPrimeri:\n- `lastItems([1, 2, 3, 4], 2)` → `[3, 4]`\n- `lastItems([1, 2], 5)` → `[1, 2]`\n- `lastItems([1, 2, 3], 0)` → `[]`\n\nOgraničenje: `count` je ceo broj, 0 ili veći.",
+    "en": "Write a function `lastItems(items, count)` that returns the last `count` elements of the array.\n\n- If `count` is greater than the length of the array, the whole array is returned.\n- If `count` is 0, an empty array is returned.\n- The original array is not changed.\n\nExamples:\n- `lastItems([1, 2, 3, 4], 2)` → `[3, 4]`\n- `lastItems([1, 2], 5)` → `[1, 2]`\n- `lastItems([1, 2, 3], 0)` → `[]`\n\nConstraint: `count` is a whole number, 0 or greater."
+  },
+  "starterCode": "function lastItems(items, count) {\n  // your code\n}",
+  "tests": "test({ sr: 'vraća poslednje elemente', en: 'returns the last items' }, () => {\n  expect(lastItems([1, 2, 3, 4], 2)).toEqual([3, 4]);\n});\ntest({ sr: 'veći broj od dužine daje ceo niz', en: 'a count larger than the length gives the whole array' }, () => {\n  expect(lastItems([1, 2], 5)).toEqual([1, 2]);\n});\ntest({ sr: 'nula daje prazan niz', en: 'zero gives an empty array' }, () => {\n  expect(lastItems([1, 2, 3], 0)).toEqual([]);\n});",
+  "hiddenTests": "test('an empty array gives an empty array', () => {\n  expect(lastItems([], 3)).toEqual([]);\n});\ntest('one item', () => {\n  expect(lastItems(['a', 'b', 'c'], 1)).toEqual(['c']);\n});\ntest('the original array is not changed', () => {\n  const input = [1, 2, 3];\n  lastItems(input, 2);\n  expect(input).toEqual([1, 2, 3]);\n});\ntest('the result is a new array', () => {\n  const input = [1, 2, 3];\n  expect(lastItems(input, 3)).not.toBe(input);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "slice od izračunatog početka",
+        "en": "slice from a computed start"
+      },
+      "code": "function lastItems(items, count) {\n  const start = items.length - count;\n  return items.slice(start < 0 ? 0 : start);\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function lastItems` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, count)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz, a `count` je broj poslednjih elemenata koje tražimo. Poziv `lastItems([1, 2, 3], 2)` daje `items = [1, 2, 3]` i `count = 2`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function lastItems` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, count)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array, and `count` is the number of last elements we want. The call `lastItems([1, 2, 3], 2)` gives `items = [1, 2, 3]` and `count = 2`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Računamo gde počinju poslednjih `count` elemenata.\n\n- `items.length` je broj elemenata. Za `[1, 2, 3, 4]` je `4`.\n- `items.length - count` je indeks prvog elementa koji vraćamo. Za `count = 2` to je `4 - 2 = 2`, a element na indeksu 2 je `3`.\n- `const start` pravi promenljivu koja se ne dodeljuje ponovo.\n\n```\nitems = [1, 2, 3, 4], count = 2\nstart = 4 - 2 = 2    → od indeksa 2 nadalje: [3, 4]\n\ncount = 0 → start = 4 - 0 = 4 → od indeksa 4 nadalje: []\n```",
+            "en": "We compute where the last `count` elements begin.\n\n- `items.length` is the number of elements. For `[1, 2, 3, 4]` it is `4`.\n- `items.length - count` is the index of the first element we return. For `count = 2` that is `4 - 2 = 2`, and the element at index 2 is `3`.\n- `const start` creates a variable that is not reassigned.\n\n```\nitems = [1, 2, 3, 4], count = 2\nstart = 4 - 2 = 2    → from index 2 on: [3, 4]\n\ncount = 0 → start = 4 - 0 = 4 → from index 4 on: []\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Vraćamo deo niza od `start` do kraja.\n\n- `items.slice(početak)` vraća **novi** niz od zadatog indeksa do kraja. Originalni niz se ne menja.\n- `start < 0 ? 0 : start` je ternarni operator: ako je `start` negativan (jer je `count` veći od dužine), počinjemo od `0`, pa se vraća ceo niz. Inače se koristi `start`.\n- Zašto ne `items.slice(-count)`: za `count = 0` bilo bi `slice(-0)`, a `-0` je isto što i `0`, pa bi se vratio **ceo** niz umesto praznog.\n\n```\n[1, 2].slice(0)      → [1, 2]      (ceo niz, kao kad je count = 5)\n[1, 2, 3].slice(3)   → []         (count = 0)\n[1, 2, 3].slice(-0)  → [1, 2, 3]  (zamka: ceo niz)\n```",
+            "en": "We return the part of the array from `start` to the end.\n\n- `items.slice(start)` returns a **new** array from the given index to the end. The original array is not changed.\n- `start < 0 ? 0 : start` is the ternary operator: if `start` is negative (because `count` is greater than the length), we start from `0`, so the whole array is returned. Otherwise `start` is used.\n- Why not `items.slice(-count)`: for `count = 0` it would be `slice(-0)`, and `-0` is the same as `0`, so the **whole** array would be returned instead of an empty one.\n\n```\n[1, 2].slice(0)      → [1, 2]      (the whole array, like when count = 5)\n[1, 2, 3].slice(3)   → []         (count = 0)\n[1, 2, 3].slice(-0)  → [1, 2, 3]  (the trap: the whole array)\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Granicu računamo iz `start`, a ne iz `count`, pa se ivični slučajevi (0 i veći broj od dužine) rešavaju sami.",
+        "en": "We compute the boundary from `start`, not from `count`, so edge cases (0 and a number larger than the length) are handled on their own."
+      }
+    }
+  ]
+}

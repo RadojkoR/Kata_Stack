@@ -1,0 +1,117 @@
+{
+  "id": "has-value-01",
+  "title": {
+    "sr": "Da li niz sadrži vrednost",
+    "en": "Does the array contain a value"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays", "searching"],
+  "description": {
+    "sr": "Napiši funkciju `hasValue(items, value)` koja vraća `true` ako se `value` nalazi u nizu, a `false` ako ne.\n\nPoređenje radi kao `includes`: vrednosti se porede strogo, pa broj `1` i tekst `'1'` nisu isti. Za razliku od `indexOf`, `NaN` se nalazi u nizu.\n\nPrimeri:\n- `hasValue([1, 2, 3], 2)` → `true`\n- `hasValue(['a'], 'b')` → `false`\n- `hasValue(['a', 'b'], 'a')` → `true`\n\nOriginalni niz se ne menja.",
+    "en": "Write a function `hasValue(items, value)` that returns `true` if `value` is in the array, and `false` if not.\n\nThe comparison works like `includes`: values are compared strictly, so the number `1` and the text `'1'` are not the same. Unlike `indexOf`, `NaN` is found in the array.\n\nExamples:\n- `hasValue([1, 2, 3], 2)` → `true`\n- `hasValue(['a'], 'b')` → `false`\n- `hasValue(['a', 'b'], 'a')` → `true`\n\nThe original array is not changed."
+  },
+  "starterCode": "function hasValue(items, value) {\n  // your code\n}",
+  "tests": "test({ sr: 'nalazi vrednost u sredini', en: 'finds a value in the middle' }, () => {\n  expect(hasValue([1, 2, 3], 2)).toBe(true);\n});\ntest({ sr: 'vrednost koje nema daje false', en: 'a missing value gives false' }, () => {\n  expect(hasValue(['a'], 'b')).toBe(false);\n});\ntest({ sr: 'nalazi i prvi element', en: 'finds the first element too' }, () => {\n  expect(hasValue(['a', 'b'], 'a')).toBe(true);\n});",
+  "hiddenTests": "test('NaN is found, unlike with indexOf', () => {\n  expect(hasValue([1, NaN], NaN)).toBe(true);\n});\ntest('strict comparison: the number 1 and the text \"1\" are different', () => {\n  expect(hasValue(['1', 2], 1)).toBe(false);\n});\ntest('null and undefined are different', () => {\n  expect(hasValue([null], undefined)).toBe(false);\n});\ntest('an empty array contains nothing', () => {\n  expect(hasValue([], 1)).toBe(false);\n});\ntest('does not change the input', () => {\n  const input = [1, 2];\n  hasValue(input, 2);\n  expect(input).toEqual([1, 2]);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "includes",
+        "en": "includes"
+      },
+      "code": "function hasValue(items, value) {\n  return items.includes(value);\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function hasValue` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, value)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz u kome tražimo, a `value` je vrednost koju tražimo. Poziv `hasValue([1, 2], 2)` daje `items = [1, 2]` i `value = 2`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function hasValue` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, value)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array we search in, and `value` is the value we look for. The call `hasValue([1, 2], 2)` gives `items = [1, 2]` and `value = 2`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Metoda `includes` proverava da li niz sadrži zadatu vrednost.\n\n- `items.includes(value)` vraća `true` ako se `value` nalazi u nizu, a `false` ako ne.\n- Poređenje je strogo, kao `===`: `'1'` i `1` nisu isti.\n- `includes` ima jednu razliku od `===`: `NaN` nalazi samog sebe. Zato `includes` nalazi `NaN`, a `indexOf` ne.\n\n```\n[1, 2].includes(2)      → true\n[1, 2].includes(3)      → false\n[1, NaN].includes(NaN)  → true\n[1, NaN].indexOf(NaN)   → -1  (zato indexOf ne prolazi skriveni test)\n```",
+            "en": "The `includes` method checks whether the array contains the given value.\n\n- `items.includes(value)` returns `true` if `value` is in the array, and `false` if not.\n- The comparison is strict, like `===`: `'1'` and `1` are not the same.\n- `includes` has one difference from `===`: `NaN` finds itself. That is why `includes` finds `NaN`, while `indexOf` does not.\n\n```\n[1, 2].includes(2)      → true\n[1, 2].includes(3)      → false\n[1, NaN].includes(NaN)  → true\n[1, NaN].indexOf(NaN)   → -1  (why indexOf fails the hidden test)\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najkraće rešenje: `includes` radi sve, uključujući `NaN`.",
+        "en": "The shortest solution: `includes` does everything, including `NaN`."
+      }
+    },
+    {
+      "label": {
+        "sr": "petlja sa posebnom proverom za NaN",
+        "en": "a loop with a special check for NaN"
+      },
+      "code": "function hasValue(items, value) {\n  for (const item of items) {\n    if (item === value) return true;\n    if (Number.isNaN(item) && Number.isNaN(value)) return true;\n  }\n  return false;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function hasValue` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, value)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz u kome tražimo, a `value` je vrednost koju tražimo. Poziv `hasValue([1, 2], 2)` daje `items = [1, 2]` i `value = 2`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function hasValue` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, value)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array we search in, and `value` is the value we look for. The call `hasValue([1, 2], 2)` gives `items = [1, 2]` and `value = 2`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prolazimo kroz sve elemente, jedan po jedan.\n\n- `for (const item of items)` uzima svaki element niza redom; u `item` je trenutni element.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through all the elements, one by one.\n\n- `for (const item of items)` takes each element of the array in order; `item` is the current element.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Ako je element jednak traženoj vrednosti, odmah vraćamo `true`.\n\n- `item === value` je stroga jednakost.\n- `return true` završava funkciju, pa se ostatak petlje ne izvršava.\n\n```\nitems = [1, 2, 3], value = 2:\nitem = 1 → 1 === 2? ne\nitem = 2 → 2 === 2? da → return true\n```",
+            "en": "If the element equals the value we look for, we return `true` at once.\n\n- `item === value` is strict equality.\n- `return true` ends the function, so the rest of the loop does not run.\n\n```\nitems = [1, 2, 3], value = 2:\nitem = 1 → 1 === 2? no\nitem = 2 → 2 === 2? yes → return true\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Poseban slučaj za `NaN`: `NaN` nije jednak ni samom sebi, pa ga `===` nikad ne nađe.\n\n- `Number.isNaN(item)` je `true` samo ako je element `NaN`. Isto važi za `value`.\n- Ako su oba `NaN`, vraćamo `true`.\n\n```\nitems = [1, NaN], value = NaN:\nitem = 1   → 1 === NaN? ne; Number.isNaN(1)? ne\nitem = NaN → NaN === NaN? ne; Number.isNaN(NaN) i Number.isNaN(NaN)? da → return true\n```",
+            "en": "A special case for `NaN`: `NaN` is not equal even to itself, so `===` never finds it.\n\n- `Number.isNaN(item)` is `true` only if the element is `NaN`. The same holds for `value`.\n- If both are `NaN`, we return `true`.\n\n```\nitems = [1, NaN], value = NaN:\nitem = 1   → 1 === NaN? no; Number.isNaN(1)? no\nitem = NaN → NaN === NaN? no; Number.isNaN(NaN) and Number.isNaN(NaN)? yes → return true\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 2.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 2.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Ako petlja prođe do kraja, vrednosti nema.\n\n- Do ove linije se stiže samo ako nijedan `return true` nije izvršen.\n- `return false` je namerno posle petlje: da je unutra, funkcija bi vratila `false` već posle prvog elementa koji nije traženi.",
+            "en": "If the loop runs to the end, the value is not there.\n\n- This line is reached only if no `return true` ran.\n- `return false` is deliberately after the loop: if it were inside, the function would return `false` after the first element that is not the one we want."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Petlja pokazuje šta `includes` radi iznutra; posebna provera za `NaN` je potrebna jer `===` ne nalazi `NaN`.",
+        "en": "The loop shows what `includes` does inside; the special check for `NaN` is needed because `===` does not find `NaN`."
+      }
+    }
+  ]
+}

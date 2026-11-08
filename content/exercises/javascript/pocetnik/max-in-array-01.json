@@ -10,8 +10,8 @@
   "runtime": "worker",
   "tags": ["arrays", "loops"],
   "description": {
-    "sr": "Napiši funkciju `findMax(numbers)` koja vraća najveći broj u nizu, ili `undefined` ako je niz prazan.\n\nNe koristi `Math.max`: cilj je da sam napišeš petlju.\n\nPrimeri:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`",
-    "en": "Write a function `findMax(numbers)` that returns the largest number in the array, or `undefined` if the array is empty.\n\nDo not use `Math.max`: the goal is to write the loop yourself.\n\nExamples:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`"
+    "sr": "Napiši funkciju `findMax(numbers)` koja vraća najveći broj u nizu, ili `undefined` ako je niz prazan.\n\nPreporuka: reši bez `Math.max`, sopstvenom petljom, jer je to cilj vežbe. Testovi proveravaju samo rezultat, ne i način.\n\nPrimeri:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`",
+    "en": "Write a function `findMax(numbers)` that returns the largest number in the array, or `undefined` if the array is empty.\n\nRecommendation: solve it without `Math.max`, with your own loop, because that is the goal of the exercise. The tests check only the result, not the approach.\n\nExamples:\n- `findMax([3, 7, 2])` → `7`\n- `findMax([-5, -2, -9])` → `-2`\n- `findMax([])` → `undefined`"
   },
   "starterCode": "function findMax(numbers) {\n  // your code\n}",
   "tests": "test({ sr: 'nalazi najveći broj', en: 'finds the largest number' }, () => {\n  expect(findMax([3, 7, 2])).toBe(7);\n});\ntest({ sr: 'radi sa negativnim brojevima', en: 'works with negative numbers' }, () => {\n  expect(findMax([-5, -2, -9])).toBe(-2);\n});\ntest({ sr: 'prazan niz daje undefined', en: 'an empty array gives undefined' }, () => {\n  expect(findMax([])).toBe(undefined);\n});",

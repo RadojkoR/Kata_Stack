@@ -12,7 +12,7 @@
   },
   "starterCode": "function createCounter(start = 0) {\n  // your code\n}",
   "tests": "test({ sr: 'počinje od 1 po defaultu', en: 'starts from 1 by default' }, () => {\n  const c = createCounter();\n  expect(c()).toBe(1);\n  expect(c()).toBe(2);\n});\ntest({ sr: 'poštuje početnu vrednost', en: 'respects the start value' }, () => {\n  const c = createCounter(10);\n  expect(c()).toBe(11);\n});",
-  "hiddenTests": "test('counters are independent', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});",
+  "hiddenTests": "test('counters are independent', () => {\n  const a = createCounter();\n  const b = createCounter();\n  a();\n  a();\n  expect(b()).toBe(1);\n});\ntest('a negative start value', () => {\n  const c = createCounter(-5);\n  expect(c()).toBe(-4);\n});\ntest('many calls keep counting', () => {\n  const c = createCounter();\n  let last = 0;\n  for (let i = 0; i < 100; i++) last = c();\n  expect(last).toBe(100);\n});",
   "solutions": [
     {
       "label": {

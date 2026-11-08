@@ -1,0 +1,131 @@
+{
+  "id": "count-occurrences-01",
+  "title": {
+    "sr": "Koliko puta se pojavljuje",
+    "en": "How many times it appears"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["arrays", "searching", "loops"],
+  "description": {
+    "sr": "Napiši funkciju `countOccurrences(items, value)` koja vraća koliko puta se `value` pojavljuje u nizu. Poređenje je strogo (`===`), kao kod `indexOf`: broj `1` i tekst `'1'` su različiti, a `NaN` se nikad ne broji.\n\nPrimeri:\n- `countOccurrences([1, 2, 1, 1], 1)` → `3`\n- `countOccurrences(['a', 'b'], 'c')` → `0`\n- `countOccurrences([], 'a')` → `0`\n\nOriginalni niz se ne menja.",
+    "en": "Write a function `countOccurrences(items, value)` that returns how many times `value` appears in the array. The comparison is strict (`===`), as in `indexOf`: the number `1` and the text `'1'` are different, and `NaN` is never counted.\n\nExamples:\n- `countOccurrences([1, 2, 1, 1], 1)` → `3`\n- `countOccurrences(['a', 'b'], 'c')` → `0`\n- `countOccurrences([], 'a')` → `0`\n\nThe original array is not changed."
+  },
+  "starterCode": "function countOccurrences(items, value) {\n  // your code\n}",
+  "tests": "test({ sr: 'broji sva pojavljivanja', en: 'counts all occurrences' }, () => {\n  expect(countOccurrences([1, 2, 1, 1], 1)).toBe(3);\n});\ntest({ sr: 'vrednost koje nema daje 0', en: 'a value that is missing gives 0' }, () => {\n  expect(countOccurrences(['a', 'b'], 'c')).toBe(0);\n});\ntest({ sr: 'prazan niz daje 0', en: 'an empty array gives 0' }, () => {\n  expect(countOccurrences([], 'a')).toBe(0);\n});",
+  "hiddenTests": "test('strict comparison: the number 1 and the text \"1\" are different', () => {\n  expect(countOccurrences(['1', 1, '1'], '1')).toBe(2);\n});\ntest('all elements are equal', () => {\n  expect(countOccurrences(['a', 'a', 'a'], 'a')).toBe(3);\n});\ntest('NaN is never counted', () => {\n  expect(countOccurrences([NaN, 1], NaN)).toBe(0);\n});\ntest('does not change the input', () => {\n  const input = [1, 1];\n  countOccurrences(input, 1);\n  expect(input).toEqual([1, 1]);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja sa indexOf",
+        "en": "a loop with indexOf"
+      },
+      "code": "function countOccurrences(items, value) {\n  let count = 0;\n  let index = items.indexOf(value);\n  while (index !== -1) {\n    count++;\n    index = items.indexOf(value, index + 1);\n  }\n  return count;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countOccurrences` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, value)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz u kome brojimo, a `value` je vrednost koju brojimo. Poziv `countOccurrences([1, 2, 1], 1)` daje `items = [1, 2, 1]` i `value = 1`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 9.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countOccurrences` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, value)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array we count in, and `value` is the value we count. The call `countOccurrences([1, 2, 1], 1)` gives `items = [1, 2, 1]` and `value = 1`.\n- `{` opens the function body, and `}` on line 9 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Brojač pojavljivanja, na početku nula.\n\n- `let count = 0` pravi promenljivu koja raste za svako pojavljivanje. Na početku nijedno nije nađeno.",
+            "en": "A counter of occurrences, starting at zero.\n\n- `let count = 0` creates a variable that grows by one for every occurrence. At the start none has been found."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Tražimo prvo pojavljivanje.\n\n- `items.indexOf(value)` vraća poziciju prvog pojavljivanja, ili `-1` ako ga nema.\n- `let index` je `let` jer će se menjati u petlji.\n\n```\n[1, 2, 1].indexOf(1) → 0\n[1, 2, 1].indexOf(9) → -1\n```",
+            "en": "We look for the first occurrence.\n\n- `items.indexOf(value)` returns the position of the first occurrence, or `-1` if there is none.\n- `let index` is `let` because it will change in the loop.\n\n```\n[1, 2, 1].indexOf(1) → 0\n[1, 2, 1].indexOf(9) → -1\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Petlja traje dok god nalazimo pojavljivanje.\n\n- `while (uslov) { ... }` proverava uslov pre svakog prolaza.\n- `index !== -1` znači „nađeno je“: `-1` je oznaka „nema više“.\n- `{` otvara telo; zatvara ga `}` u liniji 7.",
+            "en": "The loop continues as long as we find an occurrence.\n\n- `while (condition) { ... }` checks the condition before every pass.\n- `index !== -1` means “found”: `-1` is the marker for “no more”.\n- `{` opens the body; it is closed by `}` on line 7."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Svako nađeno pojavljivanje brojimo.\n\n- `count++` dodaje 1 na `count`.",
+            "en": "We count every occurrence we find.\n\n- `count++` adds 1 to `count`."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Tražimo sledeće pojavljivanje, počevši **posle** trenutnog.\n\n- `indexOf(value, index + 1)`: drugi argument je pozicija od koje počinje pretraga. `index + 1` je odmah posle trenutnog pojavljivanja, pa se isto mesto ne nalazi ponovo.\n- Da stoji samo `index`, pretraga bi svaki put našla isto mesto i petlja se nikad ne bi završila (beskonačna petlja).\n- Rezultat se upisuje u `index`. Kad nema više pojavljivanja, dobijamo `-1` i petlja se završava.\n\n```\n[1, 2, 1, 1], value = 1:\nindex = indexOf(1)     → 0    count postaje 1\nindex = indexOf(1, 1)  → 2    count postaje 2\nindex = indexOf(1, 3)  → 3    count postaje 3\nindex = indexOf(1, 4)  → -1   petlja se završava\n```",
+            "en": "We look for the next occurrence, starting **after** the current one.\n\n- `indexOf(value, index + 1)`: the second argument is the position where the search starts. `index + 1` is right after the current occurrence, so the same place is not found again.\n- If only `index` stood there, the search would find the same place every time and the loop would never end (an infinite loop).\n- The result is stored in `index`. When there are no more occurrences we get `-1` and the loop ends.\n\n```\n[1, 2, 1, 1], value = 1:\nindex = indexOf(1)     → 0    count becomes 1\nindex = indexOf(1, 1)  → 2    count becomes 2\nindex = indexOf(1, 3)  → 3    count becomes 3\nindex = indexOf(1, 4)  → -1   the loop ends\n```"
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 4.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 4.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Vraćamo broj pojavljivanja.\n\n- Namerno je izvan petlje: da je unutra, vratio bi se broj posle prvog pojavljivanja.",
+            "en": "We return the number of occurrences.\n\n- It is deliberately outside the loop: if it were inside, the number after the first occurrence would be returned."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Petlja nalazi svako pojavljivanje, a drugi argument `indexOf` je ono što je čini ispravnom.",
+        "en": "The loop finds every occurrence, and the second argument of `indexOf` is what makes it correct."
+      }
+    },
+    {
+      "label": {
+        "sr": "filter",
+        "en": "filter"
+      },
+      "code": "function countOccurrences(items, value) {\n  return items.filter((item) => item === value).length;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countOccurrences` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(items, value)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `items` je niz u kome brojimo, a `value` je vrednost koju brojimo. Poziv `countOccurrences([1, 2, 1], 1)` daje `items = [1, 2, 1]` i `value = 1`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 9.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countOccurrences` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(items, value)` is the parameter list. A parameter is an empty “slot” for input: `items` is the array we count in, and `value` is the value we count. The call `countOccurrences([1, 2, 1], 1)` gives `items = [1, 2, 1]` and `value = 1`.\n- `{` opens the function body, and `}` on line 9 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "`filter` pravi novi niz samo od elemenata koji zadovoljavaju uslov.\n\n- `(item) => item === value` je uslov: za svaki element vraća `true` ili `false`.\n- `filter` zadržava elemente za koje je odgovor `true`, pa dobijamo niz svih pojavljivanja.\n- `.length` je broj elemenata tog niza, tj. broj pojavljivanja.\n- Ovo je kraće, ali pravi novi niz u memoriji. Za veoma velike nizove petlja troši manje.\n\n```\n[1, 2, 1, 1] filter item === 1 → [1, 1, 1]\n.length → 3\n```",
+            "en": "`filter` creates a new array with only the elements that meet the condition.\n\n- `(item) => item === value` is the condition: for every element it returns `true` or `false`.\n- `filter` keeps the elements for which the answer is `true`, so we get an array of all occurrences.\n- `.length` is the number of elements of that array, i.e. the number of occurrences.\n- This is shorter, but it creates a new array in memory. For very large arrays a loop uses less memory.\n\n```\n[1, 2, 1, 1] filter item === 1 → [1, 1, 1]\n.length → 3\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najkraće; `filter` je prvi korak ka metodama nizova koje se obrađuju kasnije.",
+        "en": "The shortest; `filter` is the first step towards array methods, which are covered later."
+      }
+    }
+  ]
+}

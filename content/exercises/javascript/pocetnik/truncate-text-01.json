@@ -1,0 +1,62 @@
+{
+  "id": "truncate-text-01",
+  "title": {
+    "sr": "Skrati tekst",
+    "en": "Shorten a text"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings"],
+  "description": {
+    "sr": "Napiši funkciju `truncate(text, maxLength)` koja skraćuje predugačak tekst.\n\n- Ako tekst nije duži od `maxLength`, vraća ga neizmenjenog.\n- Inače vraća početak teksta na koji je dodato `'...'`, tako da je **ukupna dužina rezultata tačno `maxLength`**.\n\nPrimeri:\n- `truncate('Hello world', 8)` → `'Hello...'`\n- `truncate('Hi', 8)` → `'Hi'`\n- `truncate('Hello', 5)` → `'Hello'` (nije duži od 5)\n\nOgraničenje: `maxLength` je ceo broj, 3 ili veći.",
+    "en": "Write a function `truncate(text, maxLength)` that shortens a text that is too long.\n\n- If the text is not longer than `maxLength`, it returns it unchanged.\n- Otherwise it returns the beginning of the text with `'...'` added, so that the **total length of the result is exactly `maxLength`**.\n\nExamples:\n- `truncate('Hello world', 8)` → `'Hello...'`\n- `truncate('Hi', 8)` → `'Hi'`\n- `truncate('Hello', 5)` → `'Hello'` (not longer than 5)\n\nConstraint: `maxLength` is a whole number, 3 or greater."
+  },
+  "starterCode": "function truncate(text, maxLength) {\n  // your code\n}",
+  "tests": "test({ sr: 'predugačak tekst se skraćuje', en: 'a text that is too long is shortened' }, () => {\n  expect(truncate('Hello world', 8)).toBe('Hello...');\n});\ntest({ sr: 'kratak tekst ostaje isti', en: 'a short text stays the same' }, () => {\n  expect(truncate('Hi', 8)).toBe('Hi');\n});\ntest({ sr: 'tekst tačne dužine ostaje isti', en: 'a text of exactly the maximum length stays the same' }, () => {\n  expect(truncate('Hello', 5)).toBe('Hello');\n});",
+  "hiddenTests": "test('the shortest allowed limit', () => {\n  expect(truncate('abcdef', 3)).toBe('...');\n});\ntest('one character too long', () => {\n  expect(truncate('abcdef', 5)).toBe('ab...');\n});\ntest('an empty text stays empty', () => {\n  expect(truncate('', 5)).toBe('');\n});\ntest('the result is never longer than the limit', () => {\n  const text = 'The quick brown fox jumps over the lazy dog';\n  for (let max = 3; max <= 50; max++) {\n    expect(truncate(text, max).length <= max).toBe(true);\n  }\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "slice i nadovezivanje",
+        "en": "slice and concatenation"
+      },
+      "code": "function truncate(text, maxLength) {\n  if (text.length <= maxLength) return text;\n  return text.slice(0, maxLength - 3) + '...';\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function truncate` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text, maxLength)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `text` je tekst koji skraćujemo, a `maxLength` je najveća dozvoljena dužina rezultata. Poziv `truncate('Hello world', 8)` daje `text = 'Hello world'` i `maxLength = 8`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function truncate` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text, maxLength)` is the parameter list. A parameter is an empty “slot” for input: `text` is the text we shorten, and `maxLength` is the largest allowed length of the result. The call `truncate('Hello world', 8)` gives `text = 'Hello world'` and `maxLength = 8`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prvo proveravamo da li uopšte treba skraćivati.\n\n- `text.length` je broj znakova u tekstu. `'Hello'.length` je `5`.\n- `text.length <= maxLength` pita: da li je tekst kratak koliko treba? `<=` uključuje i tačnu dužinu, pa se tekst dužine tačno `maxLength` ne skraćuje.\n- `return text` vraća originalni tekst i završava funkciju, pa se ostatak koda ne izvršava. Za prazan tekst (`length` je `0`) uslov je tačan, pa se vraća `''`.",
+            "en": "First we check whether shortening is needed at all.\n\n- `text.length` is the number of characters in the text. `'Hello'.length` is `5`.\n- `text.length <= maxLength` asks: is the text as short as required? `<=` includes the exact length too, so a text of exactly `maxLength` is not shortened.\n- `return text` returns the original text and ends the function, so the rest of the code does not run. For an empty text (`length` is `0`) the condition is true, so `''` is returned."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Inače uzimamo početak teksta i dodajemo tri tačke.\n\n- `text.slice(0, maxLength - 3)` vraća deo teksta od indeksa `0` do indeksa `maxLength - 3`, **bez** tog poslednjeg indeksa. Tekst se ne menja (stringovi su nepromenljivi), dobija se novi.\n- Zašto `maxLength - 3`: tri tačke `'...'` zauzimaju 3 mesta, pa za početak teksta ostaje `maxLength - 3`. Tako je ukupna dužina tačno `maxLength`.\n- `+ '...'` nadovezuje tri tačke na kraj dobijenog dela.\n- `return` vraća rezultat i završava funkciju.\n\nTok za `truncate('Hello world', 8)`:\n\n```\n'Hello world'.length = 11   → 11 <= 8 netačno → ide dalje\nmaxLength - 3 = 5\n'Hello world'.slice(0, 5) = 'Hello'\n'Hello' + '...' = 'Hello...'   (dužina 8)\n```\n\nZa najmanju dozvoljenu granicu, `truncate('abcdef', 3)`:\n\n```\nslice(0, 0) = ''   (prazan tekst)\n'' + '...' = '...'   (dužina 3)\n```",
+            "en": "Otherwise we take the beginning of the text and add three dots.\n\n- `text.slice(0, maxLength - 3)` returns the part of the text from index `0` up to index `maxLength - 3`, **excluding** that last index. The text is not changed (strings are immutable), a new one is created.\n- Why `maxLength - 3`: the three dots `'...'` take 3 places, so `maxLength - 3` remains for the beginning of the text. This way the total length is exactly `maxLength`.\n- `+ '...'` appends the three dots to the end of the resulting part.\n- `return` returns the result and ends the function.\n\nFlow for `truncate('Hello world', 8)`:\n\n```\n'Hello world'.length = 11   → 11 <= 8 is false → goes on\nmaxLength - 3 = 5\n'Hello world'.slice(0, 5) = 'Hello'\n'Hello' + '...' = 'Hello...'   (length 8)\n```\n\nFor the smallest allowed limit, `truncate('abcdef', 3)`:\n\n```\nslice(0, 0) = ''   (an empty text)\n'' + '...' = '...'   (length 3)\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Rezultat je uvek dugačak najviše `maxLength`, jer tri tačke ulaze u dozvoljenu dužinu.",
+        "en": "The result is always at most `maxLength` long, because the three dots count toward the allowed length."
+      }
+    }
+  ]
+}

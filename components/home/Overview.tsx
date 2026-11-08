@@ -50,43 +50,6 @@ export function Overview({ items, locale, labels }: Props) {
         </div>
       </header>
 
-      <section aria-labelledby="recent-title" className="space-y-3">
-        <h2 id="recent-title" className="text-lg font-semibold">
-          {labels.home.recentTitle}
-        </h2>
-
-        {recent.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-500 dark:border-zinc-700">
-            {labels.home.recentEmpty}
-          </p>
-        ) : (
-          <>
-            {resume && (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-500/40 bg-blue-500/5 p-4">
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{resume.item.title}</p>
-                  <p className="text-xs text-zinc-500">
-                    {labels.areas[resume.item.area]} · {labels.levels[resume.item.level]}
-                  </p>
-                </div>
-                <Link
-                  href={`/${locale}/exercise/${resume.item.id}`}
-                  className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-500"
-                >
-                  {labels.home.continue} →
-                </Link>
-              </div>
-            )}
-
-            <ul className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-              {recent.map((entry) => (
-                <RecentRow key={entry.item.id} entry={entry} locale={locale} labels={labels} formatDate={formatDate} />
-              ))}
-            </ul>
-          </>
-        )}
-      </section>
-
       <section aria-label={labels.nav.areas} className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
         {AREAS.map((area) => {
           const soon = COMING_SOON_AREAS.includes(area);
@@ -128,6 +91,43 @@ export function Overview({ items, locale, labels }: Props) {
             </Link>
           );
         })}
+      </section>
+
+      <section aria-labelledby="recent-title" className="space-y-3">
+        <h2 id="recent-title" className="text-lg font-semibold">
+          {labels.home.recentTitle}
+        </h2>
+
+        {recent.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-500 dark:border-zinc-700">
+            {labels.home.recentEmpty}
+          </p>
+        ) : (
+          <>
+            {resume && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-500/40 bg-blue-500/5 p-4">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{resume.item.title}</p>
+                  <p className="text-xs text-zinc-500">
+                    {labels.areas[resume.item.area]} · {labels.levels[resume.item.level]}
+                  </p>
+                </div>
+                <Link
+                  href={`/${locale}/exercise/${resume.item.id}`}
+                  className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-500"
+                >
+                  {labels.home.continue} →
+                </Link>
+              </div>
+            )}
+
+            <ul className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+              {recent.map((entry) => (
+                <RecentRow key={entry.item.id} entry={entry} locale={locale} labels={labels} formatDate={formatDate} />
+              ))}
+            </ul>
+          </>
+        )}
       </section>
     </div>
   );

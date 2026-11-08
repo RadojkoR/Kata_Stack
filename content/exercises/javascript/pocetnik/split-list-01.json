@@ -1,0 +1,90 @@
+{
+  "id": "split-list-01",
+  "title": {
+    "sr": "Podeli listu po zarezima",
+    "en": "Split a list by commas"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings"],
+  "description": {
+    "sr": "Napiši funkciju `splitList(text)` koja deli tekst po zarezima i vraća niz stavki. Svaka stavka se čisti od razmaka na krajevima, a prazne stavke se ne ubacuju.\n\nPrimeri:\n- `splitList('a, b,c')` → `['a', 'b', 'c']`\n- `splitList('  x  ')` → `['x']`\n- `splitList('')` → `[]`\n- `splitList('a,,b')` → `['a', 'b']`\n\nOgraničenje: `text` je string, i može biti prazan.",
+    "en": "Write a function `splitList(text)` that splits the text by commas and returns an array of items. Each item is trimmed of spaces at both ends, and empty items are not included.\n\nExamples:\n- `splitList('a, b,c')` → `['a', 'b', 'c']`\n- `splitList('  x  ')` → `['x']`\n- `splitList('')` → `[]`\n- `splitList('a,,b')` → `['a', 'b']`\n\nConstraint: `text` is a string, and it can be empty."
+  },
+  "starterCode": "function splitList(text) {\n  // your code\n}",
+  "tests": "test({ sr: 'deli po zarezima i čisti razmake', en: 'splits by commas and trims spaces' }, () => {\n  expect(splitList('a, b,c')).toEqual(['a', 'b', 'c']);\n});\ntest({ sr: 'bez zareza ostaje jedna stavka', en: 'without commas there is one item' }, () => {\n  expect(splitList('  x  ')).toEqual(['x']);\n});\ntest({ sr: 'prazan tekst daje prazan niz', en: 'empty text gives an empty array' }, () => {\n  expect(splitList('')).toEqual([]);\n});",
+  "hiddenTests": "test('empty items between two commas are skipped', () => {\n  expect(splitList('a,,b')).toEqual(['a', 'b']);\n});\ntest('only spaces give an empty array', () => {\n  expect(splitList(' , ')).toEqual([]);\n});\ntest('a longer list', () => {\n  expect(splitList('one, two ,three')).toEqual(['one', 'two', 'three']);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja: podeli, očisti, preskoči prazne",
+        "en": "a loop: split, trim, skip empty"
+      },
+      "code": "function splitList(text) {\n  const result = [];\n  for (const part of text.split(',')) {\n    const item = part.trim();\n    if (item !== '') result.push(item);\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function splitList` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `splitList('a,b')`, unutar funkcije je `text` jednako `'a,b'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 8.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function splitList` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `splitList('a,b')`, inside the function `text` equals `'a,b'`.\n- `{` opens the function body, and `}` on line 8 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo prazan niz u koji ćemo upisivati stavke.\n\n- `const result = [];` pravi prazan niz; `[]` je prazan niz.\n- `const` znači da se promenljiva `result` ne dodeljuje ponovo. Sadržaj niza se menja kad dodajemo stavke, a to je dozvoljeno.",
+            "en": "We create an empty array into which we will write the items.\n\n- `const result = [];` creates an empty array; `[]` is an empty array.\n- `const` means the variable `result` is not reassigned. The array's contents change as we add items, which is allowed."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja `for...of` prolazi kroz delove teksta, jedan po jedan.\n\n- `text.split(',')` seče tekst na mestima gde su zarezi i vraća niz delova: `'a,b'` postaje `['a', 'b']`.\n- `for (const part of ...)` uzima jedan po jedan deo; u `part` je u svakom prolazu trenutni deo.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 6.\n\n```\n'a, ,b'.split(',')  → ['a', ' ', 'b']\n```",
+            "en": "A `for...of` loop goes through the pieces of the text, one by one.\n\n- `text.split(',')` cuts the text where the commas are and returns an array of pieces: `'a,b'` becomes `['a', 'b']`.\n- `for (const part of ...)` takes the pieces one by one; `part` is the current piece on each pass.\n- `{` opens the loop body; it is closed by `}` on line 6.\n\n```\n'a, ,b'.split(',')  → ['a', ' ', 'b']\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Čistimo razmake sa početka i kraja svakog dela.\n\n- `part.trim()` uklanja razmake (i tabove, nove redove) sa oba kraja dela. Razmaci u sredini ostaju.\n- `const item` pravi promenljivu za očišćen deo; `const` jer se ne dodeljuje ponovo.\n\n```\n' b '.trim()   → 'b'\n'  '.trim()    → ''     (samo razmaci postaju prazan tekst)\n'a b'.trim()    → 'a b'  (razmak u sredini ostaje)\n```",
+            "en": "We trim the spaces from the start and the end of each piece.\n\n- `part.trim()` removes spaces (and tabs, newlines) from both ends of the piece. Spaces in the middle stay.\n- `const item` creates a variable for the trimmed piece; `const` because it is not reassigned.\n\n```\n' b '.trim()   → 'b'\n'  '.trim()    → ''     (only spaces become an empty text)\n'a b'.trim()    → 'a b'  (the space in the middle stays)\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Stavku dodajemo samo ako nije prazna.\n\n- `item !== ''` pita da li očišćen deo nije prazan tekst. `!==` je stroga nejednakost.\n- `if (...) result.push(item);` nema vitičastih zagrada, pa u `if` spada samo `result.push(item)`.\n- `push` dodaje stavku na kraj niza `result`.\n- Prazni delovi se javljaju i kad je tekst prazan (`''.split(',')` je `['']`) i kad su dva zareza zaredom, pa je ova provera neophodna.\n\n```\ndelovi: ['a', ' ', 'b']\n'a'  → nije prazan  → push → ['a']\n' '  → trim → ''   → prazan → preskače se\n'b'  → nije prazan  → push → ['a', 'b']\n```",
+            "en": "We add an item only if it is not empty.\n\n- `item !== ''` asks whether the trimmed piece is not an empty text. `!==` is strict inequality.\n- `if (...) result.push(item);` has no curly braces, so only `result.push(item)` belongs to the `if`.\n- `push` adds the item to the end of the array `result`.\n- Empty pieces also appear when the text is empty (`''.split(',')` is `['']`) and when two commas are in a row, so this check is necessary.\n\n```\npieces: ['a', ' ', 'b']\n'a'  → not empty → push → ['a']\n' '  → trim → ''   → empty → skipped\n'b'  → not empty → push → ['a', 'b']\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Vraćamo sve prikupljene stavke.\n\n- Za prazan tekst `split` daje `['']`, taj jedini deo je prazan posle čišćenja i preskače se, pa je rezultat `[]`.",
+            "en": "We return all the items we collected.\n\n- For an empty text `split` gives `['']`; that single piece is empty after trimming and is skipped, so the result is `[]`."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Dva koraka: prvo se tekst podeli, pa se svaki deo očisti i proveri. Prazne stavke se preskaču.",
+        "en": "Two steps: first the text is split, then every piece is trimmed and checked. Empty items are skipped."
+      }
+    }
+  ]
+}

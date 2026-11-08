@@ -57,6 +57,96 @@
         "sr": "Prvo se tekst normalizuje (mala slova, bez znakova), pa se poredi sa svojom obrnutom verzijom.",
         "en": "The text is normalized first (lowercase, no symbols), then compared with its own reversed version."
       }
+    },
+    {
+      "label": {
+        "sr": "dva pokazivača",
+        "en": "two pointers"
+      },
+      "code": "function isPalindrome(text) {\n  const cleaned = text.toLowerCase().replace(/[^a-z0-9]/g, '');\n  let left = 0;\n  let right = cleaned.length - 1;\n  while (left < right) {\n    if (cleaned[left] !== cleaned[right]) return false;\n    left++;\n    right--;\n  }\n  return true;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function isPalindrome` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `isPalindrome('level')`, unutar funkcije je `text` jednako `'level'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 11.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function isPalindrome` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `isPalindrome('level')`, inside the function `text` equals `'level'`.\n- `{` opens the function body, and `}` on line 11 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Isto čišćenje kao u prvom rešenju: mala slova, pa brisanje svega što nije slovo `a-z` ili cifra.\n\n- `text.toLowerCase()` pretvara slova u mala.\n- `.replace(/[^a-z0-9]/g, '')` briše svaki znak koji nije malo slovo ili cifra (`^` unutar `[ ]` znači „sve osim“, `g` znači „sve pojave“).\n- Rezultat je u `cleaned`, npr. `'A man, a plan'` postaje `'amanaplan'`.",
+            "en": "The same cleaning as in the first solution: lowercase, then deleting everything that is not a letter `a-z` or a digit.\n\n- `text.toLowerCase()` turns the letters into lowercase.\n- `.replace(/[^a-z0-9]/g, '')` deletes every character that is not a lowercase letter or a digit (`^` inside `[ ]` means “anything except”, `g` means “all occurrences”).\n- The result is in `cleaned`, e.g. `'A man, a plan'` becomes `'amanaplan'`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Levi „pokazivač“: indeks znaka koji gledamo sa početka.\n\n- `let left = 0;` pravi promenljivu sa vrednošću `0`, jer prvi znak stringa ima indeks 0.\n- „Pokazivač“ je samo broj koji pokazuje na mesto u stringu. `let` jer će se pomerati udesno.",
+            "en": "The left “pointer”: the index of the character we look at from the start.\n\n- `let left = 0;` creates a variable with the value `0`, because the first character of a string has index 0.\n- A “pointer” is just a number that points to a place in the string. `let` because it will move to the right."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Desni pokazivač: indeks poslednjeg znaka.\n\n- `cleaned.length` je broj znakova. Indeksi idu od `0` do `length - 1`, pa je poslednji znak na `cleaned.length - 1`.\n- Za `'level'` dužina je 5, pa je `right = 4`.\n- Za prazan string `right` je `-1`.",
+            "en": "The right pointer: the index of the last character.\n\n- `cleaned.length` is the number of characters. Indexes go from `0` to `length - 1`, so the last character is at `cleaned.length - 1`.\n- For `'level'` the length is 5, so `right = 4`.\n- For an empty string `right` is `-1`."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Petlja `while` ponavlja telo dok god je uslov tačan.\n\n- `while (uslov) { ... }` proverava uslov pre svakog ponavljanja; kad postane `false`, petlja se završava.\n- `left < right` znači da se pokazivači još nisu sreli. Kad se sretnu (neparna dužina, srednji znak) ili mimoiđu (parna dužina), sve parove smo već uporedili.\n- Srednji znak se ne poredi, jer je uvek jednak samom sebi.\n- Za prazan string uslov `0 < -1` nije tačan, pa se petlja ne izvršava nijednom.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 9.",
+            "en": "The `while` loop repeats its body as long as the condition is true.\n\n- `while (condition) { ... }` checks the condition before every repetition; when it becomes `false`, the loop ends.\n- `left < right` means the pointers have not met yet. When they meet (odd length, the middle character) or pass each other (even length), we have already compared all the pairs.\n- The middle character is not compared, because it is always equal to itself.\n- For an empty string the condition `0 < -1` is not true, so the loop does not run at all.\n- `{` opens the loop body; it is closed by `}` on line 9."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Poredimo znak sa leve i znak sa desne strane.\n\n- `cleaned[left]` je znak na indeksu `left`, a `cleaned[right]` znak na indeksu `right`.\n- `!==` je stroga nejednakost: `true` ako se znakovi razlikuju.\n- Čim nađemo jedan par koji se razlikuje, tekst nije palindrom: `return false` odmah završava funkciju i ostatak se ne proverava.",
+            "en": "We compare the character on the left with the character on the right.\n\n- `cleaned[left]` is the character at index `left`, and `cleaned[right]` the character at index `right`.\n- `!==` is strict inequality: `true` if the characters differ.\n- As soon as we find one pair that differs, the text is not a palindrome: `return false` ends the function immediately and the rest is not checked."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Levi pokazivač ide jedno mesto udesno.\n\n- `left++` znači „dodaj 1 na `left`“, tj. isto što i `left = left + 1`.",
+            "en": "The left pointer moves one place to the right.\n\n- `left++` means “add 1 to `left`”, i.e. the same as `left = left + 1`."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Desni pokazivač ide jedno mesto ulevo.\n\n- `right--` znači „oduzmi 1 od `right`“, tj. isto što i `right = right - 1`.\n- Tako se pokazivači približavaju sredini, a petlja proverava sledeći par.\n\nTok:\n\n```\ncleaned = 'level'   (indeksi 0..4)\nleft=0, right=4 → 'l' i 'l' isti → dalje\nleft=1, right=3 → 'e' i 'e' isti → dalje\nleft=2, right=2 → 2 < 2 nije tačno → kraj petlje → true\n\ncleaned = 'hello'\nleft=0, right=4 → 'h' i 'o' različiti → return false\n```",
+            "en": "The right pointer moves one place to the left.\n\n- `right--` means “subtract 1 from `right`”, i.e. the same as `right = right - 1`.\n- This way the pointers move toward the middle, and the loop checks the next pair.\n\nFlow:\n\n```\ncleaned = 'level'   (indexes 0..4)\nleft=0, right=4 → 'l' and 'l' are equal → continue\nleft=1, right=3 → 'e' and 'e' are equal → continue\nleft=2, right=2 → 2 < 2 is not true → end of the loop → true\n\ncleaned = 'hello'\nleft=0, right=4 → 'h' and 'o' differ → return false\n```"
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 5.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 5.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Svi parovi su se poklopili: tekst je palindrom.\n\n- Do ove linije se stiže samo ako `return false` u liniji 6 nijednom nije izvršen.\n- Za prazan tekst petlja se nije ni izvršila, pa je rezultat `true`, što test traži.",
+            "en": "All pairs matched: the text is a palindrome.\n\n- This line is reached only if `return false` on line 6 never ran.\n- For empty text the loop did not even run, so the result is `true`, which the test requires."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Ne pravi obrnuti string i staje na prvoj razlici; poredi najviše polovinu znakova.",
+        "en": "It does not build a reversed string and stops at the first difference; it compares at most half of the characters."
+      }
     }
   ]
 }

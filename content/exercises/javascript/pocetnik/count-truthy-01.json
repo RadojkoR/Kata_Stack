@@ -1,0 +1,117 @@
+{
+  "id": "count-truthy-01",
+  "title": {
+    "sr": "Koliko je istinitih vrednosti",
+    "en": "How many truthy values"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["types", "conversion"],
+  "description": {
+    "sr": "U JavaScript-u se svaka vrednost u uslovu ponaša ili kao „istinita“ (truthy) ili kao „neistinita“ (falsy). Neistinite su samo: `false`, `0`, `-0`, `0n`, `''` (prazan string), `null`, `undefined` i `NaN`. Sve ostalo je istinito.\n\nNapiši funkciju `countTruthy(values)` koja vraća koliko je istinitih vrednosti u nizu.\n\nPrimeri:\n- `countTruthy([0, 1, '', 'a'])` → `2`\n- `countTruthy([null, undefined, NaN, false])` → `0`\n- `countTruthy([])` → `0`",
+    "en": "In JavaScript every value in a condition behaves either as “truthy” or as “falsy”. The only falsy values are: `false`, `0`, `-0`, `0n`, `''` (an empty string), `null`, `undefined` and `NaN`. Everything else is truthy.\n\nWrite a function `countTruthy(values)` that returns how many truthy values there are in the array.\n\nExamples:\n- `countTruthy([0, 1, '', 'a'])` → `2`\n- `countTruthy([null, undefined, NaN, false])` → `0`\n- `countTruthy([])` → `0`"
+  },
+  "starterCode": "function countTruthy(values) {\n  // your code\n}",
+  "tests": "test({ sr: 'meša istinite i neistinite', en: 'mixes truthy and falsy' }, () => {\n  expect(countTruthy([0, 1, '', 'a'])).toBe(2);\n});\ntest({ sr: 'sve neistinite daje 0', en: 'all falsy gives 0' }, () => {\n  expect(countTruthy([null, undefined, NaN, false])).toBe(0);\n});\ntest({ sr: 'prazan niz daje 0', en: 'an empty array gives 0' }, () => {\n  expect(countTruthy([])).toBe(0);\n});",
+  "hiddenTests": "test('the strings \"0\" and \"false\" are truthy', () => {\n  expect(countTruthy(['0', 'false'])).toBe(2);\n});\ntest('empty arrays and objects are truthy', () => {\n  expect(countTruthy([[], {}])).toBe(2);\n});\ntest('negative numbers are truthy, zero is not', () => {\n  expect(countTruthy([-1, 0, 1])).toBe(2);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja i if",
+        "en": "loop and if"
+      },
+      "code": "function countTruthy(values) {\n  let count = 0;\n  for (const value of values) {\n    if (value) count++;\n  }\n  return count;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countTruthy` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(values)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `countTruthy([0, 1, '', 'a'])`, unutar funkcije je `values` taj niz.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countTruthy` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(values)` is the parameter list. A parameter is an empty “slot” for input: when we call `countTruthy([0, 1, '', 'a'])`, inside the function `values` is that array.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Brojač istinitih vrednosti.\n\n- `let count` pravi promenljivu čija se vrednost menja.\n- `= 0` je početna vrednost: dok nismo ništa našli, istinitih je nula. Prazan niz zato vraća `0`.\n- Promenljiva postoji samo unutar funkcije, pa svaki poziv počinje od nule.",
+            "en": "A counter of truthy values.\n\n- `let count` creates a variable whose value changes.\n- `= 0` is the starting value: until we have found anything, there are zero truthy values. An empty array therefore returns `0`.\n- The variable exists only inside the function, so every call starts from zero."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja koja prolazi kroz sve vrednosti niza.\n\n- `for (const value of values)` uzima jedan po jedan element niza; u `value` je u svakom prolazu trenutni element.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.\n\nZa `[0, 1, '', 'a']` telo se izvrši četiri puta:\n\n```\nprolaz 1: value = 0\nprolaz 2: value = 1\nprolaz 3: value = ''\nprolaz 4: value = 'a'\n```",
+            "en": "A loop that goes through all the values of the array.\n\n- `for (const value of values)` takes the elements one by one; `value` is the current element on each pass.\n- `{` opens the loop body; it is closed by `}` on line 5.\n\nFor `[0, 1, '', 'a']` the body runs four times:\n\n```\npass 1: value = 0\npass 2: value = 1\npass 3: value = ''\npass 4: value = 'a'\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Ako je vrednost istinita, uvećavamo brojač.\n\n- `if (value)` ne poredi ništa: JavaScript sam pretvara `value` u `true` ili `false` po pravilu istinito/neistinito i izvršava naredbu samo ako je rezultat `true`. To se zove implicitna konverzija.\n- Neistinite su samo `false`, `0`, `-0`, `0n`, `''`, `null`, `undefined`, `NaN`. Zato je `'0'` (tekst) istinito, kao i prazan niz `[]` i prazan objekat `{}` (skriveni testovi).\n- `count++` je **postfiksno uvećanje**: `++` znači „dodaj 1“, pa je to isto što i `count = count + 1`. Ovde se vrednost izraza ne koristi, pa je svejedno da li je `count++` ili `++count`.\n- Nema vitičastih zagrada, pa u `if` spada samo `count++`.\n\nTok za `[0, 1, '', 'a']`:\n\n```\nvalue = 0   → neistinito, preskače se      count = 0\nvalue = 1   → istinito,    count = 1\nvalue = ''  → neistinito, preskače se      count = 1\nvalue = 'a' → istinito,    count = 2\n```",
+            "en": "If the value is truthy, we increase the counter.\n\n- `if (value)` compares nothing: JavaScript itself converts `value` to `true` or `false` by the truthy/falsy rule and runs the statement only if the result is `true`. This is called implicit conversion.\n- The only falsy values are `false`, `0`, `-0`, `0n`, `''`, `null`, `undefined`, `NaN`. That is why `'0'` (text) is truthy, and so are an empty array `[]` and an empty object `{}` (hidden tests).\n- `count++` is the **postfix increment**: `++` means “add 1”, so it is the same as `count = count + 1`. Here the value of the expression is not used, so it makes no difference whether it is `count++` or `++count`.\n- There are no curly braces, so only `count++` belongs to the `if`.\n\nFlow for `[0, 1, '', 'a']`:\n\n```\nvalue = 0   → falsy, skipped      count = 0\nvalue = 1   → truthy,       count = 1\nvalue = ''  → falsy, skipped      count = 1\nvalue = 'a' → truthy,       count = 2\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Vraća broj istinitih vrednosti.\n\n- `return count` šalje vrednost brojača kao rezultat. Namerno je izvan petlje, da se izvrši tek posle svih elemenata.",
+            "en": "Returns the number of truthy values.\n\n- `return count` sends the counter's value as the result. It is deliberately outside the loop, so it runs only after all the elements."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najjasniji pristup: `if (value)` koristi pravilo istinito/neistinito direktno.",
+        "en": "The clearest approach: `if (value)` uses the truthy/falsy rule directly."
+      }
+    },
+    {
+      "label": {
+        "sr": "filter(Boolean)",
+        "en": "filter(Boolean)"
+      },
+      "code": "function countTruthy(values) {\n  return values.filter(Boolean).length;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countTruthy` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(values)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `countTruthy([0, 1, '', 'a'])`, unutar funkcije je `values` taj niz.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countTruthy` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(values)` is the parameter list. A parameter is an empty “slot” for input: when we call `countTruthy([0, 1, '', 'a'])`, inside the function `values` is that array.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Zadržavamo samo istinite vrednosti i brojimo ih.\n\n- `values.filter(...)` pravi **novi** niz od onih elemenata za koje funkcija u zagradama vrati istinitu vrednost. Original se ne menja.\n- `Boolean` je ugrađena funkcija koja pretvara bilo šta u `true` ili `false` po pravilu istinito/neistinito. `filter` je poziva za svaki element: `Boolean(0)` je `false`, `Boolean('a')` je `true`.\n- Funkcija se prosleđuje bez zagrada (`Boolean`, a ne `Boolean()`): ne pozivamo je mi, nego je `filter` poziva za svaki element.\n- `.length` je broj elemenata dobijenog niza, tj. broj istinitih vrednosti.\n- `return` vraća taj broj i završava funkciju.\n\nTok za `[0, 1, '', 'a']`:\n\n```\nBoolean(0)   → false → izbacuje se\nBoolean(1)   → true  → ostaje\nBoolean('')  → false → izbacuje se\nBoolean('a') → true  → ostaje\nfilter vraća [1, 'a'], a .length je 2\n```",
+            "en": "We keep only the truthy values and count them.\n\n- `values.filter(...)` creates a **new** array from the elements for which the function in the parentheses returns a truthy value. The original is not changed.\n- `Boolean` is a built-in function that turns anything into `true` or `false` by the truthy/falsy rule. `filter` calls it for each element: `Boolean(0)` is `false`, `Boolean('a')` is `true`.\n- The function is passed without parentheses (`Boolean`, not `Boolean()`): we do not call it ourselves, `filter` calls it for each element.\n- `.length` is the number of elements of the resulting array, i.e. the number of truthy values.\n- `return` returns that number and ends the function.\n\nFlow for `[0, 1, '', 'a']`:\n\n```\nBoolean(0)   → false → dropped\nBoolean(1)   → true  → kept\nBoolean('')  → false → dropped\nBoolean('a') → true  → kept\nfilter returns [1, 'a'], and .length is 2\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kratko, ali pravi pomoćni niz; za veoma velike nizove petlja troši manje memorije.",
+        "en": "Short, but it creates a helper array; for very large arrays the loop uses less memory."
+      }
+    }
+  ]
+}

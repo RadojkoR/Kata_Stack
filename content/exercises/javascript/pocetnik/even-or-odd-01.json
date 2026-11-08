@@ -1,0 +1,117 @@
+{
+  "id": "even-or-odd-01",
+  "title": {
+    "sr": "Paran ili neparan",
+    "en": "Even or odd"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["conditionals", "operators"],
+  "description": {
+    "sr": "Napiši funkciju `parityLabel(n)` koja vraća `'even'` ako je ceo broj `n` paran, a `'odd'` ako je neparan.\n\nPrimeri:\n- `parityLabel(4)` → `'even'`\n- `parityLabel(7)` → `'odd'`\n- `parityLabel(0)` → `'even'`\n\nOgraničenje: `n` je ceo broj. Radi i sa negativnim brojevima: `parityLabel(-3)` → `'odd'`.",
+    "en": "Write a function `parityLabel(n)` that returns `'even'` if the whole number `n` is even, and `'odd'` if it is odd.\n\nExamples:\n- `parityLabel(4)` → `'even'`\n- `parityLabel(7)` → `'odd'`\n- `parityLabel(0)` → `'even'`\n\nConstraint: `n` is a whole number. It also works with negative numbers: `parityLabel(-3)` → `'odd'`."
+  },
+  "starterCode": "function parityLabel(n) {\n  // your code\n}",
+  "tests": "test({ sr: 'paran broj', en: 'an even number' }, () => {\n  expect(parityLabel(4)).toBe('even');\n});\ntest({ sr: 'neparan broj', en: 'an odd number' }, () => {\n  expect(parityLabel(7)).toBe('odd');\n});\ntest({ sr: 'nula je paran broj', en: 'zero is an even number' }, () => {\n  expect(parityLabel(0)).toBe('even');\n});",
+  "hiddenTests": "test('negative odd numbers', () => {\n  expect(parityLabel(-3)).toBe('odd');\n  expect(parityLabel(-7)).toBe('odd');\n});\ntest('negative even numbers', () => {\n  expect(parityLabel(-4)).toBe('even');\n});\ntest('large numbers', () => {\n  expect(parityLabel(1000001)).toBe('odd');\n  expect(parityLabel(1000000)).toBe('even');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "ternarni operator",
+        "en": "ternary operator"
+      },
+      "code": "function parityLabel(n) {\n  return n % 2 === 0 ? 'even' : 'odd';\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function parityLabel` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `parityLabel(4)`, unutar funkcije je `n` jednako `4`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function parityLabel` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `parityLabel(4)`, inside the function `n` equals `4`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Cela odluka je jedan izraz sa ternarnim operatorom, a `return` ga vraća.\n\n- `uslov ? a : b` je **ternarni operator**: ako je uslov tačan, rezultat je `a`, inače `b`. To je kraći zapis za `if / else` kad treba samo izabrati jednu od dve vrednosti.\n- Ovde je uslov `n % 2 === 0`, `a` je `'even'`, a `b` je `'odd'`.\n- `n % 2` je ostatak pri deljenju sa 2. Za parne brojeve je `0`, za neparne je `1`, a za negativne neparne `-1`.\n- `=== 0` pita da li je ostatak tačno nula. Redosled računanja je: prvo `%`, zatim `===`, a ternarni operator na kraju.\n- Zašto se ne proverava `n % 2 === 1`: za `-3` je ostatak `-1`, pa bi negativni neparni brojevi pogrešno dobili `'even'`. Zato se proverava samo „da li je ostatak nula“ (skriveni test).\n- `return` vraća vrednost celog izraza i završava funkciju.\n\nTok za nekoliko brojeva:\n\n```\nn = 4   → 4 % 2 = 0   → 0 === 0 je true  → 'even'\nn = 7   → 7 % 2 = 1   → 1 === 0 je false → 'odd'\nn = 0   → 0 % 2 = 0   → true              → 'even'\nn = -3  → -3 % 2 = -1 → -1 === 0 je false → 'odd'\n```",
+            "en": "The whole decision is one expression with the ternary operator, and `return` returns it.\n\n- `condition ? a : b` is the **ternary operator**: if the condition is true the result is `a`, otherwise `b`. It is a shorter way to write `if / else` when we only need to choose one of two values.\n- Here the condition is `n % 2 === 0`, `a` is `'even'`, and `b` is `'odd'`.\n- `n % 2` is the remainder of dividing by 2. For even numbers it is `0`, for odd numbers it is `1`, and for negative odd numbers `-1`.\n- `=== 0` asks whether the remainder is exactly zero. The order of evaluation is: first `%`, then `===`, and the ternary operator last.\n- Why `n % 2 === 1` is not checked: for `-3` the remainder is `-1`, so negative odd numbers would wrongly get `'even'`. That is why we only check “is the remainder zero” (hidden test).\n- `return` returns the value of the whole expression and ends the function.\n\nFlow for several numbers:\n\n```\nn = 4   → 4 % 2 = 0   → 0 === 0 is true   → 'even'\nn = 7   → 7 % 2 = 1   → 1 === 0 is false  → 'odd'\nn = 0   → 0 % 2 = 0   → true               → 'even'\nn = -3  → -3 % 2 = -1 → -1 === 0 is false → 'odd'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Ternarni operator je najkraći kad se bira jedna od dve vrednosti.",
+        "en": "The ternary operator is the shortest way when choosing one of two values."
+      }
+    },
+    {
+      "label": {
+        "sr": "if / else",
+        "en": "if / else"
+      },
+      "code": "function parityLabel(n) {\n  if (n % 2 === 0) {\n    return 'even';\n  } else {\n    return 'odd';\n  }\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function parityLabel` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `parityLabel(4)`, unutar funkcije je `n` jednako `4`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function parityLabel` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `parityLabel(4)`, inside the function `n` equals `4`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Uslov: da li je broj paran?\n\n- `if (uslov) { ... }` izvršava blok između `{` i `}` samo ako je uslov `true`.\n- `n % 2 === 0` je „ostatak pri deljenju sa 2 je nula“. `%` je ostatak pri deljenju, a `===` je stroga jednakost.\n- Proverava se nula, a ne jedinica, jer je za negativne neparne brojeve ostatak `-1` (`-3 % 2` je `-1`).\n- `{` otvara blok koji se izvršava kad je uslov tačan; zatvara ga `}` u liniji 4.",
+            "en": "The condition: is the number even?\n\n- `if (condition) { ... }` runs the block between `{` and `}` only if the condition is `true`.\n- `n % 2 === 0` is “the remainder of dividing by 2 is zero”. `%` is the remainder of division, and `===` is strict equality.\n- Zero is checked, not one, because for negative odd numbers the remainder is `-1` (`-3 % 2` is `-1`).\n- `{` opens the block that runs when the condition is true; it is closed by `}` on line 4."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Ako je paran, vraćamo `'even'`.\n\n- `return 'even'` vraća tekst i odmah završava funkciju, pa se grana `else` ne izvršava.",
+            "en": "If it is even, we return `'even'`.\n\n- `return 'even'` returns the text and ends the function immediately, so the `else` branch does not run."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Početak grane „inače“.\n\n- `} else {` zatvara blok iz linije 2 i otvara blok koji se izvršava kad uslov NIJE tačan, tj. kad je broj neparan. Zatvara se u liniji 6.",
+            "en": "The start of the “otherwise” branch.\n\n- `} else {` closes the block from line 2 and opens the block that runs when the condition is NOT true, i.e. when the number is odd. It closes on line 6."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Inače vraćamo `'odd'`.\n\n- Do ove linije se stiže samo za neparne brojeve, pa je ovo jedina preostala mogućnost.\n\nTok:\n\n```\nn = 4   → uslov tačan → 'even'\nn = 7   → uslov netačan → else → 'odd'\nn = -3  → -3 % 2 = -1, nije 0 → else → 'odd'\n```",
+            "en": "Otherwise we return `'odd'`.\n\n- This line is reached only for odd numbers, so it is the only remaining possibility.\n\nFlow:\n\n```\nn = 4   → condition true → 'even'\nn = 7   → condition false → else → 'odd'\nn = -3  → -3 % 2 = -1, not 0 → else → 'odd'\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara blok `else` otvoreno u liniji 4.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the `else` block opened on line 4.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Duži zapis, ali svaka grana je jasno odvojena; isto radi kao ternarni operator.",
+        "en": "A longer form, but each branch is clearly separated; it works the same as the ternary operator."
+      }
+    }
+  ]
+}

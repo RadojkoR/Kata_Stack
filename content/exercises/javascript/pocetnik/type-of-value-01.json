@@ -1,0 +1,69 @@
+{
+  "id": "type-of-value-01",
+  "title": {
+    "sr": "Naziv tipa vrednosti",
+    "en": "The type name of a value"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["types"],
+  "description": {
+    "sr": "Napiši funkciju `describeType(value)` koja vraća naziv tipa vrednosti kao string, slično operatoru `typeof`, uz dve razlike:\n\n- za `null` vraća `'null'` (a ne `'object'`)\n- za niz vraća `'array'` (a ne `'object'`)\n\nPrimeri:\n- `describeType(5)` → `'number'`\n- `describeType(null)` → `'null'`\n- `describeType([1, 2])` → `'array'`\n\nZa sve ostalo vraća isto što i `typeof`.",
+    "en": "Write a function `describeType(value)` that returns the type name of a value as a string, similar to the `typeof` operator, with two differences:\n\n- for `null` it returns `'null'` (not `'object'`)\n- for an array it returns `'array'` (not `'object'`)\n\nExamples:\n- `describeType(5)` → `'number'`\n- `describeType(null)` → `'null'`\n- `describeType([1, 2])` → `'array'`\n\nFor everything else it returns the same as `typeof`."
+  },
+  "starterCode": "function describeType(value) {\n  // your code\n}",
+  "tests": "test({ sr: 'obični tipovi kao typeof', en: 'ordinary types like typeof' }, () => {\n  expect(describeType(5)).toBe('number');\n  expect(describeType('hi')).toBe('string');\n  expect(describeType(true)).toBe('boolean');\n});\ntest({ sr: 'null je \"null\"', en: 'null is \"null\"' }, () => {\n  expect(describeType(null)).toBe('null');\n});\ntest({ sr: 'niz je \"array\"', en: 'an array is \"array\"' }, () => {\n  expect(describeType([1, 2])).toBe('array');\n});",
+  "hiddenTests": "test('undefined', () => {\n  expect(describeType(undefined)).toBe('undefined');\n});\ntest('a plain object stays \"object\"', () => {\n  expect(describeType({ a: 1 })).toBe('object');\n});\ntest('an empty array is still an array', () => {\n  expect(describeType([])).toBe('array');\n});\ntest('a function and NaN', () => {\n  expect(describeType(() => 1)).toBe('function');\n  expect(describeType(NaN)).toBe('number');\n});\ntest('a date is an object, like typeof says', () => {\n  expect(describeType(new Date(0))).toBe('object');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "dva izuzetka pa typeof",
+        "en": "two exceptions, then typeof"
+      },
+      "code": "function describeType(value) {\n  if (value === null) return 'null';\n  if (Array.isArray(value)) return 'array';\n  return typeof value;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function describeType` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(value)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `describeType(5)`, unutar funkcije je `value` jednako `5`. Može biti bilo koja vrednost.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 5.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function describeType` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(value)` is the parameter list. A parameter is an empty “slot” for input: when we call `describeType(5)`, inside the function `value` equals `5`. It can be any value.\n- `{` opens the function body, and `}` on line 5 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prvo hvatamo `null`, jer `typeof` za njega daje pogrešan odgovor.\n\n- `if (uslov) naredba` izvršava naredbu samo ako je uslov `true`.\n- `value === null` pita: da li je `value` tačno `null`? `===` je stroga jednakost, poredi i vrednost i tip i daje `true` ili `false`.\n- `null` je poseban „prazan“ vrednost koju programer sam stavlja kad hoće da kaže „nema vrednosti“.\n- `return 'null'` odmah vraća tekst `'null'` i završava funkciju, pa se ostatak koda ne izvršava.\n- Zašto je ovo potrebno: `typeof null` je `'object'`. To je stara greška u jeziku koja se zadržala zbog kompatibilnosti.\n\n```\ntypeof null      → 'object'   (greška jezika)\ndescribeType(null) → 'null'     (ovo želimo)\n```",
+            "en": "First we catch `null`, because `typeof` gives a wrong answer for it.\n\n- `if (condition) statement` runs the statement only if the condition is `true`.\n- `value === null` asks: is `value` exactly `null`? `===` is strict equality, it compares both value and type and gives `true` or `false`.\n- `null` is a special “empty” value that a programmer puts in deliberately to say “there is no value”.\n- `return 'null'` immediately returns the text `'null'` and ends the function, so the rest of the code does not run.\n- Why this is needed: `typeof null` is `'object'`. That is an old mistake in the language that stayed for compatibility.\n\n```\ntypeof null      → 'object'   (a language mistake)\ndescribeType(null) → 'null'     (what we want)\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatim hvatamo nizove, jer `typeof` i za njih daje `'object'`.\n\n- `Array.isArray(value)` je ugrađena funkcija koja vraća `true` samo ako je `value` niz.\n- Ne može se koristiti `typeof value === 'array'`: `typeof` nikad ne vraća `'array'`, nego `'object'`.\n- `return 'array'` vraća tekst i završava funkciju.\n- Ako uslov nije tačan, izvršavanje nastavlja na sledećoj liniji.\n\n```\ntypeof [1, 2]            → 'object'  (nije dovoljno precizno)\nArray.isArray([1, 2])     → true\nArray.isArray({ a: 1 })   → false\nArray.isArray('abc')      → false\n```",
+            "en": "Then we catch arrays, because `typeof` gives `'object'` for them too.\n\n- `Array.isArray(value)` is a built-in function that returns `true` only if `value` is an array.\n- `typeof value === 'array'` cannot be used: `typeof` never returns `'array'`, it returns `'object'`.\n- `return 'array'` returns the text and ends the function.\n- If the condition is not true, execution continues on the next line.\n\n```\ntypeof [1, 2]            → 'object'  (not precise enough)\nArray.isArray([1, 2])     → true\nArray.isArray({ a: 1 })   → false\nArray.isArray('abc')      → false\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Za sve ostalo dovoljan je `typeof`.\n\n- `typeof value` je **operator**: daje tekst sa nazivom tipa vrednosti. Piše se bez zagrada, pa je `typeof value` isto što i `typeof(value)`.\n- Moguće vrednosti su `'number'`, `'string'`, `'boolean'`, `'undefined'`, `'function'`, `'object'` (plus `'symbol'` i `'bigint'`).\n- `NaN` je tipa `'number'` (skriveni test), a funkcija je tipa `'function'`.\n- Do ove linije stižu samo vrednosti koje nisu `null` ni niz, pa je `'object'` ovde stvarno običan objekat.\n\nTok za nekoliko poziva:\n\n```\ndescribeType(5)        → nije null, nije niz → typeof 5 = 'number'\ndescribeType('hi')     → nije null, nije niz → typeof 'hi' = 'string'\ndescribeType(undefined)→ nije null, nije niz → typeof undefined = 'undefined'\ndescribeType({ a: 1 }) → nije null, nije niz → typeof { a: 1 } = 'object'\ndescribeType(null)     → value === null      → 'null'\ndescribeType([1, 2])   → Array.isArray       → 'array'\n```",
+            "en": "`typeof` is enough for everything else.\n\n- `typeof value` is an **operator**: it gives text with the name of the value's type. It is written without parentheses, so `typeof value` is the same as `typeof(value)`.\n- The possible values are `'number'`, `'string'`, `'boolean'`, `'undefined'`, `'function'`, `'object'` (plus `'symbol'` and `'bigint'`).\n- `NaN` is of type `'number'` (hidden test), and a function is of type `'function'`.\n- Only values that are neither `null` nor an array reach this line, so `'object'` here really is a plain object.\n\nFlow for several calls:\n\n```\ndescribeType(5)        → not null, not an array → typeof 5 = 'number'\ndescribeType('hi')     → not null, not an array → typeof 'hi' = 'string'\ndescribeType(undefined)→ not null, not an array → typeof undefined = 'undefined'\ndescribeType({ a: 1 }) → not null, not an array → typeof { a: 1 } = 'object'\ndescribeType(null)     → value === null         → 'null'\ndescribeType([1, 2])   → Array.isArray          → 'array'\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Redosled je bitan: izuzeci (`null` i niz) se proveravaju pre `typeof`, jer ih `typeof` ne razlikuje od običnog objekta.",
+        "en": "The order matters: the exceptions (`null` and an array) are checked before `typeof`, because `typeof` does not tell them apart from a plain object."
+      }
+    }
+  ]
+}

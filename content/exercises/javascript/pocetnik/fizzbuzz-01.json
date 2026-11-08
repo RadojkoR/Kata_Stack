@@ -7,8 +7,8 @@
   "runtime": "worker",
   "tags": ["loops", "strings"],
   "description": {
-    "sr": "Napiši funkciju `fizzBuzz(n)` koja vraća niz stringova od 1 do `n`.\n\n- brojevi deljivi sa 3 postaju `'Fizz'`\n- brojevi deljivi sa 5 postaju `'Buzz'`\n- brojevi deljivi sa oba postaju `'FizzBuzz'`\n- ostali se vraćaju kao string (`'1'`, `'2'`, ...)\n\nPrimer: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`",
-    "en": "Write a function `fizzBuzz(n)` that returns an array of strings from 1 to `n`.\n\n- numbers divisible by 3 become `'Fizz'`\n- numbers divisible by 5 become `'Buzz'`\n- numbers divisible by both become `'FizzBuzz'`\n- all others are returned as a string (`'1'`, `'2'`, ...)\n\nExample: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`"
+    "sr": "Napiši funkciju `fizzBuzz(n)` koja vraća niz stringova od 1 do `n`.\n\n- brojevi deljivi sa 3 postaju `'Fizz'`\n- brojevi deljivi sa 5 postaju `'Buzz'`\n- brojevi deljivi sa oba postaju `'FizzBuzz'`\n- ostali se vraćaju kao string (`'1'`, `'2'`, ...)\n\nPrimer: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`\n\nOgraničenje: `n` je ceo broj, 0 ili veći.",
+    "en": "Write a function `fizzBuzz(n)` that returns an array of strings from 1 to `n`.\n\n- numbers divisible by 3 become `'Fizz'`\n- numbers divisible by 5 become `'Buzz'`\n- numbers divisible by both become `'FizzBuzz'`\n- all others are returned as a string (`'1'`, `'2'`, ...)\n\nExample: `fizzBuzz(5)` → `['1', '2', 'Fizz', '4', 'Buzz']`\n\nConstraint: `n` is a whole number, 0 or greater."
   },
   "starterCode": "function fizzBuzz(n) {\n  // your code\n}",
   "tests": "test({ sr: 'prvih pet brojeva', en: 'the first five numbers' }, () => {\n  expect(fizzBuzz(5)).toEqual(['1', '2', 'Fizz', '4', 'Buzz']);\n});\ntest({ sr: 'deljivo sa 15 je FizzBuzz', en: 'divisible by 15 is FizzBuzz' }, () => {\n  expect(fizzBuzz(15)[14]).toBe('FizzBuzz');\n});\ntest({ sr: 'n = 0 daje prazan niz', en: 'n = 0 gives an empty array' }, () => {\n  expect(fizzBuzz(0)).toEqual([]);\n});",
@@ -66,7 +66,7 @@
         {
           "lines": [7, 7],
           "text": {
-            "sr": "Svi ostali brojevi se vraćaju kao string.\n\n- `String(k)` pretvara broj u tekst: broj `4` postaje string `'4'`.\n- To je bitno: test poredi sa `['1', '2', 'Fizz', '4', 'Buzz']`, a broj `1` nije isto što i string `'1'` (poređenje `toEqual` ih razlikuje).\n- Ovo je poslednja linija koju niz proverava: kad nijedan raniji `return` nije stigao do izvršavanja, element postaje tekst broja.",
+            "sr": "Svi ostali brojevi se vraćaju kao string.\n\n- `String(k)` pretvara broj u tekst: broj `4` postaje string `'4'`.\n- To je bitno: test poredi sa `['1', '2', 'Fizz', '4', 'Buzz']`, a broj `1` nije isto što i string `'1'` (poređenje `toEqual` ih razlikuje).\n- Ovo je poslednja linija do koje funkcija stiže: kad nijedan raniji `return` nije stigao do izvršavanja, element postaje tekst broja.",
             "en": "All other numbers are returned as a string.\n\n- `String(k)` turns a number into text: the number `4` becomes the string `'4'`.\n- This matters: the test compares with `['1', '2', 'Fizz', '4', 'Buzz']`, and the number `1` is not the same as the string `'1'` (the `toEqual` comparison tells them apart).\n- This is the last line the function reaches: when none of the earlier `return`s ran, the element becomes the text of the number."
           }
         },

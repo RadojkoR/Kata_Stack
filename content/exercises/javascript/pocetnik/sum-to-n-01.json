@@ -1,0 +1,117 @@
+{
+  "id": "sum-to-n-01",
+  "title": {
+    "sr": "Zbir od 1 do n",
+    "en": "Sum from 1 to n"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["loops"],
+  "description": {
+    "sr": "Napiši funkciju `sumTo(n)` koja vraća zbir svih celih brojeva od 1 do `n` (uključujući `n`).\n\nPrimeri:\n- `sumTo(5)` → `15` (jer je 1 + 2 + 3 + 4 + 5 = 15)\n- `sumTo(1)` → `1`\n- `sumTo(0)` → `0`\n\nOgraničenje: `n` je ceo broj, 0 ili veći.",
+    "en": "Write a function `sumTo(n)` that returns the sum of all whole numbers from 1 to `n` (including `n`).\n\nExamples:\n- `sumTo(5)` → `15` (because 1 + 2 + 3 + 4 + 5 = 15)\n- `sumTo(1)` → `1`\n- `sumTo(0)` → `0`\n\nConstraint: `n` is a whole number, 0 or greater."
+  },
+  "starterCode": "function sumTo(n) {\n  // your code\n}",
+  "tests": "test({ sr: 'zbir od 1 do 5', en: 'the sum from 1 to 5' }, () => {\n  expect(sumTo(5)).toBe(15);\n});\ntest({ sr: 'zbir od 1 do 1', en: 'the sum from 1 to 1' }, () => {\n  expect(sumTo(1)).toBe(1);\n});\ntest({ sr: 'nula daje 0', en: 'zero gives 0' }, () => {\n  expect(sumTo(0)).toBe(0);\n});",
+  "hiddenTests": "test('the last number is included', () => {\n  expect(sumTo(2)).toBe(3);\n  expect(sumTo(3)).toBe(6);\n});\ntest('a larger number', () => {\n  expect(sumTo(10)).toBe(55);\n  expect(sumTo(100)).toBe(5050);\n});\ntest('a big sum is still exact', () => {\n  expect(sumTo(1000)).toBe(500500);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja `for`",
+        "en": "a `for` loop"
+      },
+      "code": "function sumTo(n) {\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    total += i;\n  }\n  return total;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function sumTo` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `sumTo(5)`, unutar funkcije je `n` jednako `5`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function sumTo` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `sumTo(5)`, inside the function `n` equals `5`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Promenljiva u koju skupljamo zbir.\n\n- `let total = 0` pravi promenljivu čija se vrednost menja, sa početnom vrednošću `0`.\n- Nula je neutralna za sabiranje, pa će `sumTo(0)` vratiti `0` bez ikakvog posebnog slučaja.",
+            "en": "The variable in which we collect the sum.\n\n- `let total = 0` creates a variable whose value changes, with the starting value `0`.\n- Zero is neutral for addition, so `sumTo(0)` will return `0` with no special case."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja `for` ima tri dela odvojena tačka-zarezom.\n\n- `let i = 1` je **početak**: pravi brojač `i` i postavlja ga na `1`. Izvršava se jednom, pre prvog prolaza.\n- `i <= n` je **uslov**: proverava se pre svakog prolaza, i dok je tačan, telo se izvršava. `<=` znači „manje ili jednako“, pa se i `n` uključuje.\n- `i++` je **korak**: izvršava se posle svakog prolaza i povećava `i` za 1.\n- Za `n = 0` uslov `1 <= 0` je odmah netačan, pa se telo ne izvršava nijednom i vraća se početnih `0`.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.\n\nBrojač za `n = 4`:\n\n```\ni = 1  → 1 <= 4 tačno → telo\ni = 2  → 2 <= 4 tačno → telo\ni = 3  → 3 <= 4 tačno → telo\ni = 4  → 4 <= 4 tačno → telo\ni = 5  → 5 <= 4 netačno → petlja se završava\n```",
+            "en": "The `for` loop has three parts separated by semicolons.\n\n- `let i = 1` is the **start**: it creates the counter `i` and sets it to `1`. It runs once, before the first pass.\n- `i <= n` is the **condition**: it is checked before every pass, and while it is true the body runs. `<=` means “less than or equal”, so `n` is included too.\n- `i++` is the **step**: it runs after every pass and increases `i` by 1.\n- For `n = 0` the condition `1 <= 0` is immediately false, so the body does not run at all and the initial `0` is returned.\n- `{` opens the loop body; it is closed by `}` on line 5.\n\nThe counter for `n = 4`:\n\n```\ni = 1  → 1 <= 4 true  → body\ni = 2  → 2 <= 4 true  → body\ni = 3  → 3 <= 4 true  → body\ni = 4  → 4 <= 4 true  → body\ni = 5  → 5 <= 4 false → the loop ends\n```"
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "U svakom prolazu dodajemo trenutni broj na zbir.\n\n- `total += i` je skraćeno za `total = total + i`: uzmi trenutni zbir, dodaj `i`, rezultat vrati u `total`.\n\nTok za `n = 4`:\n\n```\npočetak:  total = 0\ni = 1:    total = 0 + 1 = 1\ni = 2:    total = 1 + 2 = 3\ni = 3:    total = 3 + 3 = 6\ni = 4:    total = 6 + 4 = 10\nrezultat: 10\n```",
+            "en": "In every pass we add the current number to the sum.\n\n- `total += i` is short for `total = total + i`: take the current sum, add `i`, and put the result back into `total`.\n\nFlow for `n = 4`:\n\n```\nstart:    total = 0\ni = 1:    total = 0 + 1 = 1\ni = 2:    total = 1 + 2 = 3\ni = 3:    total = 3 + 3 = 6\ni = 4:    total = 6 + 4 = 10\nresult:   10\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Vraća zbir.\n\n- `return total` šalje konačnu vrednost. Namerno je izvan petlje, da se izvrši tek posle svih prolaza.",
+            "en": "Returns the sum.\n\n- `return total` sends the final value. It is deliberately outside the loop, so it runs only after all passes."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Jasna petlja koja radi onoliko koraka koliko je `n`.",
+        "en": "A clear loop that does as many steps as `n`."
+      }
+    },
+    {
+      "label": {
+        "sr": "formula",
+        "en": "a formula"
+      },
+      "code": "function sumTo(n) {\n  return (n * (n + 1)) / 2;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function sumTo` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `sumTo(5)`, unutar funkcije je `n` jednako `5`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function sumTo` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `sumTo(5)`, inside the function `n` equals `5`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Zbir se računa formulom, bez petlje.\n\n- Ideja (pripisuje se Gausu): zbir `1 + 2 + ... + n` napišeš dvaput, jednom unapred, jednom unazad, pa saberi parove. Svaki par daje `n + 1`, a parova ima `n`, pa je dvostruki zbir `n * (n + 1)`. Zbir je polovina toga.\n- `n * (n + 1)` množi `n` sa sledećim brojem. Zagrade u `(n * (n + 1))` služe čitljivosti.\n- `/ 2` deli sa 2. Rezultat je uvek ceo broj, jer je proizvod dva uzastopna broja uvek paran (jedan od njih je paran).\n- Za `n = 0` formula daje `0 * 1 / 2 = 0`, bez posebnog slučaja.\n- Ovaj pristup ne zavisi od veličine `n`: uvek jedno množenje i jedno deljenje, a petlja bi radila `n` koraka.\n\nPrimer za `n = 5`:\n\n```\n1 + 2 + 3 + 4 + 5\n5 + 4 + 3 + 2 + 1\n--------------------- parovi: 6, 6, 6, 6, 6  → 5 * 6 = 30\nzbir je polovina: 30 / 2 = 15\n\nformula: (5 * (5 + 1)) / 2 = (5 * 6) / 2 = 15\n```",
+            "en": "The sum is computed with a formula, without a loop.\n\n- The idea (attributed to Gauss): write the sum `1 + 2 + ... + n` twice, once forward, once backward, then add the pairs. Each pair gives `n + 1`, and there are `n` pairs, so the double sum is `n * (n + 1)`. The sum is half of that.\n- `n * (n + 1)` multiplies `n` by the next number. The parentheses in `(n * (n + 1))` are for readability.\n- `/ 2` divides by 2. The result is always a whole number, because the product of two consecutive numbers is always even (one of them is even).\n- For `n = 0` the formula gives `0 * 1 / 2 = 0`, with no special case.\n- This approach does not depend on the size of `n`: always one multiplication and one division, while a loop would do `n` steps.\n\nExample for `n = 5`:\n\n```\n1 + 2 + 3 + 4 + 5\n5 + 4 + 3 + 2 + 1\n--------------------- pairs: 6, 6, 6, 6, 6  → 5 * 6 = 30\nthe sum is half: 30 / 2 = 15\n\nformula: (5 * (5 + 1)) / 2 = (5 * 6) / 2 = 15\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Jedan račun umesto `n` koraka; važi za ceo broj `n >= 0`.",
+        "en": "One calculation instead of `n` steps; valid for a whole number `n >= 0`."
+      }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": "day-name-01",
+  "title": {
+    "sr": "Naziv dana u nedelji",
+    "en": "Name of the day of the week"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["conditionals"],
+  "description": {
+    "sr": "Napiši funkciju `dayName(number)` koja broj od 1 do 7 pretvara u naziv dana na engleskom: `1` je `'Monday'`, `2` je `'Tuesday'`, ... `7` je `'Sunday'`.\n\nZa sve ostalo vraća `'Invalid'`: brojeve van opsega (`0`, `8`, negativne) i brojeve koji nisu celi (npr. `1.5`).\n\nPrimeri:\n- `dayName(1)` → `'Monday'`\n- `dayName(7)` → `'Sunday'`\n- `dayName(9)` → `'Invalid'`",
+    "en": "Write a function `dayName(number)` that converts a number from 1 to 7 into the name of the day: `1` is `'Monday'`, `2` is `'Tuesday'`, ... `7` is `'Sunday'`.\n\nFor everything else it returns `'Invalid'`: numbers out of range (`0`, `8`, negative ones) and numbers that are not whole (e.g. `1.5`).\n\nExamples:\n- `dayName(1)` → `'Monday'`\n- `dayName(7)` → `'Sunday'`\n- `dayName(9)` → `'Invalid'`"
+  },
+  "starterCode": "function dayName(number) {\n  // your code\n}",
+  "tests": "test({ sr: 'ponedeljak je 1', en: 'Monday is 1' }, () => {\n  expect(dayName(1)).toBe('Monday');\n});\ntest({ sr: 'nedelja je 7', en: 'Sunday is 7' }, () => {\n  expect(dayName(7)).toBe('Sunday');\n});\ntest({ sr: 'broj van opsega je Invalid', en: 'a number out of range is Invalid' }, () => {\n  expect(dayName(9)).toBe('Invalid');\n});",
+  "hiddenTests": "test('every day in order', () => {\n  const names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];\n  names.forEach((name, i) => expect(dayName(i + 1)).toBe(name));\n});\ntest('zero and negative numbers are invalid', () => {\n  expect(dayName(0)).toBe('Invalid');\n  expect(dayName(-1)).toBe('Invalid');\n});\ntest('the number right after the range is invalid', () => {\n  expect(dayName(8)).toBe('Invalid');\n});\ntest('numbers that are not whole are invalid', () => {\n  expect(dayName(1.5)).toBe('Invalid');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "switch",
+        "en": "switch"
+      },
+      "code": "function dayName(number) {\n  switch (number) {\n    case 1:\n      return 'Monday';\n    case 2:\n      return 'Tuesday';\n    case 3:\n      return 'Wednesday';\n    case 4:\n      return 'Thursday';\n    case 5:\n      return 'Friday';\n    case 6:\n      return 'Saturday';\n    case 7:\n      return 'Sunday';\n    default:\n      return 'Invalid';\n  }\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function dayName` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(number)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `dayName(3)`, unutar funkcije je `number` jednako `3`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 20.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function dayName` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(number)` is the parameter list. A parameter is an empty “slot” for input: when we call `dayName(3)`, inside the function `number` equals `3`.\n- `{` opens the function body, and `}` on line 20 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "`switch` bira jednu od više grana prema vrednosti.\n\n- `switch (number) { ... }` uzima vrednost izraza u zagradama (ovde `number`) i poredi je redom sa svakim `case`.\n- Poređenje je **strogo** (kao `===`), bez konverzije: `1` se poklapa sa `case 1`, ali `'1'` (tekst) ne bi.\n- Kad se nađe poklapanje, izvršavanje počinje od tog `case` i ide dalje redom, sve dok ne naiđe na `return` ili `break`.\n- `{` otvara telo `switch`-a; zatvara ga `}` u liniji 19.",
+            "en": "`switch` picks one of several branches by value.\n\n- `switch (number) { ... }` takes the value of the expression in the parentheses (here `number`) and compares it in order with each `case`.\n- The comparison is **strict** (like `===`), with no conversion: `1` matches `case 1`, but `'1'` (text) would not.\n- When a match is found, execution starts from that `case` and continues in order, until it meets `return` or `break`.\n- `{` opens the `switch` body; it is closed by `}` on line 19."
+          }
+        },
+        {
+          "lines": [3, 4],
+          "text": {
+            "sr": "Prva grana: `case 1` i njen `return`.\n\n- `case 1:` znači „ako je `number` jednako `1`“. Dvotačka otvara kod te grane.\n- `return 'Monday'` vraća tekst i odmah završava funkciju, pa se ostale grane ne izvršavaju.\n- Zato nije potreban `break`. Bez `return` ili `break` izvršavanje bi „propalo“ u sledeći `case` i vratilo pogrešan dan.",
+            "en": "The first branch: `case 1` and its `return`.\n\n- `case 1:` means “if `number` equals `1`”. The colon opens the code of that branch.\n- `return 'Monday'` returns the text and ends the function immediately, so the other branches do not run.\n- That is why `break` is not needed. Without `return` or `break` execution would “fall through” into the next `case` and return a wrong day."
+          }
+        },
+        {
+          "lines": [5, 16],
+          "text": {
+            "sr": "Isto za dane 2 do 7: svaki `case` je par linija (`case N:` pa `return`).\n\n- `case 2:` do `case 7:` rade potpuno isto kao `case 1:`, samo sa drugim brojem i drugim tekstom.\n- Svaki `case` ima svoj `return`, pa se izvršava najviše jedna grana.\n\nTok za nekoliko poziva:\n\n```\ndayName(1) → case 1 se poklapa → 'Monday'\ndayName(4) → case 1, 2, 3 se ne poklapaju → case 4 se poklapa → 'Thursday'\ndayName(7) → ... → case 7 se poklapa → 'Sunday'\n```",
+            "en": "The same for days 2 to 7: each `case` is a pair of lines (`case N:` then `return`).\n\n- `case 2:` to `case 7:` do exactly the same as `case 1:`, only with a different number and a different text.\n- Every `case` has its own `return`, so at most one branch runs.\n\nFlow for several calls:\n\n```\ndayName(1) → case 1 matches → 'Monday'\ndayName(4) → cases 1, 2, 3 do not match → case 4 matches → 'Thursday'\ndayName(7) → ... → case 7 matches → 'Sunday'\n```"
+          }
+        },
+        {
+          "lines": [17, 18],
+          "text": {
+            "sr": "`default`: sve što nije nijedan `case`.\n\n- `default:` je grana koja se izvršava kad se nijedan `case` nije poklopio.\n- `return 'Invalid'` vraća tekst za sve ostalo: `0`, `8`, negativne brojeve, `1.5` (strogo poređenje: `1.5` nije `1`), tekst...\n- Zato ne treba posebno proveravati opseg (`number < 1 || number > 7`): sve što nije ponuđeno u `case`-ovima automatski ide u `default`.\n\n```\ndayName(9)   → nijedan case → default → 'Invalid'\ndayName(0)   → nijedan case → default → 'Invalid'\ndayName(1.5) → 1.5 nije jednako nijednom → default → 'Invalid'\n```",
+            "en": "`default`: everything that is none of the `case`s.\n\n- `default:` is the branch that runs when no `case` matched.\n- `return 'Invalid'` returns the text for everything else: `0`, `8`, negative numbers, `1.5` (strict comparison: `1.5` is not `1`), text...\n- That is why the range does not need a separate check (`number < 1 || number > 7`): everything not offered in the `case`s automatically goes to `default`.\n\n```\ndayName(9)   → no case → default → 'Invalid'\ndayName(0)   → no case → default → 'Invalid'\ndayName(1.5) → 1.5 equals none → default → 'Invalid'\n```"
+          }
+        },
+        {
+          "lines": [19, 19],
+          "text": {
+            "sr": "Zatvara telo `switch`-a otvoreno u liniji 2.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the `switch` body opened on line 2.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [20, 20],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`switch` je pregledan kad ima mnogo tačno određenih vrednosti; `default` hvata sve ostalo.",
+        "en": "`switch` is clear when there are many exactly defined values; `default` catches everything else."
+      }
+    },
+    {
+      "label": {
+        "sr": "niz i indeks",
+        "en": "array and index"
+      },
+      "code": "function dayName(number) {\n  return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][number - 1] ?? 'Invalid';\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function dayName` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(number)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `dayName(3)`, unutar funkcije je `number` jednako `3`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function dayName` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(number)` is the parameter list. A parameter is an empty “slot” for input: when we call `dayName(3)`, inside the function `number` equals `3`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Naziv dana se čita iz niza po indeksu, a ako ga nema, vraća se `'Invalid'`.\n\n- `['Monday', ..., 'Sunday']` je niz sa sedam naziva. Niz se prvo pravi, pa se odmah čita jedan njegov element.\n- `[number - 1]` čita element na tom indeksu. Indeksi kreću od `0`, a dani od `1`, zato se oduzima 1: `number = 1` daje indeks `0` (`'Monday'`), `number = 7` daje indeks `6` (`'Sunday'`).\n- Za indeks koji ne postoji (broj van opsega) čitanje daje `undefined`. Isto važi za nepun indeks: `1.5 - 1` je `0.5`, a element na `0.5` ne postoji.\n- `?? 'Invalid'` je **nullish coalescing**: vraća desnu stranu samo ako je leva `undefined` ili `null`. Zato nepostojeći dan postaje `'Invalid'`.\n- `return` vraća rezultat i završava funkciju.\n\nTok:\n\n```\nnumber = 3   → indeks 2   → 'Wednesday'\nnumber = 1   → indeks 0   → 'Monday'\nnumber = 8   → indeks 7   → undefined → 'Invalid'\nnumber = 0   → indeks -1  → undefined → 'Invalid'\nnumber = 1.5 → indeks 0.5 → undefined → 'Invalid'\n```",
+            "en": "The name of the day is read from an array by index, and if there is none, `'Invalid'` is returned.\n\n- `['Monday', ..., 'Sunday']` is an array with seven names. The array is created first, and then one of its elements is read right away.\n- `[number - 1]` reads the element at that index. Indexes start at `0`, while days start at `1`, so we subtract 1: `number = 1` gives index `0` (`'Monday'`), `number = 7` gives index `6` (`'Sunday'`).\n- For an index that does not exist (a number out of range) reading gives `undefined`. The same holds for a fractional index: `1.5 - 1` is `0.5`, and there is no element at `0.5`.\n- `?? 'Invalid'` is **nullish coalescing**: it returns the right side only if the left is `undefined` or `null`. That is why a nonexistent day becomes `'Invalid'`.\n- `return` returns the result and ends the function.\n\nFlow:\n\n```\nnumber = 3   → index 2   → 'Wednesday'\nnumber = 1   → index 0   → 'Monday'\nnumber = 8   → index 7   → undefined → 'Invalid'\nnumber = 0   → index -1  → undefined → 'Invalid'\nnumber = 1.5 → index 0.5 → undefined → 'Invalid'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Podaci su u nizu, pa nema grananja; dobro kad su vrednosti redom 1, 2, 3...",
+        "en": "The data is in an array, so there is no branching; good when the values are 1, 2, 3... in order."
+      }
+    }
+  ]
+}

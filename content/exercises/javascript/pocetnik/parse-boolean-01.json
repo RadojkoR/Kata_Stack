@@ -1,0 +1,76 @@
+{
+  "id": "parse-boolean-01",
+  "title": {
+    "sr": "Tekst u logičku vrednost",
+    "en": "Text to a boolean"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "conversion"],
+  "description": {
+    "sr": "Napiši funkciju `parseBoolean(text)` koja pretvara tekst u logičku vrednost:\n\n- `'true'` daje `true`, `'false'` daje `false`\n- velika i mala slova i razmaci sa strana se ignorišu\n- sve ostalo daje `null` (što znači „ne znam“)\n\nPrimeri:\n- `parseBoolean('true')` → `true`\n- `parseBoolean('false')` → `false`\n- `parseBoolean('yes')` → `null`\n\nNe koristi `Boolean(text)`: `Boolean('false')` je `true`, jer je neprazan tekst uvek istinit.",
+    "en": "Write a function `parseBoolean(text)` that converts text to a boolean:\n\n- `'true'` gives `true`, `'false'` gives `false`\n- letter case and spaces at the sides are ignored\n- everything else gives `null` (meaning “I do not know”)\n\nExamples:\n- `parseBoolean('true')` → `true`\n- `parseBoolean('false')` → `false`\n- `parseBoolean('yes')` → `null`\n\nDo not use `Boolean(text)`: `Boolean('false')` is `true`, because non-empty text is always truthy."
+  },
+  "starterCode": "function parseBoolean(text) {\n  // your code\n}",
+  "tests": "test({ sr: '\"true\" daje true', en: '\"true\" gives true' }, () => {\n  expect(parseBoolean('true')).toBe(true);\n});\ntest({ sr: '\"false\" daje false', en: '\"false\" gives false' }, () => {\n  expect(parseBoolean('false')).toBe(false);\n});\ntest({ sr: 'nepoznat tekst daje null', en: 'unknown text gives null' }, () => {\n  expect(parseBoolean('yes')).toBe(null);\n});",
+  "hiddenTests": "test('capital letters and spaces are ignored', () => {\n  expect(parseBoolean(' TRUE ')).toBe(true);\n  expect(parseBoolean('False')).toBe(false);\n});\ntest('an empty string gives null', () => {\n  expect(parseBoolean('')).toBe(null);\n});\ntest('the digit 1 is not \"true\"', () => {\n  expect(parseBoolean('1')).toBe(null);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "normalizuj pa uporedi",
+        "en": "normalize, then compare"
+      },
+      "code": "function parseBoolean(text) {\n  const normalized = text.trim().toLowerCase();\n  if (normalized === 'true') return true;\n  if (normalized === 'false') return false;\n  return null;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function parseBoolean` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `parseBoolean('true')`, unutar funkcije je `text` jednako `'true'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 6.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function parseBoolean` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text)` is the parameter list. A parameter is an empty “slot” for input: when we call `parseBoolean('true')`, inside the function `text` equals `'true'`.\n- `{` opens the function body, and `}` on line 6 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravimo „normalizovanu“ verziju teksta, da poređenje ne zavisi od razmaka i velikih slova.\n\n- `const normalized` pravi promenljivu koja se ne dodeljuje ponovo.\n- `text.trim()` uklanja razmake (i tabove, nove redove) sa početka i kraja. `'  true '` postaje `'true'`.\n- `.toLowerCase()` pretvara sva slova u mala. `'TRUE'` postaje `'true'`.\n- Stringovi su nepromenljivi, pa svaka metoda vraća nov string, a `text` ostaje isti.\n\n```\n' TRUE '  → trim → 'TRUE' → toLowerCase → 'true'\n'False'   → trim → 'False' → toLowerCase → 'false'\n```",
+            "en": "We build a “normalized” version of the text, so the comparison does not depend on spaces and letter case.\n\n- `const normalized` creates a variable that is not reassigned.\n- `text.trim()` removes spaces (and tabs, newlines) from the start and end. `'  true '` becomes `'true'`.\n- `.toLowerCase()` turns all letters into lowercase. `'TRUE'` becomes `'true'`.\n- Strings are immutable, so each method returns a new string and `text` stays the same.\n\n```\n' TRUE '  → trim → 'TRUE' → toLowerCase → 'true'\n'False'   → trim → 'False' → toLowerCase → 'false'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Ako je tekst `'true'`, vraćamo `true`.\n\n- `normalized === 'true'` poredi dva teksta po vrednosti i daje `true` ili `false`.\n- `return true` vraća **logičku** vrednost `true` (bez navodnika), a ne tekst `'true'`. To je ono što test traži.\n- `return` odmah završava funkciju, pa se ostale provere ne izvršavaju.",
+            "en": "If the text is `'true'`, we return `true`.\n\n- `normalized === 'true'` compares two texts by value and gives `true` or `false`.\n- `return true` returns the **boolean** value `true` (without quotes), not the text `'true'`. That is what the test requires.\n- `return` immediately ends the function, so the other checks do not run."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Ako je tekst `'false'`, vraćamo `false`.\n\n- Isto kao u prethodnoj liniji, samo za `'false'`.\n- Zašto nije dovoljno `return normalized === 'true'`: tada bi i `'yes'` i `''` dali `false`, a zadatak traži `null` za sve što nije jasno `true` ili `false`.",
+            "en": "If the text is `'false'`, we return `false`.\n\n- The same as the previous line, only for `'false'`.\n- Why `return normalized === 'true'` is not enough: then both `'yes'` and `''` would give `false`, while the task requires `null` for everything that is not clearly `true` or `false`."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Sve ostalo je nepoznato: vraćamo `null`.\n\n- Do ove linije stiže samo tekst koji nije ni `'true'` ni `'false'`: `'yes'`, `'1'`, prazan tekst i slično.\n- `null` označava „nema vrednosti“. Tako pozivalac može da razlikuje „jeste false“ od „nije prepoznato“.\n\nTok:\n\n```\nparseBoolean(' TRUE ') → 'true'  → true\nparseBoolean('False')  → 'false' → false\nparseBoolean('yes')    → 'yes'   → ni jedno ni drugo → null\nparseBoolean('')       → ''      → ni jedno ni drugo → null\n```",
+            "en": "Everything else is unknown: we return `null`.\n\n- Only text that is neither `'true'` nor `'false'` reaches this line: `'yes'`, `'1'`, empty text and the like.\n- `null` means “no value”. This way the caller can tell “it is false” apart from “not recognized”.\n\nFlow:\n\n```\nparseBoolean(' TRUE ') → 'true'  → true\nparseBoolean('False')  → 'false' → false\nparseBoolean('yes')    → 'yes'   → neither → null\nparseBoolean('')       → ''      → neither → null\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Tri ishoda (`true`, `false`, `null`) razlikuju „prepoznato kao ne“ od „nije prepoznato“.",
+        "en": "Three outcomes (`true`, `false`, `null`) tell “recognized as no” apart from “not recognized”."
+      }
+    }
+  ]
+}

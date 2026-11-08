@@ -1,0 +1,103 @@
+{
+  "id": "format-time-01",
+  "title": {
+    "sr": "Prikaz vremena MM:SS",
+    "en": "Display time as MM:SS"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings", "templates"],
+  "description": {
+    "sr": "Napiši funkciju `formatTime(minutes, seconds)` koja vraća tekst oblika `'MM:SS'`. Minuti i sekunde se pišu sa **najmanje dve cifre**, dopunjene vodećom nulom.\n\nPrimeri:\n- `formatTime(5, 7)` → `'05:07'`\n- `formatTime(12, 30)` → `'12:30'`\n- `formatTime(0, 0)` → `'00:00'`\n\nOgraničenje: `minutes` i `seconds` su celi brojevi, 0 ili veći. Ako minuti imaju više od dve cifre, ostaju cela: `formatTime(100, 5)` → `'100:05'`.",
+    "en": "Write a function `formatTime(minutes, seconds)` that returns text of the form `'MM:SS'`. Minutes and seconds are written with **at least two digits**, padded with a leading zero.\n\nExamples:\n- `formatTime(5, 7)` → `'05:07'`\n- `formatTime(12, 30)` → `'12:30'`\n- `formatTime(0, 0)` → `'00:00'`\n\nConstraint: `minutes` and `seconds` are whole numbers, 0 or greater. If the minutes have more than two digits, they stay whole: `formatTime(100, 5)` → `'100:05'`."
+  },
+  "starterCode": "function formatTime(minutes, seconds) {\n  // your code\n}",
+  "tests": "test({ sr: 'dopunjuje jednocifrene brojeve nulom', en: 'pads single-digit numbers with a zero' }, () => {\n  expect(formatTime(5, 7)).toBe('05:07');\n});\ntest({ sr: 'dvocifreni brojevi ostaju isti', en: 'two-digit numbers stay the same' }, () => {\n  expect(formatTime(12, 30)).toBe('12:30');\n});\ntest({ sr: 'nula je 00', en: 'zero is 00' }, () => {\n  expect(formatTime(0, 0)).toBe('00:00');\n});",
+  "hiddenTests": "test('only the seconds need padding', () => {\n  expect(formatTime(12, 9)).toBe('12:09');\n});\ntest('only the minutes need padding', () => {\n  expect(formatTime(9, 59)).toBe('09:59');\n});\ntest('minutes with more than two digits stay whole', () => {\n  expect(formatTime(100, 5)).toBe('100:05');\n});\ntest('the result is text', () => {\n  expect(typeof formatTime(1, 1)).toBe('string');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "padStart i šablon",
+        "en": "padStart and a template"
+      },
+      "code": "function formatTime(minutes, seconds) {\n  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function formatTime` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(minutes, seconds)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `minutes` i `seconds` su broj minuta i broj sekundi. Poziv `formatTime(5, 7)` daje `minutes = 5` i `seconds = 7`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function formatTime` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(minutes, seconds)` is the parameter list. A parameter is an empty “slot” for input: `minutes` and `seconds` are the number of minutes and the number of seconds. The call `formatTime(5, 7)` gives `minutes = 5` and `seconds = 7`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Svaki deo se dopuni nulom, pa se spoje u šablonu.\n\n- `String(minutes)` pretvara broj u tekst. Potrebno je jer `padStart` postoji samo za tekst, a ne za brojeve.\n- `.padStart(2, '0')` dopunjuje tekst sa leve strane do dužine `2`, znakom `'0'`. `'5'` postaje `'05'`, a `'12'` ostaje `'12'`.\n- `padStart` nikad ne skraćuje: tekst koji je već dug 2 ili više znakova ostaje isti, pa `'100'` ostaje `'100'` (skriveni test).\n- Ako se izostavi drugi argument (`padStart(2)`), dopuna se vrši razmakom, a ne nulom.\n- Obrnuti apostrofi `` ` ` `` prave **šablon-literal** (template literal). Unutar njega `${izraz}` ubacuje vrednost izraza u tekst.\n- Dvotačka između dva `${...}` je običan znak koji se prepisuje. Cela vrednost je `'MM:SS'`.\n\nTok za `formatTime(5, 7)`:\n\n```\nString(5).padStart(2, '0')  → '5'  → '05'\nString(7).padStart(2, '0')  → '7'  → '07'\nšablon: `${'05'}:${'07'}`   → '05:07'\n```\n\nZa `formatTime(100, 5)`:\n\n```\nString(100).padStart(2, '0') → '100' (već duže od 2) → '100'\nString(5).padStart(2, '0')   → '05'\nrezultat: '100:05'\n```",
+            "en": "Each part is padded with a zero, and then they are joined in a template.\n\n- `String(minutes)` turns a number into text. It is needed because `padStart` exists only for text, not for numbers.\n- `.padStart(2, '0')` pads the text on the left up to length `2`, with the character `'0'`. `'5'` becomes `'05'`, and `'12'` stays `'12'`.\n- `padStart` never shortens: text that is already 2 or more characters long stays the same, so `'100'` stays `'100'` (hidden test).\n- If the second argument is omitted (`padStart(2)`), the padding is a space, not a zero.\n- Backticks `` ` ` `` create a **template literal**. Inside it `${expression}` inserts the value of the expression into the text.\n- The colon between the two `${...}` is an ordinary character that is copied. The whole value is `'MM:SS'`.\n\nFlow for `formatTime(5, 7)`:\n\n```\nString(5).padStart(2, '0')  → '5'  → '05'\nString(7).padStart(2, '0')  → '7'  → '07'\ntemplate: `${'05'}:${'07'}`  → '05:07'\n```\n\nFor `formatTime(100, 5)`:\n\n```\nString(100).padStart(2, '0') → '100' (already longer than 2) → '100'\nString(5).padStart(2, '0')   → '05'\nresult: '100:05'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`padStart` i šablon-literal daju kratak kod; `padStart` nikad ne skraćuje duže brojeve.",
+        "en": "`padStart` and a template literal give short code; `padStart` never shortens longer numbers."
+      }
+    },
+    {
+      "label": {
+        "sr": "uslov i nadovezivanje",
+        "en": "a condition and concatenation"
+      },
+      "code": "function formatTime(minutes, seconds) {\n  const mm = minutes < 10 ? '0' + minutes : String(minutes);\n  const ss = seconds < 10 ? '0' + seconds : String(seconds);\n  return mm + ':' + ss;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function formatTime` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(minutes, seconds)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `minutes` i `seconds` su broj minuta i broj sekundi. Poziv `formatTime(5, 7)` daje `minutes = 5` i `seconds = 7`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 5.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function formatTime` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(minutes, seconds)` is the parameter list. A parameter is an empty “slot” for input: `minutes` and `seconds` are the number of minutes and the number of seconds. The call `formatTime(5, 7)` gives `minutes = 5` and `seconds = 7`.\n- `{` opens the function body, and `}` on line 5 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Minuti kao tekst sa vodećom nulom kad treba.\n\n- `minutes < 10` pita da li je broj jednocifren (0 do 9).\n- `uslov ? a : b` je ternarni operator: ako je uslov tačan, rezultat je `a`, inače `b`.\n- `'0' + minutes` nadovezuje nulu (tekst) i broj. Kad se tekst sabira sa brojem, broj se pretvara u tekst, pa je `'0' + 5` jednako `'05'`.\n- `String(minutes)` pretvara broj u tekst za dvocifrene i veće brojeve, da `mm` uvek bude tekst.\n\n```\nminutes = 5   → 5 < 10 tačno   → '0' + 5 = '05'\nminutes = 12  → 12 < 10 netačno → String(12) = '12'\nminutes = 100 → 100 < 10 netačno → String(100) = '100'\n```",
+            "en": "Minutes as text with a leading zero when needed.\n\n- `minutes < 10` asks whether the number is a single digit (0 to 9).\n- `condition ? a : b` is the ternary operator: if the condition is true the result is `a`, otherwise `b`.\n- `'0' + minutes` joins a zero (text) and a number. When text is added to a number, the number is converted to text, so `'0' + 5` equals `'05'`.\n- `String(minutes)` turns a number into text for two-digit and larger numbers, so `mm` is always text.\n\n```\nminutes = 5   → 5 < 10 true    → '0' + 5 = '05'\nminutes = 12  → 12 < 10 false   → String(12) = '12'\nminutes = 100 → 100 < 10 false  → String(100) = '100'\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Isto za sekunde.\n\n- Ista logika kao u prethodnoj liniji, samo za `seconds`. Rezultat je tekst `ss` sa najmanje dve cifre.",
+            "en": "The same for seconds.\n\n- The same logic as on the previous line, only for `seconds`. The result is the text `ss` with at least two digits."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Spajamo minute i sekunde dvotačkom.\n\n- `mm + ':' + ss` nadovezuje tri teksta: minute, dvotačku, sekunde. Pošto su sva tri teksta, `+` ih samo spaja, ne sabira.\n- `return` vraća gotov tekst i završava funkciju.\n\nTok za `formatTime(5, 7)`:\n\n```\nmm = '05', ss = '07'\n'05' + ':' + '07' = '05:07'\n```",
+            "en": "We join the minutes and the seconds with a colon.\n\n- `mm + ':' + ss` joins three texts: the minutes, the colon, the seconds. Since all three are text, `+` only joins them, it does not add.\n- `return` returns the finished text and ends the function.\n\nFlow for `formatTime(5, 7)`:\n\n```\nmm = '05', ss = '07'\n'05' + ':' + '07' = '05:07'\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Duži, ali bez ugrađenih metoda: pokazuje šta zapravo radi `padStart`.",
+        "en": "Longer, but with no built-in methods: it shows what `padStart` actually does."
+      }
+    }
+  ]
+}

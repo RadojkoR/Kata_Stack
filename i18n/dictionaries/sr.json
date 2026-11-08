@@ -167,6 +167,13 @@
     "errors": "greške",
     "regex": "regularni izrazi",
     "sets": "skupovi",
-    "recursion": "rekurzija"
+    "recursion": "rekurzija",
+    "types": "tipovi podataka",
+    "conversion": "konverzije",
+    "conditionals": "uslovi",
+    "operators": "operatori",
+    "templates": "šabloni teksta",
+    "spread": "spread operator",
+    "searching": "pretraga"
   }
 }

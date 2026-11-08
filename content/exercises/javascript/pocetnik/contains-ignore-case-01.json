@@ -1,0 +1,89 @@
+{
+  "id": "contains-ignore-case-01",
+  "title": {
+    "sr": "Sadrži tekst, bez obzira na velika slova",
+    "en": "Contains text, ignoring letter case"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["strings"],
+  "description": {
+    "sr": "Napiši funkciju `containsIgnoreCase(text, search)` koja vraća `true` ako `text` sadrži `search`, ne razlikujući velika i mala slova. Inače vraća `false`.\n\nPrimeri:\n- `containsIgnoreCase('Hello World', 'world')` → `true`\n- `containsIgnoreCase('Hello', 'xyz')` → `false`\n- `containsIgnoreCase('', 'a')` → `false`\n\nPrazan `search` se nalazi u svakom tekstu: `containsIgnoreCase('abc', '')` → `true`.",
+    "en": "Write a function `containsIgnoreCase(text, search)` that returns `true` if `text` contains `search`, ignoring letter case. Otherwise it returns `false`.\n\nExamples:\n- `containsIgnoreCase('Hello World', 'world')` → `true`\n- `containsIgnoreCase('Hello', 'xyz')` → `false`\n- `containsIgnoreCase('', 'a')` → `false`\n\nAn empty `search` is found in every text: `containsIgnoreCase('abc', '')` → `true`."
+  },
+  "starterCode": "function containsIgnoreCase(text, search) {\n  // your code\n}",
+  "tests": "test({ sr: 'nalazi tekst bez obzira na velika slova', en: 'finds the text regardless of letter case' }, () => {\n  expect(containsIgnoreCase('Hello World', 'world')).toBe(true);\n});\ntest({ sr: 'tekst koga nema daje false', en: 'text that is missing gives false' }, () => {\n  expect(containsIgnoreCase('Hello', 'xyz')).toBe(false);\n});\ntest({ sr: 'prazan tekst ne sadrži slovo', en: 'an empty text does not contain a letter' }, () => {\n  expect(containsIgnoreCase('', 'a')).toBe(false);\n});",
+  "hiddenTests": "test('an empty search is found in every text', () => {\n  expect(containsIgnoreCase('abc', '')).toBe(true);\n  expect(containsIgnoreCase('', '')).toBe(true);\n});\ntest('capital letters on either side', () => {\n  expect(containsIgnoreCase('ABC', 'abc')).toBe(true);\n  expect(containsIgnoreCase('abc', 'ABC')).toBe(true);\n});\ntest('a search longer than the text is not found', () => {\n  expect(containsIgnoreCase('abc', 'abcd')).toBe(false);\n});\ntest('the match can be at the start, in the middle or at the end', () => {\n  expect(containsIgnoreCase('Hello World', 'HELLO')).toBe(true);\n  expect(containsIgnoreCase('Hello World', 'o W')).toBe(true);\n  expect(containsIgnoreCase('Hello World', 'LD')).toBe(true);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "includes",
+        "en": "includes"
+      },
+      "code": "function containsIgnoreCase(text, search) {\n  return text.toLowerCase().includes(search.toLowerCase());\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function containsIgnoreCase` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text, search)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `text` je tekst u kome tražimo, a `search` je ono što tražimo. Poziv `containsIgnoreCase('Hello World', 'world')` daje `text = 'Hello World'` i `search = 'world'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function containsIgnoreCase` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text, search)` is the parameter list. A parameter is an empty “slot” for input: `text` is the text we search in, and `search` is what we look for. The call `containsIgnoreCase('Hello World', 'world')` gives `text = 'Hello World'` and `search = 'world'`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pretvaramo oba teksta u mala slova, pa proveravamo da li jedan sadrži drugi.\n\n- `text.toLowerCase()` vraća novi tekst u kome su sva slova mala. Stringovi su nepromenljivi, pa se `text` ne menja.\n- `search.toLowerCase()` isto za tekst koji tražimo. Tek kad su oba malim slovima, poređenje ne zavisi od velikih slova.\n- `.includes(...)` je metoda teksta: vraća `true` ako tekst sadrži zadati deo bilo gde (na početku, u sredini ili na kraju), a `false` inače. Pošto je poređenje tačno slovo po slovo, `'o W'` (sa razmakom) se nalazi u `'hello world'`.\n- Prazan tekst se nalazi u svakom tekstu: `'abc'.includes('')` je `true`, pa i `containsIgnoreCase('abc', '')` daje `true`.\n- `return` vraća `true` ili `false` direktno, bez `if`.\n\nTok za `containsIgnoreCase('Hello World', 'WORLD')`:\n\n```\n'Hello World'.toLowerCase() → 'hello world'\n'WORLD'.toLowerCase()       → 'world'\n'hello world'.includes('world') → true\n```",
+            "en": "We turn both texts to lowercase, then check whether one contains the other.\n\n- `text.toLowerCase()` returns a new text in which all letters are lowercase. Strings are immutable, so `text` is not changed.\n- `search.toLowerCase()` does the same for the text we look for. Only when both are lowercase does the comparison not depend on letter case.\n- `.includes(...)` is a text method: it returns `true` if the text contains the given part anywhere (at the start, in the middle or at the end), and `false` otherwise. Since the comparison is exactly character by character, `'o W'` (with a space) is found in `'hello world'`.\n- An empty text is found in every text: `'abc'.includes('')` is `true`, so `containsIgnoreCase('abc', '')` gives `true` too.\n- `return` returns `true` or `false` directly, without `if`.\n\nFlow for `containsIgnoreCase('Hello World', 'WORLD')`:\n\n```\n'Hello World'.toLowerCase() → 'hello world'\n'WORLD'.toLowerCase()       → 'world'\n'hello world'.includes('world') → true\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`includes` odmah vraća `true` ili `false`, pa nema posebnog poređenja.",
+        "en": "`includes` returns `true` or `false` right away, so there is no extra comparison."
+      }
+    },
+    {
+      "label": {
+        "sr": "indexOf",
+        "en": "indexOf"
+      },
+      "code": "function containsIgnoreCase(text, search) {\n  return text.toLowerCase().indexOf(search.toLowerCase()) !== -1;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function containsIgnoreCase` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(text, search)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `text` je tekst u kome tražimo, a `search` je ono što tražimo. Poziv `containsIgnoreCase('Hello World', 'world')` daje `text = 'Hello World'` i `search = 'world'`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function containsIgnoreCase` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(text, search)` is the parameter list. A parameter is an empty “slot” for input: `text` is the text we search in, and `search` is what we look for. The call `containsIgnoreCase('Hello World', 'world')` gives `text = 'Hello World'` and `search = 'world'`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Isto što i `includes`, ali preko pozicije.\n\n- `text.toLowerCase()` i `search.toLowerCase()` pretvaraju oba teksta u mala slova, da velika slova ne smetaju.\n- `.indexOf(deo)` vraća poziciju na kojoj se `deo` prvi put pojavljuje u tekstu (brojanje kreće od `0`), ili `-1` ako ga nema.\n- `!== -1` pita: „da li je nađen?“. `!==` je stroga nejednakost, a `-1` je oznaka „nije nađeno“. Pozicija `0` (na samom početku) znači da JE nađen, zato se ne sme proveravati samo istinitost rezultata: `0` je neistinito.\n- Za prazan `search` `indexOf` vraća `0`, a `0 !== -1` je `true`, što test traži.\n- `return` vraća `true` ili `false` direktno.\n\nTok:\n\n```\n'hello world'.indexOf('world') → 6    → 6 !== -1 → true\n'hello'.indexOf('xyz')        → -1   → -1 !== -1 → false\n'abc'.indexOf('')             → 0    → 0 !== -1 → true\n```",
+            "en": "The same as `includes`, but through the position.\n\n- `text.toLowerCase()` and `search.toLowerCase()` turn both texts to lowercase, so capital letters do not matter.\n- `.indexOf(part)` returns the position at which `part` first appears in the text (counting starts at `0`), or `-1` if it is not there.\n- `!== -1` asks: “was it found?”. `!==` is strict inequality, and `-1` is the “not found” marker. Position `0` (right at the start) means it WAS found, so we must not just check truthiness of the result: `0` is falsy.\n- For an empty `search` `indexOf` returns `0`, and `0 !== -1` is `true`, which the test requires.\n- `return` returns `true` or `false` directly.\n\nFlow:\n\n```\n'hello world'.indexOf('world') → 6    → 6 !== -1 → true\n'hello'.indexOf('xyz')        → -1   → -1 !== -1 → false\n'abc'.indexOf('')             → 0    → 0 !== -1 → true\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Stariji način pre `includes`; zamka je poređenje sa `-1`, jer je `0` ispravna pozicija.",
+        "en": "The older way from before `includes`; the trap is the comparison with `-1`, because `0` is a valid position."
+      }
+    }
+  ]
+}

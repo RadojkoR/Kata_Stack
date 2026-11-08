@@ -1,0 +1,173 @@
+{
+  "id": "triangle-01",
+  "title": {
+    "sr": "Trougao od zvezdica",
+    "en": "A triangle of stars"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["loops", "strings"],
+  "description": {
+    "sr": "Napiši funkciju `buildTriangle(n)` koja vraća niz od `n` stringova. Red broj `i` (od 1 do `n`) sadrži tačno `i` zvezdica `'*'`.\n\nPrimeri:\n- `buildTriangle(3)` → `['*', '**', '***']`\n- `buildTriangle(1)` → `['*']`\n- `buildTriangle(0)` → `[]`\n\nOgraničenje: `n` je ceo broj, 0 ili veći.",
+    "en": "Write a function `buildTriangle(n)` that returns an array of `n` strings. Row number `i` (from 1 to `n`) contains exactly `i` stars `'*'`.\n\nExamples:\n- `buildTriangle(3)` → `['*', '**', '***']`\n- `buildTriangle(1)` → `['*']`\n- `buildTriangle(0)` → `[]`\n\nConstraint: `n` is a whole number, 0 or greater."
+  },
+  "starterCode": "function buildTriangle(n) {\n  // your code\n}",
+  "tests": "test({ sr: 'trougao od tri reda', en: 'a triangle of three rows' }, () => {\n  expect(buildTriangle(3)).toEqual(['*', '**', '***']);\n});\ntest({ sr: 'jedan red', en: 'a single row' }, () => {\n  expect(buildTriangle(1)).toEqual(['*']);\n});\ntest({ sr: 'nula daje prazan niz', en: 'zero gives an empty array' }, () => {\n  expect(buildTriangle(0)).toEqual([]);\n});",
+  "hiddenTests": "test('five rows', () => {\n  expect(buildTriangle(5)).toEqual(['*', '**', '***', '****', '*****']);\n});\ntest('the number of rows and the length of each row', () => {\n  const rows = buildTriangle(7);\n  expect(rows).toHaveLength(7);\n  rows.forEach((row, i) => expect(row).toHaveLength(i + 1));\n});\ntest('every row contains only stars', () => {\n  buildTriangle(4).forEach((row) => expect(row).toBe('*'.repeat(row.length)));\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "ugnježdene petlje",
+        "en": "nested loops"
+      },
+      "code": "function buildTriangle(n) {\n  const rows = [];\n  for (let i = 1; i <= n; i++) {\n    let row = '';\n    for (let j = 0; j < i; j++) {\n      row += '*';\n    }\n    rows.push(row);\n  }\n  return rows;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function buildTriangle` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `buildTriangle(3)`, unutar funkcije je `n` jednako `3`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 11.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function buildTriangle` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `buildTriangle(3)`, inside the function `n` equals `3`.\n- `{` opens the function body, and `}` on line 11 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prazan niz u koji skupljamo redove.\n\n- `const rows = [];` pravi prazan niz; `[]` je prazan niz.\n- `const` jer se promenljiva ne dodeljuje ponovo; sadržaj niza se menja kad dodajemo redove.\n- Za `n = 0` petlja se ne izvršava, pa se vraća ovaj prazan niz.",
+            "en": "An empty array in which we collect the rows.\n\n- `const rows = [];` creates an empty array; `[]` is an empty array.\n- `const` because the variable is not reassigned; the array's contents change when we add rows.\n- For `n = 0` the loop does not run, so this empty array is returned."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Spoljna petlja: jedan prolaz po jedan red.\n\n- `let i = 1` počinje od `1`, jer prvi red ima jednu zvezdicu. `i <= n` je uslov, pa se i red broj `n` pravi. `i++` povećava brojač.\n- Tokom jednog prolaza `i` je broj reda, ali i broj zvezdica koje taj red treba da ima.\n- `{` otvara telo spoljne petlje; zatvara ga `}` u liniji 9.",
+            "en": "The outer loop: one pass per row.\n\n- `let i = 1` starts at `1`, because the first row has one star. `i <= n` is the condition, so row number `n` is built too. `i++` increases the counter.\n- During one pass `i` is the row number and also the number of stars that row has to have.\n- `{` opens the outer loop body; it is closed by `}` on line 9."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Svaki red počinje kao prazan tekst.\n\n- `let row = '';` pravi promenljivu sa praznim tekstom `''`. `let` jer će se tekst dopunjavati.\n- Ova linija je **unutar** spoljne petlje, pa se za svaki novi red `row` ponovo postavlja na prazno. Da je izvan petlje, zvezdice bi se gomilale iz reda u red.",
+            "en": "Every row starts as empty text.\n\n- `let row = '';` creates a variable with the empty text `''`. `let` because the text will be extended.\n- This line is **inside** the outer loop, so `row` is reset to empty for every new row. If it were outside the loop, the stars would pile up from row to row."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Unutrašnja petlja: dodaje zvezdice u trenutni red.\n\n- `let j = 0` kreće od `0`, a `j < i` ponavlja telo tačno `i` puta (za `i = 3`: `j` je 0, 1, 2).\n- Unutrašnja petlja se u potpunosti izvrši za svaki prolaz spoljne petlje. To je razlika između jedne i ugnježdenih petlji.\n- Koristi se drugo ime brojača, `j`, da se ne meša sa `i`.\n- `{` otvara telo unutrašnje petlje; zatvara ga `}` u liniji 7.",
+            "en": "The inner loop: it adds stars to the current row.\n\n- `let j = 0` starts at `0`, and `j < i` repeats the body exactly `i` times (for `i = 3`: `j` is 0, 1, 2).\n- The inner loop runs completely for every pass of the outer loop. That is the difference between a single loop and nested loops.\n- A different counter name, `j`, is used so it does not get mixed up with `i`.\n- `{` opens the inner loop body; it is closed by `}` on line 7."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Dodajemo jednu zvezdicu u red.\n\n- `row += '*'` je skraćeno za `row = row + '*'`: nadovezuje zvezdicu na kraj teksta.\n\nTok za `n = 3`:\n\n```\ni = 1:  row = ''   → j = 0 → '*'                  → push('*')\ni = 2:  row = ''   → j = 0 → '*', j = 1 → '**'   → push('**')\ni = 3:  row = ''   → j = 0, 1, 2 → '***'          → push('***')\nrows = ['*', '**', '***']\n```",
+            "en": "We add one star to the row.\n\n- `row += '*'` is short for `row = row + '*'`: it appends a star to the end of the text.\n\nFlow for `n = 3`:\n\n```\ni = 1:  row = ''   → j = 0 → '*'                  → push('*')\ni = 2:  row = ''   → j = 0 → '*', j = 1 → '**'   → push('**')\ni = 3:  row = ''   → j = 0, 1, 2 → '***'          → push('***')\nrows = ['*', '**', '***']\n```"
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo unutrašnje petlje otvoreno u liniji 5.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the inner loop body opened on line 5.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Gotov red dodajemo u niz.\n\n- `rows.push(row)` dodaje tekst na kraj niza. Ova linija je **posle** unutrašnje petlje, a **unutar** spoljne: izvršava se jednom po redu, kad je red kompletan.",
+            "en": "We add the finished row to the array.\n\n- `rows.push(row)` adds the text to the end of the array. This line is **after** the inner loop, but **inside** the outer one: it runs once per row, when the row is complete."
+          }
+        },
+        {
+          "lines": [9, 9],
+          "text": {
+            "sr": "Zatvara telo spoljne petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the outer loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [10, 10],
+          "text": {
+            "sr": "Vraća niz redova.\n\n- `return rows` šalje niz pozivaocu. Namerno je izvan petlji, da se izvrši tek kad su svi redovi gotovi.",
+            "en": "Returns the array of rows.\n\n- `return rows` sends the array to the caller. It is deliberately outside the loops, so it runs only when all rows are done."
+          }
+        },
+        {
+          "lines": [11, 11],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Ugnježdene petlje: spoljna bira red, unutrašnja ga puni; spora za veliko `n`, ali najjasnija za učenje.",
+        "en": "Nested loops: the outer one picks the row, the inner one fills it; slow for a large `n`, but the clearest for learning."
+      }
+    },
+    {
+      "label": {
+        "sr": "jedna petlja i repeat",
+        "en": "one loop and repeat"
+      },
+      "code": "function buildTriangle(n) {\n  const rows = [];\n  for (let i = 1; i <= n; i++) {\n    rows.push('*'.repeat(i));\n  }\n  return rows;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function buildTriangle` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `buildTriangle(3)`, unutar funkcije je `n` jednako `3`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function buildTriangle` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `buildTriangle(3)`, inside the function `n` equals `3`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prazan niz u koji skupljamo redove.\n\n- `const rows = [];` pravi prazan niz. Za `n = 0` petlja se ne izvršava, pa se vraća prazan niz.",
+            "en": "An empty array in which we collect the rows.\n\n- `const rows = [];` creates an empty array. For `n = 0` the loop does not run, so an empty array is returned."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Jedna petlja: po jedan prolaz za svaki red.\n\n- `for (let i = 1; i <= n; i++)` ide od `1` do `n` uključujući `n`. U svakom prolazu `i` je broj reda.\n- `{` otvara telo; zatvara ga `}` u liniji 5.",
+            "en": "One loop: one pass for each row.\n\n- `for (let i = 1; i <= n; i++)` goes from `1` to `n` including `n`. In every pass `i` is the row number.\n- `{` opens the body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Ceo red se pravi jednom naredbom.\n\n- `'*'.repeat(i)` je metoda teksta: vraća tekst u kome je `'*'` ponovljeno `i` puta. `'*'.repeat(3)` je `'***'`.\n- `rows.push(...)` dodaje taj red na kraj niza.\n- Ovo zamenjuje celu unutrašnju petlju iz prvog rešenja: isto se dobija, ali je kraće.\n\nTok za `n = 3`:\n\n```\ni = 1 → '*'.repeat(1) = '*'    → rows = ['*']\ni = 2 → '*'.repeat(2) = '**'   → rows = ['*', '**']\ni = 3 → '*'.repeat(3) = '***'  → rows = ['*', '**', '***']\n```",
+            "en": "The whole row is built with one statement.\n\n- `'*'.repeat(i)` is a text method: it returns text in which `'*'` is repeated `i` times. `'*'.repeat(3)` is `'***'`.\n- `rows.push(...)` adds that row to the end of the array.\n- This replaces the whole inner loop from the first solution: the same result, but shorter.\n\nFlow for `n = 3`:\n\n```\ni = 1 → '*'.repeat(1) = '*'    → rows = ['*']\ni = 2 → '*'.repeat(2) = '**'   → rows = ['*', '**']\ni = 3 → '*'.repeat(3) = '***'  → rows = ['*', '**', '***']\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Vraća niz redova.\n\n- `return rows` šalje niz pozivaocu, tek posle petlje.",
+            "en": "Returns the array of rows.\n\n- `return rows` sends the array to the caller, only after the loop."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kad postoji ugrađena metoda koja radi isti posao, unutrašnja petlja nije potrebna.",
+        "en": "When a built-in method does the same job, the inner loop is not needed."
+      }
+    }
+  ]
+}

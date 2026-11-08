@@ -1,0 +1,90 @@
+{
+  "id": "countdown-01",
+  "title": {
+    "sr": "Odbrojavanje",
+    "en": "Countdown"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["loops", "arrays"],
+  "description": {
+    "sr": "Napiši funkciju `countdown(n)` koja vraća niz brojeva od `n` do 1, opadajuće.\n\nAko je `n` jednako 0 ili manje od 0, vraća prazan niz `[]`.\n\nPrimeri:\n- `countdown(3)` → `[3, 2, 1]`\n- `countdown(1)` → `[1]`\n- `countdown(0)` → `[]`\n- `countdown(-2)` → `[]`",
+    "en": "Write a function `countdown(n)` that returns an array of numbers from `n` down to 1, decreasing.\n\nIf `n` is 0 or less than 0, it returns an empty array `[]`.\n\nExamples:\n- `countdown(3)` → `[3, 2, 1]`\n- `countdown(1)` → `[1]`\n- `countdown(0)` → `[]`\n- `countdown(-2)` → `[]`"
+  },
+  "starterCode": "function countdown(n) {\n  // your code\n}",
+  "tests": "test({ sr: 'odbrojava do 1', en: 'counts down to 1' }, () => {\n  expect(countdown(3)).toEqual([3, 2, 1]);\n});\ntest({ sr: 'jedan broj', en: 'a single number' }, () => {\n  expect(countdown(1)).toEqual([1]);\n});\ntest({ sr: 'nula daje prazan niz', en: 'zero gives an empty array' }, () => {\n  expect(countdown(0)).toEqual([]);\n});",
+  "hiddenTests": "test('a longer countdown', () => {\n  expect(countdown(5)).toEqual([5, 4, 3, 2, 1]);\n});\ntest('a negative number gives an empty array', () => {\n  expect(countdown(-2)).toEqual([]);\n});\ntest('length and the first and last element', () => {\n  const result = countdown(10);\n  expect(result).toHaveLength(10);\n  expect(result[0]).toBe(10);\n  expect(result[9]).toBe(1);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "petlja `while`",
+        "en": "a `while` loop"
+      },
+      "code": "function countdown(n) {\n  const result = [];\n  while (n > 0) {\n    result.push(n);\n    n--;\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function countdown` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(n)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `countdown(3)`, unutar funkcije je `n` jednako `3`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 8.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function countdown` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(n)` is the parameter list. A parameter is an empty “slot” for input: when we call `countdown(3)`, inside the function `n` equals `3`.\n- `{` opens the function body, and `}` on line 8 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prazan niz u koji skupljamo brojeve.\n\n- `const result = [];` pravi prazan niz; `[]` je prazan niz.\n- `const` jer se promenljiva ne dodeljuje ponovo. Sadržaj niza se menja (dodajemo elemente), što je dozvoljeno.\n- Ako se petlja ne izvrši nijednom (`n` je 0 ili manje), ovaj prazan niz se vraća, što test traži.",
+            "en": "An empty array in which we collect the numbers.\n\n- `const result = [];` creates an empty array; `[]` is an empty array.\n- `const` because the variable is not reassigned. The array's contents change (we add elements), which is allowed.\n- If the loop does not run at all (`n` is 0 or less), this empty array is returned, which the test requires."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Petlja `while` ponavlja telo dok god je uslov tačan.\n\n- `while (uslov) { ... }` proverava uslov PRE svakog prolaza. Kad postane `false`, petlja se završava.\n- `n > 0` znači „`n` je veće od nule“. Zato se `0` ne upisuje u niz, a za `0` i negativne brojeve uslov je odmah netačan i telo se ne izvršava.\n- Za razliku od `for`, ovde nema ugrađenog brojača: sama promenljiva `n` se menja u telu (linija 5).\n- `{` otvara telo; zatvara ga `}` u liniji 6.",
+            "en": "The `while` loop repeats its body as long as the condition is true.\n\n- `while (condition) { ... }` checks the condition BEFORE every pass. When it becomes `false`, the loop ends.\n- `n > 0` means “`n` is greater than zero”. That is why `0` is not written into the array, and for `0` and negative numbers the condition is immediately false and the body does not run.\n- Unlike `for`, there is no built-in counter here: the variable `n` itself changes in the body (line 5).\n- `{` opens the body; it is closed by `}` on line 6."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Dodajemo trenutnu vrednost `n` na kraj niza.\n\n- `result.push(n)` dodaje `n` na kraj niza `result`. Zato niz raste redom `3`, pa `2`, pa `1`: opadajuće, kako zadatak traži.",
+            "en": "We add the current value of `n` to the end of the array.\n\n- `result.push(n)` adds `n` to the end of the array `result`. That is why the array grows in the order `3`, then `2`, then `1`: decreasing, as the task requires."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Smanjujemo `n` za 1, da bi petlja jednom stala.\n\n- `n--` znači „oduzmi 1 od `n`“, tj. isto što i `n = n - 1`. Suprotno je od `n++`.\n- Bez ove linije `n` se nikad ne bi menjalo, uslov `n > 0` bi uvek bio tačan i petlja bi radila u nedogled (beskonačna petlja).\n- Menja se lokalna kopija parametra: brojevi se prosleđuju po vrednosti, pa promenljiva pozivaoca ostaje ista.\n\nTok za `countdown(3)`:\n\n```\npočetak:   n = 3, result = []\nprolaz 1:  3 > 0 tačno → push(3) → result = [3]       → n = 2\nprolaz 2:  2 > 0 tačno → push(2) → result = [3, 2]    → n = 1\nprolaz 3:  1 > 0 tačno → push(1) → result = [3, 2, 1] → n = 0\nprovera:   0 > 0 netačno → petlja se završava\n```",
+            "en": "We decrease `n` by 1, so the loop eventually stops.\n\n- `n--` means “subtract 1 from `n`”, i.e. the same as `n = n - 1`. It is the opposite of `n++`.\n- Without this line `n` would never change, the condition `n > 0` would always be true and the loop would run forever (an infinite loop).\n- A local copy of the parameter is changed: numbers are passed by value, so the caller's variable stays the same.\n\nFlow for `countdown(3)`:\n\n```\nstart:     n = 3, result = []\npass 1:    3 > 0 true → push(3) → result = [3]       → n = 2\npass 2:    2 > 0 true → push(2) → result = [3, 2]    → n = 1\npass 3:    1 > 0 true → push(1) → result = [3, 2, 1] → n = 0\ncheck:     0 > 0 false → the loop ends\n```"
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Vraća popunjen niz.\n\n- `return result` šalje niz pozivaocu. Za `0` ili negativan `n` to je prazan niz `[]`.",
+            "en": "Returns the filled array.\n\n- `return result` sends the array to the caller. For `0` or a negative `n` that is the empty array `[]`."
+          }
+        },
+        {
+          "lines": [8, 8],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`while` je prirodan kad se broj ponavljanja ne zadaje unapred, nego zavisi od uslova.",
+        "en": "`while` is natural when the number of repetitions is not given in advance but depends on a condition."
+      }
+    }
+  ]
+}

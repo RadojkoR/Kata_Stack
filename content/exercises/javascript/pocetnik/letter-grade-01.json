@@ -1,0 +1,83 @@
+{
+  "id": "letter-grade-01",
+  "title": {
+    "sr": "Ocena slovom",
+    "en": "Letter grade"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["conditionals"],
+  "description": {
+    "sr": "Napiši funkciju `letterGrade(score)` koja broj poena (0 do 100) pretvara u ocenu slovom:\n\n- 90 i više: `'A'`\n- 80 do 89: `'B'`\n- 70 do 79: `'C'`\n- 60 do 69: `'D'`\n- manje od 60: `'F'`\n\nPrimeri:\n- `letterGrade(95)` → `'A'`\n- `letterGrade(85)` → `'B'`\n- `letterGrade(50)` → `'F'`",
+    "en": "Write a function `letterGrade(score)` that converts a number of points (0 to 100) into a letter grade:\n\n- 90 and more: `'A'`\n- 80 to 89: `'B'`\n- 70 to 79: `'C'`\n- 60 to 69: `'D'`\n- less than 60: `'F'`\n\nExamples:\n- `letterGrade(95)` → `'A'`\n- `letterGrade(85)` → `'B'`\n- `letterGrade(50)` → `'F'`"
+  },
+  "starterCode": "function letterGrade(score) {\n  // your code\n}",
+  "tests": "test({ sr: 'visok broj poena daje A', en: 'a high score gives A' }, () => {\n  expect(letterGrade(95)).toBe('A');\n});\ntest({ sr: 'sredina daje B', en: 'the middle gives B' }, () => {\n  expect(letterGrade(85)).toBe('B');\n});\ntest({ sr: 'nizak broj poena daje F', en: 'a low score gives F' }, () => {\n  expect(letterGrade(50)).toBe('F');\n});",
+  "hiddenTests": "test('boundaries between grades', () => {\n  expect(letterGrade(90)).toBe('A');\n  expect(letterGrade(89)).toBe('B');\n  expect(letterGrade(80)).toBe('B');\n  expect(letterGrade(79)).toBe('C');\n  expect(letterGrade(70)).toBe('C');\n  expect(letterGrade(69)).toBe('D');\n  expect(letterGrade(60)).toBe('D');\n  expect(letterGrade(59)).toBe('F');\n});\ntest('the extremes 0 and 100', () => {\n  expect(letterGrade(0)).toBe('F');\n  expect(letterGrade(100)).toBe('A');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "lanac uslova od najvišeg ka najnižem",
+        "en": "a chain of conditions from the highest to the lowest"
+      },
+      "code": "function letterGrade(score) {\n  if (score >= 90) return 'A';\n  if (score >= 80) return 'B';\n  if (score >= 70) return 'C';\n  if (score >= 60) return 'D';\n  return 'F';\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function letterGrade` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(score)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `letterGrade(85)`, unutar funkcije je `score` jednako `85`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function letterGrade` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(score)` is the parameter list. A parameter is an empty “slot” for input: when we call `letterGrade(85)`, inside the function `score` equals `85`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Prvo proveravamo najvišu ocenu.\n\n- `if (uslov) naredba` izvršava naredbu samo ako je uslov `true`.\n- `score >= 90` pita: da li je `score` veći od ili jednak 90? Operator `>=` uključuje i samu granicu, pa 90 dobija `'A'`.\n- `return 'A'` vraća tekst `'A'` i odmah završava funkciju, pa se ostale provere ne izvršavaju.",
+            "en": "First we check the highest grade.\n\n- `if (condition) statement` runs the statement only if the condition is `true`.\n- `score >= 90` asks: is `score` greater than or equal to 90? The `>=` operator includes the boundary itself, so 90 gets `'A'`.\n- `return 'A'` returns the text `'A'` and ends the function immediately, so the other checks do not run."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatim ocena `'B'`.\n\n- Do ove linije stižu samo brojevi manji od 90, jer su ostali već izašli u liniji 2. Zato je dovoljno proveriti samo donju granicu: `score >= 80`.\n- Ne treba pisati `score >= 80 && score < 90`: gornja granica je već pokrivena redosledom provera.",
+            "en": "Then the grade `'B'`.\n\n- Only numbers below 90 reach this line, because the others already left on line 2. So it is enough to check only the lower bound: `score >= 80`.\n- There is no need to write `score >= 80 && score < 90`: the upper bound is already covered by the order of the checks."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Isto za `'C'`: stižu samo brojevi manji od 80, pa proveravamo samo `score >= 70`.",
+            "en": "The same for `'C'`: only numbers below 80 arrive, so we check only `score >= 70`."
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Isto za `'D'`: stižu samo brojevi manji od 70, pa proveravamo samo `score >= 60`.",
+            "en": "The same for `'D'`: only numbers below 70 arrive, so we check only `score >= 60`."
+          }
+        },
+        {
+          "lines": [6, 6],
+          "text": {
+            "sr": "Sve što je preostalo je `'F'`.\n\n- Ovde nema uslova: do ove linije stižu samo brojevi manji od 60.\n- Zato nije potreban ni `else`: svaki `if` iznad završava funkciju svojim `return`-om, pa preostali kod nikad ne stiže do linije 6 ako je neki uslov tačan.\n\nTok za nekoliko vrednosti:\n\n```\nscore = 95 → 95 >= 90? da → 'A'\nscore = 85 → 85 >= 90? ne → 85 >= 80? da → 'B'\nscore = 60 → 60 >= 90? ne → >= 80? ne → >= 70? ne → 60 >= 60? da → 'D'\nscore = 59 → sve provere ne → 'F'\n```",
+            "en": "Whatever is left is `'F'`.\n\n- There is no condition here: only numbers below 60 reach this line.\n- That is why `else` is not needed either: every `if` above ends the function with its own `return`, so the remaining code never reaches line 6 if some condition is true.\n\nFlow for several values:\n\n```\nscore = 95 → 95 >= 90? yes → 'A'\nscore = 85 → 85 >= 90? no → 85 >= 80? yes → 'B'\nscore = 60 → 60 >= 90? no → >= 80? no → >= 70? no → 60 >= 60? yes → 'D'\nscore = 59 → all checks no → 'F'\n```"
+          }
+        },
+        {
+          "lines": [7, 7],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Redosled provera (od najviše granice ka najnižoj) čini gornje granice nepotrebnim.",
+        "en": "The order of the checks (from the highest bound to the lowest) makes the upper bounds unnecessary."
+      }
+    }
+  ]
+}

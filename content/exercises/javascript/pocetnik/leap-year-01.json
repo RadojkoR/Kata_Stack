@@ -1,0 +1,103 @@
+{
+  "id": "leap-year-01",
+  "title": {
+    "sr": "Prestupna godina",
+    "en": "Leap year"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": ["conditionals", "operators"],
+  "description": {
+    "sr": "Napiši funkciju `isLeapYear(year)` koja vraća `true` ako je godina prestupna.\n\nPravilo:\n- godina deljiva sa 4 je prestupna,\n- osim ako je deljiva sa 100, tada nije prestupna,\n- osim ako je deljiva i sa 400, tada jeste prestupna.\n\nPrimeri:\n- `isLeapYear(2024)` → `true`\n- `isLeapYear(2023)` → `false`\n- `isLeapYear(1900)` → `false`, a `isLeapYear(2000)` → `true`\n\nOgraničenje: `year` je ceo pozitivan broj.",
+    "en": "Write a function `isLeapYear(year)` that returns `true` if the year is a leap year.\n\nThe rule:\n- a year divisible by 4 is a leap year,\n- unless it is divisible by 100, then it is not a leap year,\n- unless it is also divisible by 400, then it is a leap year.\n\nExamples:\n- `isLeapYear(2024)` → `true`\n- `isLeapYear(2023)` → `false`\n- `isLeapYear(1900)` → `false`, and `isLeapYear(2000)` → `true`\n\nConstraint: `year` is a positive whole number."
+  },
+  "starterCode": "function isLeapYear(year) {\n  // your code\n}",
+  "tests": "test({ sr: 'godina deljiva sa 4 je prestupna', en: 'a year divisible by 4 is a leap year' }, () => {\n  expect(isLeapYear(2024)).toBe(true);\n});\ntest({ sr: 'godina koja nije deljiva sa 4 nije prestupna', en: 'a year not divisible by 4 is not a leap year' }, () => {\n  expect(isLeapYear(2023)).toBe(false);\n});\ntest({ sr: 'vek koji nije deljiv sa 400 nije prestupan', en: 'a century not divisible by 400 is not a leap year' }, () => {\n  expect(isLeapYear(1900)).toBe(false);\n});",
+  "hiddenTests": "test('a century divisible by 400 is a leap year', () => {\n  expect(isLeapYear(2000)).toBe(true);\n  expect(isLeapYear(1600)).toBe(true);\n});\ntest('other centuries are not leap years', () => {\n  expect(isLeapYear(2100)).toBe(false);\n  expect(isLeapYear(1800)).toBe(false);\n});\ntest('the result is a boolean', () => {\n  expect(isLeapYear(2024)).toBe(true);\n  expect(isLeapYear(2025)).toBe(false);\n});\ntest('years that are 2 apart from a leap year', () => {\n  expect(isLeapYear(2022)).toBe(false);\n  expect(isLeapYear(2026)).toBe(false);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "jedan logički izraz",
+        "en": "one logical expression"
+      },
+      "code": "function isLeapYear(year) {\n  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function isLeapYear` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(year)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `isLeapYear(2024)`, unutar funkcije je `year` jednako `2024`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function isLeapYear` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(year)` is the parameter list. A parameter is an empty “slot” for input: when we call `isLeapYear(2024)`, inside the function `year` equals `2024`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Pravilo iz zadatka zapisano kao jedan logički izraz.\n\n- `%` je ostatak pri deljenju, pa je `year % 4 === 0` „godina je deljiva sa 4“. Isto važi za 100 i 400.\n- `&&` je logičko **I**: izraz je tačan samo ako su OBA dela tačna.\n- `||` je logičko **ILI**: izraz je tačan ako je bar JEDAN deo tačan.\n- `!==` je stroga nejednakost: `year % 100 !== 0` znači „nije deljiva sa 100“.\n- Zagrade grupišu `(deljiva sa 4 I nije deljiva sa 100)`. Bez njih bi važilo isto, jer `&&` ima viši prioritet od `||`, ali su zagrade jasnije.\n- Čitanje celog izraza: prestupna je ako je (deljiva sa 4 I nije sa 100) ILI je deljiva sa 400.\n- Rezultat izraza je već `true` ili `false`, pa se vraća direktno, bez `if`.\n\nTok za četiri godine:\n\n```\n2024: (2024 % 4 === 0 → true  && 2024 % 100 !== 0 → true)  → true  || ... → true\n1900: (1900 % 4 === 0 → true  && 1900 % 100 !== 0 → false) → false || 1900 % 400 === 0 → false → false\n2000: (2000 % 4 === 0 → true  && 2000 % 100 !== 0 → false) → false || 2000 % 400 === 0 → true  → true\n2023: (2023 % 4 === 0 → false && ...)                      → false || 2023 % 400 === 0 → false → false\n```",
+            "en": "The rule from the task written as one logical expression.\n\n- `%` is the remainder of division, so `year % 4 === 0` is “the year is divisible by 4”. The same holds for 100 and 400.\n- `&&` is logical **AND**: the expression is true only if BOTH parts are true.\n- `||` is logical **OR**: the expression is true if at least ONE part is true.\n- `!==` is strict inequality: `year % 100 !== 0` means “not divisible by 100”.\n- The parentheses group `(divisible by 4 AND not divisible by 100)`. Without them the same would hold, because `&&` has higher precedence than `||`, but the parentheses are clearer.\n- Reading the whole expression: it is a leap year if (divisible by 4 AND not by 100) OR it is divisible by 400.\n- The result of the expression is already `true` or `false`, so it is returned directly, without `if`.\n\nFlow for four years:\n\n```\n2024: (2024 % 4 === 0 → true  && 2024 % 100 !== 0 → true)  → true  || ... → true\n1900: (1900 % 4 === 0 → true  && 1900 % 100 !== 0 → false) → false || 1900 % 400 === 0 → false → false\n2000: (2000 % 4 === 0 → true  && 2000 % 100 !== 0 → false) → false || 2000 % 400 === 0 → true  → true\n2023: (2023 % 4 === 0 → false && ...)                      → false || 2023 % 400 === 0 → false → false\n```"
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kratko, ali traži pažnju oko zagrada i redosleda `&&` i `||`.",
+        "en": "Short, but it needs attention to the parentheses and the order of `&&` and `||`."
+      }
+    },
+    {
+      "label": {
+        "sr": "lanac `if` od najvišeg pravila",
+        "en": "an `if` chain from the strongest rule"
+      },
+      "code": "function isLeapYear(year) {\n  if (year % 400 === 0) return true;\n  if (year % 100 === 0) return false;\n  return year % 4 === 0;\n}",
+      "walkthrough": [
+        {
+          "lines": [1, 1],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function isLeapYear` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(year)` je lista parametara. Parametar je prazno „mesto“ za ulaz: kad pozovemo `isLeapYear(2024)`, unutar funkcije je `year` jednako `2024`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 5.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function isLeapYear` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(year)` is the parameter list. A parameter is an empty “slot” for input: when we call `isLeapYear(2024)`, inside the function `year` equals `2024`.\n- `{` opens the function body, and `}` on line 5 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [2, 2],
+          "text": {
+            "sr": "Najjače pravilo prvo: deljivo sa 400 je uvek prestupno.\n\n- `year % 400 === 0` pita da li je godina deljiva sa 400.\n- `return true` odmah vraća `true` i završava funkciju. Time su rešene godine kao `2000` i `1600`.",
+            "en": "The strongest rule first: divisible by 400 is always a leap year.\n\n- `year % 400 === 0` asks whether the year is divisible by 400.\n- `return true` immediately returns `true` and ends the function. This settles years like `2000` and `1600`."
+          }
+        },
+        {
+          "lines": [3, 3],
+          "text": {
+            "sr": "Zatim: deljivo sa 100 (a nije sa 400) nije prestupno.\n\n- Do ove linije stižu samo godine koje NISU deljive sa 400, jer su ostale već izašle u liniji 2.\n- Zato je ovde dovoljno proveriti `year % 100 === 0`: `1900`, `2100` i slično nisu prestupne.",
+            "en": "Then: divisible by 100 (but not by 400) is not a leap year.\n\n- Only years that are NOT divisible by 400 reach this line, because the others already left on line 2.\n- So it is enough to check `year % 100 === 0` here: `1900`, `2100` and the like are not leap years."
+          }
+        },
+        {
+          "lines": [4, 4],
+          "text": {
+            "sr": "Sve ostalo odlučuje deljivost sa 4.\n\n- Do ove linije stižu samo godine koje nisu deljive ni sa 400 ni sa 100, pa preostaje obično pravilo „deljivo sa 4“.\n- `return year % 4 === 0` vraća `true` ili `false` direktno (rezultat poređenja).\n\nTok:\n\n```\n2000 → % 400 = 0 → true\n1900 → % 400 ≠ 0 → % 100 = 0 → false\n2024 → % 400 ≠ 0 → % 100 ≠ 0 → 2024 % 4 === 0 → true\n2023 → % 400 ≠ 0 → % 100 ≠ 0 → 2023 % 4 === 0 → false\n```",
+            "en": "Everything else is decided by divisibility by 4.\n\n- Only years that are divisible by neither 400 nor 100 reach this line, so the ordinary rule “divisible by 4” remains.\n- `return year % 4 === 0` returns `true` or `false` directly (the result of the comparison).\n\nFlow:\n\n```\n2000 → % 400 = 0 → true\n1900 → % 400 ≠ 0 → % 100 = 0 → false\n2024 → % 400 ≠ 0 → % 100 ≠ 0 → 2024 % 4 === 0 → true\n2023 → % 400 ≠ 0 → % 100 ≠ 0 → 2023 % 4 === 0 → false\n```"
+          }
+        },
+        {
+          "lines": [5, 5],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Svaki `if` rešava jedan slučaj i izlazi; redosled od najjačeg pravila čini uslove kratkim.",
+        "en": "Each `if` settles one case and exits; the order from the strongest rule keeps the conditions short."
+      }
+    }
+  ]
+}

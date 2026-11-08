@@ -7,12 +7,12 @@
   "runtime": "worker",
   "tags": ["strings", "objects"],
   "description": {
-    "sr": "Napiši funkciju `countWords(text)` koja vraća objekat sa brojem pojavljivanja svake reči.\n\nReči se razdvajaju razmacima, a velika i mala slova se ne razlikuju.\n\nPrimeri:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`",
-    "en": "Write a function `countWords(text)` that returns an object with the number of occurrences of each word.\n\nWords are separated by spaces, and case does not matter.\n\nExamples:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`"
+    "sr": "Napiši funkciju `countWords(text)` koja vraća objekat sa brojem pojavljivanja svake reči.\n\nReči su odvojene belim znacima (razmak, tab, novi red), a velika i mala slova se ne razlikuju. Interpunkcija se ne uklanja: `'hi,'` i `'hi'` su dve različite reči.\n\nPrimeri:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`",
+    "en": "Write a function `countWords(text)` that returns an object with the number of occurrences of each word.\n\nWords are separated by whitespace (space, tab, newline), and case does not matter. Punctuation is not removed: `'hi,'` and `'hi'` are two different words.\n\nExamples:\n- `countWords('a b a')` → `{ a: 2, b: 1 }`\n- `countWords('Hello hello')` → `{ hello: 2 }`\n- `countWords('')` → `{}`"
   },
   "starterCode": "function countWords(text) {\n  // your code\n}",
   "tests": "test({ sr: 'broji ponavljanja', en: 'counts repeated words' }, () => {\n  expect(countWords('a b a')).toEqual({ a: 2, b: 1 });\n});\ntest({ sr: 'ne razlikuje velika i mala slova', en: 'ignores letter case' }, () => {\n  expect(countWords('Hello hello')).toEqual({ hello: 2 });\n});\ntest({ sr: 'prazan tekst daje prazan objekat', en: 'empty text gives an empty object' }, () => {\n  expect(countWords('')).toEqual({});\n});",
-  "hiddenTests": "test('multiple spaces between words', () => {\n  expect(countWords('a   b  a')).toEqual({ a: 2, b: 1 });\n});\ntest('leading and trailing spaces', () => {\n  expect(countWords('  a b  ')).toEqual({ a: 1, b: 1 });\n});",
+  "hiddenTests": "test('multiple spaces between words', () => {\n  expect(countWords('a   b  a')).toEqual({ a: 2, b: 1 });\n});\ntest('leading and trailing spaces', () => {\n  expect(countWords('  a b  ')).toEqual({ a: 1, b: 1 });\n});\ntest('tabs and newlines separate words too', () => {\n  expect(countWords('a\\tb\\na')).toEqual({ a: 2, b: 1 });\n});\ntest('punctuation stays part of the word', () => {\n  expect(countWords('hi, hi')).toEqual({ 'hi,': 1, hi: 1 });\n});",
   "solutions": [
     {
       "label": {

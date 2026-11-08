@@ -167,6 +167,13 @@
     "errors": "errors",
     "regex": "regular expressions",
     "sets": "sets",
-    "recursion": "recursion"
+    "recursion": "recursion",
+    "types": "data types",
+    "conversion": "conversions",
+    "conditionals": "conditionals",
+    "operators": "operators",
+    "templates": "template literals",
+    "spread": "spread operator",
+    "searching": "searching"
   }
 }
