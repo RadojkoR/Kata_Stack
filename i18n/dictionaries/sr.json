@@ -47,6 +47,7 @@
   },
   "workspace": {
     "back": "Nazad",
+    "next": "Sledeći zadatak",
     "run": "Pokreni",
     "submit": "Predaj",
     "reset": "Resetuj",

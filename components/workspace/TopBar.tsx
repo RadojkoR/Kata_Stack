@@ -4,6 +4,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 type Props = {
   title: string;
   backHref: string;
+  nextHref?: string;
   labels: Dictionary["workspace"];
   running: "run" | "submit" | null;
   resetArmed: boolean;
@@ -28,6 +29,7 @@ const button =
 export function TopBar({
   title,
   backHref,
+  nextHref,
   labels,
   running,
   resetArmed,
@@ -89,6 +91,18 @@ export function TopBar({
       >
         {running === "submit" ? labels.statusRunning : `✓ ${labels.submit}`}
       </button>
+      {nextHref && (
+        <Link
+          href={nextHref}
+          className={`rounded px-3 py-1 text-sm ${
+            solved
+              ? "bg-green-600 text-white hover:bg-green-500"
+              : "border border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          }`}
+        >
+          {labels.next} →
+        </Link>
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@
   },
   "starterCode": "function parseBoolean(text) {\n  // your code\n}",
   "tests": "test({ sr: '\"true\" daje true', en: '\"true\" gives true' }, () => {\n  expect(parseBoolean('true')).toBe(true);\n});\ntest({ sr: '\"false\" daje false', en: '\"false\" gives false' }, () => {\n  expect(parseBoolean('false')).toBe(false);\n});\ntest({ sr: 'nepoznat tekst daje null', en: 'unknown text gives null' }, () => {\n  expect(parseBoolean('yes')).toBe(null);\n});",
-  "hiddenTests": "test('capital letters and spaces are ignored', () => {\n  expect(parseBoolean(' TRUE ')).toBe(true);\n  expect(parseBoolean('False')).toBe(false);\n});\ntest('an empty string gives null', () => {\n  expect(parseBoolean('')).toBe(null);\n});\ntest('the digit 1 is not \"true\"', () => {\n  expect(parseBoolean('1')).toBe(null);\n});",
+  "hiddenTests": "test('capital letters and spaces are ignored', () => {\n  expect(parseBoolean(' TRUE ')).toBe(true);\n  expect(parseBoolean('False')).toBe(false);\n});\ntest('an empty string gives null', () => {\n  expect(parseBoolean('')).toBe(null);\n});\ntest('the digit 1 is not \"true\"', () => {\n  expect(parseBoolean('1')).toBe(null);\n});\ntest('text that only contains or starts like \"true\" or \"false\" is unknown', () => {\n  expect(parseBoolean('truest')).toBe(null);\n  expect(parseBoolean('not true')).toBe(null);\n  expect(parseBoolean('falsey')).toBe(null);\n  expect(parseBoolean('tru')).toBe(null);\n});",
   "solutions": [
     {
       "label": {

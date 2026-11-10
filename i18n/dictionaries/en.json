@@ -47,6 +47,7 @@
   },
   "workspace": {
     "back": "Back",
+    "next": "Next exercise",
     "run": "Run",
     "submit": "Submit",
     "reset": "Reset",

@@ -29,6 +29,12 @@ async function ExerciseContent({ params }: { params: Params }) {
   const exercise = getExercise(id);
   if (!exercise || exercise.type !== "classic" || !isPlayable(exercise)) notFound();
 
+  // Sledeći zadatak: isti oblast i nivo, redom kao u listi (samo oni koje je moguće rešavati).
+  const siblings = getExercises({ area: exercise.area, level: exercise.level }).filter(
+    (e) => e.type === "classic" && isPlayable(e),
+  );
+  const next = siblings[siblings.findIndex((e) => e.id === exercise.id) + 1];
+
   const locale = await getLocale();
   const dict = await getDictionary();
   const title = localize(exercise.title, locale);
@@ -38,8 +44,10 @@ async function ExerciseContent({ params }: { params: Params }) {
       {/* React 19 prebacuje <title> u <head>; zamena za generateMetadata, koji bi takođe čitao params */}
       <title>{`${title} · ${dict.meta.title}`}</title>
       <Workspace
+        key={exercise.id}
         locale={locale}
         backHref={`/${locale}`}
+        nextHref={next ? `/${locale}/exercise/${next.id}` : undefined}
         labels={dict.workspace}
         runnerLabels={dict.runner}
         exercise={{

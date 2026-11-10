@@ -43,6 +43,8 @@ type Props = {
   exercise: WorkspaceExercise;
   locale: Locale;
   backHref: string;
+  /** Sledeći zadatak u istom nivou; na poslednjem ga nema. */
+  nextHref?: string;
   labels: Dictionary["workspace"];
   runnerLabels: Dictionary["runner"];
 };
@@ -121,7 +123,7 @@ function ViewingBar({
 const resizeHandle =
   "bg-zinc-200 transition-colors hover:bg-blue-500 data-[separator=active]:bg-blue-500 dark:bg-zinc-800 data-[orientation=vertical]:w-px";
 
-export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: Props) {
+export function Workspace({ exercise, locale, backHref, nextHref, labels, runnerLabels }: Props) {
   const isClient = useIsClient();
   const theme = useTheme();
   const storage = useMemo(() => createSafeStorage(), []);
@@ -354,6 +356,7 @@ export function Workspace({ exercise, locale, backHref, labels, runnerLabels }: 
       <TopBar
         title={exercise.title}
         backHref={backHref}
+        nextHref={nextHref}
         labels={labels}
         running={running}
         resetArmed={resetArmed}
