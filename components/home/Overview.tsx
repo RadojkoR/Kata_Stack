@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { INTL_LOCALE, type Locale } from "@/i18n/config";
+import { exerciseHref } from "@/lib/back-link";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import {
   COMING_SOON_AREAS,
@@ -113,7 +114,7 @@ export function Overview({ items, locale, labels }: Props) {
                   </p>
                 </div>
                 <Link
-                  href={`/${locale}/exercise/${resume.item.id}`}
+                  href={exerciseHref(locale, resume.item.id, `/${locale}`)}
                   className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-500"
                 >
                   {labels.home.continue} →
@@ -156,7 +157,7 @@ function RecentRow({
     <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
       <p className="min-w-0 flex-1 font-medium">
         {item.playable ? (
-          <Link href={`/${locale}/exercise/${item.id}`} className="hover:underline">
+          <Link href={exerciseHref(locale, item.id, `/${locale}`)} className="hover:underline">
             {item.title}
           </Link>
         ) : (

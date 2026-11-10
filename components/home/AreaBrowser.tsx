@@ -14,13 +14,16 @@ import {
   type BrowseItem,
   type Filter,
 } from "@/lib/browse";
+import { areaHref, exerciseHref } from "@/lib/back-link";
 import { interpolate } from "@/lib/runner/messages";
 import { useProgressMap } from "@/lib/storage/use-progress";
-import { LEVELS, type Area } from "@/types/exercise";
+import { LEVELS, type Area, type Level } from "@/types/exercise";
 import { Bar } from "./Bar";
 
 type Props = {
   area: Area;
+  /** Nivo iz adrese (?level=), da povratak sa zadatka otvori listu na istom nivou. */
+  initialLevel?: Level;
   /** Samo zadaci ove oblasti. */
   items: BrowseItem[];
   locale: string;
@@ -35,8 +38,8 @@ const chip = (active: boolean) =>
   }`;
 
 /** Stranica oblasti: na vrhu napredak po nivoima, ispod lista zadataka sa filterima. */
-export function AreaBrowser({ area, items, locale, labels }: Props) {
-  const [filter, setFilter] = useState<Filter>({});
+export function AreaBrowser({ area, initialLevel, items, locale, labels }: Props) {
+  const [filter, setFilter] = useState<Filter>({ level: initialLevel });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const progress = useProgressMap();
 
@@ -84,7 +87,12 @@ export function AreaBrowser({ area, items, locale, labels }: Props) {
                     solved: s.solved,
                     total: s.total,
                   })}
-                  onClick={() => setFilter((f) => ({ ...f, level: active ? undefined : level }))}
+                  onClick={() => {
+                    const next = active ? undefined : level;
+                    setFilter((f) => ({ ...f, level: next }));
+                    // Nivo se pamti u adresi, pa "Nazad" sa zadatka vraća na isti nivo.
+                    window.history.replaceState(null, "", areaHref(locale, area, next));
+                  }}
                   className={`rounded-lg border p-3 text-left transition-colors disabled:opacity-50 ${
                     active
                       ? "border-blue-500 bg-blue-500/10"
@@ -129,7 +137,10 @@ export function AreaBrowser({ area, items, locale, labels }: Props) {
             {hasFilter && (
               <button
                 type="button"
-                onClick={() => setFilter({})}
+                onClick={() => {
+                  setFilter({});
+                  window.history.replaceState(null, "", areaHref(locale, area));
+                }}
                 className="text-sm text-blue-600 underline underline-offset-2 dark:text-blue-400"
               >
                 {home.clearFilters}
@@ -182,7 +193,10 @@ export function AreaBrowser({ area, items, locale, labels }: Props) {
                 <li key={e.id} className="flex flex-col gap-0.5 py-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
                   <p className="font-medium">
                     {e.playable ? (
-                      <Link href={`/${locale}/exercise/${e.id}`} className="hover:underline">
+                      <Link
+                        href={exerciseHref(locale, e.id, areaHref(locale, area, filter.level))}
+                        className="hover:underline"
+                      >
                         {e.title}
                       </Link>
                     ) : (

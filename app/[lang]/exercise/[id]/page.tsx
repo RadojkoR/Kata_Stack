@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Workspace } from "@/components/workspace/Workspace";
 import { getDictionary, getLocale, tagLabel } from "@/i18n/get-dictionary";
 import { localize } from "@/i18n/localized";
+import { areaHref, exerciseHref, safeFrom } from "@/lib/back-link";
 import { getExercise, getExercises } from "@/lib/content";
 import { isPlayable } from "@/lib/runner/runtimes";
 
@@ -16,15 +17,21 @@ export function generateStaticParams() {
 }
 
 // `params` se ne čita u samoj stranici nego unutar <Suspense>, da navigacija ostane "instant" (Cache Components).
-export default function ExercisePage({ params }: PageProps<"/[lang]/exercise/[id]">) {
+export default function ExercisePage({ params, searchParams }: PageProps<"/[lang]/exercise/[id]">) {
   return (
     <Suspense fallback={<div aria-busy className="h-[calc(100dvh-3rem)]" />}>
-      <ExerciseContent params={params} />
+      <ExerciseContent params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function ExerciseContent({ params }: { params: Params }) {
+async function ExerciseContent({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: PageProps<"/[lang]/exercise/[id]">["searchParams"];
+}) {
   const { id } = await params;
   const exercise = getExercise(id);
   if (!exercise || exercise.type !== "classic" || !isPlayable(exercise)) notFound();
@@ -36,6 +43,8 @@ async function ExerciseContent({ params }: { params: Params }) {
   const next = siblings[siblings.findIndex((e) => e.id === exercise.id) + 1];
 
   const locale = await getLocale();
+  // Odakle je korisnik došao (lista nivoa, pregled...); bez toga se vraća na listu nivoa ovog zadatka.
+  const from = safeFrom(locale, (await searchParams).from);
   const dict = await getDictionary();
   const title = localize(exercise.title, locale);
 
@@ -46,8 +55,8 @@ async function ExerciseContent({ params }: { params: Params }) {
       <Workspace
         key={exercise.id}
         locale={locale}
-        backHref={`/${locale}`}
-        nextHref={next ? `/${locale}/exercise/${next.id}` : undefined}
+        backHref={from ?? areaHref(locale, exercise.area, exercise.level)}
+        nextHref={next ? exerciseHref(locale, next.id, from) : undefined}
         labels={dict.workspace}
         runnerLabels={dict.runner}
         exercise={{
