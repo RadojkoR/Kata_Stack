@@ -1,0 +1,141 @@
+{
+  "id": "first-adult-01",
+  "title": {
+    "sr": "Prva punoletna osoba",
+    "en": "The first adult"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "arrays",
+    "objects",
+    "find"
+  ],
+  "description": {
+    "sr": "Metoda `find` prolazi kroz niz redom i vraća **prvi** element za koji funkcija koju joj damo vrati `true`. Čim ga nađe, staje. Ako nijedan element ne zadovoljava uslov, vraća `undefined`: vrednost koja znači „ništa nije nađeno“. Na primer, `[5, 12, 8].find((n) => n > 6)` daje `12`.\n\nNapiši funkciju `firstAdult(people)` koja vraća prvu osobu koja ima 18 ili više godina.\n\n`people` je niz objekata, a svaki ima `name` (tekst) i `age` (ceo broj). Funkcija vraća jedan objekat iz tog niza, ili `undefined`.\n\nPravila:\n- osoba sa tačno 18 godina se računa kao punoletna\n- vraća se prva punoletna osoba po redosledu u nizu, ne najstarija\n- vraća se isti objekat koji je u nizu, ne njegova kopija\n- ako nema punoletne osobe ili je niz prazan, vraća se `undefined`\n\nPrimeri:\n```\nconst ana = { name: 'Ana', age: 17 };\nconst bojan = { name: 'Bojan', age: 18 };\nconst cana = { name: 'Cana', age: 40 };\n\nfirstAdult([ana, bojan, cana]); // bojan, jer je prvi sa 18 ili više (Cana je starija, ali dolazi posle)\nfirstAdult([cana, bojan]);      // cana, jer je prva po redosledu\nfirstAdult([ana]);              // undefined\nfirstAdult([]);                 // undefined\n```",
+    "en": "The `find` method goes through an array in order and returns the **first** element for which the function we give it returns `true`. As soon as it finds one, it stops. If no element meets the condition, it returns `undefined`: a value that means “nothing was found”. For example, `[5, 12, 8].find((n) => n > 6)` gives `12`.\n\nWrite a function `firstAdult(people)` that returns the first person who is 18 or older.\n\n`people` is an array of objects, each with `name` (text) and `age` (whole number). The function returns one object from that array, or `undefined`.\n\nRules:\n- a person who is exactly 18 counts as an adult\n- the first adult in the order of the array is returned, not the oldest\n- the same object that is in the array is returned, not a copy of it\n- if there is no adult or the array is empty, `undefined` is returned\n\nExamples:\n```\nconst ana = { name: 'Ana', age: 17 };\nconst bojan = { name: 'Bojan', age: 18 };\nconst cana = { name: 'Cana', age: 40 };\n\nfirstAdult([ana, bojan, cana]); // bojan, because he is the first with 18 or more (Cana is older, but comes later)\nfirstAdult([cana, bojan]);      // cana, because she is first in the order\nfirstAdult([ana]);              // undefined\nfirstAdult([]);                 // undefined\n```"
+  },
+  "starterCode": "function firstAdult(people) {\n  // your code\n}",
+  "tests": "const ana = { name: 'Ana', age: 17 };\nconst bojan = { name: 'Bojan', age: 18 };\nconst cana = { name: 'Cana', age: 40 };\ntest({ sr: 'vraća prvu punoletnu osobu', en: 'returns the first adult' }, () => {\n  expect(firstAdult([ana, bojan, cana])).toBe(bojan);\n});\ntest({ sr: 'tačno 18 godina se računa', en: 'exactly 18 counts' }, () => {\n  expect(firstAdult([bojan])).toBe(bojan);\n});\ntest({ sr: 'nema punoletne osobe daje undefined', en: 'no adult gives undefined' }, () => {\n  expect(firstAdult([ana])).toBe(undefined);\n});",
+  "hiddenTests": "test('the first by order, not the oldest', () => {\n  expect(firstAdult([cana, bojan])).toBe(cana);\n});\ntest('an empty array gives undefined', () => {\n  expect(firstAdult([])).toBe(undefined);\n});\ntest('returns the same object, not a copy', () => {\n  const people = [ana, bojan];\n  expect(firstAdult(people)).toBe(people[1]);\n});\ntest('only minors gives undefined, not null', () => {\n  expect(firstAdult([{ name: 'X', age: 5 }, { name: 'Y', age: 17 }])).toBe(undefined);\n});\ntest('does not change the input', () => {\n  const people = [ana, bojan, cana];\n  firstAdult(people);\n  expect(people).toEqual([ana, bojan, cana]);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "find",
+        "en": "find"
+      },
+      "code": "function firstAdult(people) {\n  return people.find((person) => person.age >= 18);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function firstAdult` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(people)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `people` je niz objekata, svaki ima `name` (tekst) i `age` (ceo broj). Poziv `firstAdult([{ name: 'Ana', age: 20 }])` daje `people = [{ name: 'Ana', age: 20 }]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function firstAdult` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(people)` is the parameter list. A parameter is an empty “slot” for input: `people` is an array of objects, each with `name` (text) and `age` (whole number). The call `firstAdult([{ name: 'Ana', age: 20 }])` gives `people = [{ name: 'Ana', age: 20 }]`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Cela obrada je u jednoj liniji.\n\n- `people.find(...)` poziva metodu `find` nad nizom `people`. `find` prolazi kroz elemente redom i staje na prvom za koji uslov vrati `true`.\n- `(person) => person.age >= 18` je uslov. `person` je jedan objekat iz niza, a `person.age` čita njegovo svojstvo `age` (tačka znači „uzmi svojstvo“). `>=` znači „veće ili jednako“, pa osoba sa tačno 18 godina prolazi.\n- `find` vraća sam element, isti objekat iz niza, a ne njegovu kopiju.\n- Ako nijedan element ne prođe (ili je niz prazan), `find` vraća `undefined`. To je upravo ono što zadatak traži, pa nije potreban poseban slučaj.\n- `return` vraća taj rezultat iz funkcije.\n\n```\npeople = [ana(17), bojan(18), cana(40)]\nana   → 17 >= 18 → false, nastavlja\nbojan → 18 >= 18 → true,  staje i vraća bojan\ncana se ne proverava\n```",
+            "en": "The whole processing is on one line.\n\n- `people.find(...)` calls the `find` method on the array `people`. `find` goes through the elements in order and stops at the first one for which the condition returns `true`.\n- `(person) => person.age >= 18` is the condition. `person` is one object from the array, and `person.age` reads its property `age` (the dot means “take the property”). `>=` means “greater than or equal”, so a person who is exactly 18 passes.\n- `find` returns the element itself, the same object from the array, not a copy.\n- If no element passes (or the array is empty), `find` returns `undefined`. That is exactly what the task asks for, so no special case is needed.\n- `return` returns that result from the function.\n\n```\npeople = [ana(17), bojan(18), cana(40)]\nana   → 17 >= 18 → false, continues\nbojan → 18 >= 18 → true,  stops and returns bojan\ncana is not checked\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`find` već radi sve što zadatak traži: staje na prvom, vraća isti objekat i `undefined` kad ništa ne nađe.",
+        "en": "`find` already does everything the task asks: it stops at the first one, returns the same object and `undefined` when nothing is found."
+      }
+    },
+    {
+      "label": {
+        "sr": "Petlja sa ranim izlaskom",
+        "en": "Loop with an early exit"
+      },
+      "code": "function firstAdult(people) {\n  for (const person of people) {\n    if (person.age >= 18) return person;\n  }\n  return undefined;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function firstAdult` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(people)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `people` je niz objekata, svaki ima `name` (tekst) i `age` (ceo broj). Poziv `firstAdult([{ name: 'Ana', age: 20 }])` daje `people = [{ name: 'Ana', age: 20 }]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 6.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function firstAdult` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(people)` is the parameter list. A parameter is an empty “slot” for input: `people` is an array of objects, each with `name` (text) and `age` (whole number). The call `firstAdult([{ name: 'Ana', age: 20 }])` gives `people = [{ name: 'Ana', age: 20 }]`.\n- `{` opens the function body, and `}` on line 6 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Prolazimo kroz osobe redom.\n\n- `for (const person of people)` znači: za svaki element niza `people`, redom, uradi telo petlje. U svakom krugu `person` je jedan objekat.\n- Redom od početka znači da prvu punoletnu osobu nalazimo pre ostalih.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 4.",
+            "en": "We go through the people in order.\n\n- `for (const person of people)` means: for every element of the array `people`, in order, run the loop body. In every round `person` is one object.\n- In order from the start means we find the first adult before the others.\n- `{` opens the loop body; it is closed by `}` on line 4."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Čim nađemo punoletnu osobu, vraćamo je i izlazimo iz funkcije.\n\n- `person.age` čita svojstvo `age` (tačka znači „uzmi svojstvo“).\n- `>= 18` znači „18 ili više“, pa osoba sa tačno 18 godina prolazi.\n- `return person` odmah završava funkciju i vraća taj objekat, isti kao u nizu, ne kopiju. Ostale osobe se više ne proveravaju, pa je rezultat prva, a ne najstarija.\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.\n\n```\nkrug  person     age >= 18\n1     ana(17)    ne\n2     bojan(18)  da → return bojan\n```",
+            "en": "As soon as we find an adult we return the person and leave the function.\n\n- `person.age` reads the property `age` (the dot means “take the property”).\n- `>= 18` means “18 or more”, so a person who is exactly 18 passes.\n- `return person` ends the function at once and returns that object, the same one as in the array, not a copy. The other people are no longer checked, so the result is the first, not the oldest.\n- `if` without curly braces: exactly one statement after the condition belongs to it.\n\n```\nround  person     age >= 18\n1      ana(17)    no\n2      bojan(18)  yes → return bojan\n```"
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 2.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 2.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Do ove linije dolazimo samo ako nijedna osoba nije bila punoletna (ili je niz prazan), jer bi nas `return` iz petlje već prekinuo. Tada vraćamo `undefined`, kako zadatak traži. Bez ove linije funkcija bi vratila `undefined` i sama, ali ovako je namera jasna.",
+            "en": "We reach this line only if no person was an adult (or the array is empty), because the `return` inside the loop would already have stopped us. Then we return `undefined`, as the task asks. Without this line the function would return `undefined` by itself, but this way the intention is clear."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Rani izlaz (`return` unutar petlje) je isto što `find` radi iznutra.",
+        "en": "The early exit (`return` inside the loop) is what `find` does internally."
+      }
+    }
+  ]
+}

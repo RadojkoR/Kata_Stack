@@ -250,10 +250,87 @@ Oznake: (novo) još nije napisan; izvor je osnovni plan ili dodatni plan.
 
 ---
 
+## 5a. TypeScript i Node.js
+
+Isti mehanizam: `content/order/typescript.json` i `content/order/node.json` postoje i sadrže zadatke koji danas postoje. `react-next` nema zadataka, pa nema ni fajla (provere važe samo za oblasti koje fajl imaju); dobiće ga sa prvim zadatkom.
+
+Postojeći zadaci su provereni čitanjem rešenja: `my-pick-01` (mapped tip) ide pre `my-exclude-01` (uslovni tip), a `group-by-01` (generička funkcija) pre `deep-readonly-01` (rekurzivni tip).
+
+Ciljni redosled kad se napišu svi zadaci iz [plan-zadaci-ostale-oblasti.md](plan-zadaci-ostale-oblasti.md). Upisuje se u fajl kako se zadaci pišu, ne unapred. Kod tipskih zadataka (`types`) pojam „mapped tip“ uvodi `my-partial-01`, a „uslovni tip“ prvi zadatak koji ga koristi; kasniji samo podsećaju.
+
+**TypeScript, početnik (12)**
+1. `typed-user-01`
+2. `status-union-01`
+3. `type-guards-01`
+4. `as-const-01`
+5. `generic-first-01`
+6. `generic-last-01`
+7. `key-of-01`
+8. `my-partial-01`
+9. `my-readonly-01`
+10. `my-record-01`
+11. `my-pick-01`
+12. `my-exclude-01`
+
+**TypeScript, srednji (12)**
+1. `overloads-01`
+2. `group-by-01`
+3. `typed-fetch-01`
+4. `api-state-01`
+5. `typed-emitter-01`
+6. `my-omit-01`
+7. `mutable-01`
+8. `my-return-type-01`
+9. `my-awaited-01`
+10. `tuple-first-last-01`
+11. `tuple-to-union-01`
+12. `deep-readonly-01`
+
+**TypeScript, expert (8)**
+1. `branded-ids-01`
+2. `deep-partial-01`
+3. `camel-case-keys-01`
+4. `route-params-01`
+5. `tuple-reverse-01`
+6. `union-to-intersection-01`
+7. `typed-builder-01`
+8. `mini-schema-01`
+
+**Node.js, početnik (8)**
+1. `parse-query-01`
+2. `parse-cookies-01`
+3. `build-url-01`
+4. `match-route-01`
+5. `parse-csv-01`
+6. `env-config-01`
+7. `validate-signup-01`
+8. `json-response-01`
+
+**Node.js, srednji (10)**
+1. `retry-01`
+2. `paginate-01`
+3. `http-errors-01`
+4. `middleware-chain-01`
+5. `mini-router-01`
+6. `crud-memory-01`
+7. `ttl-cache-01`
+8. `rate-limiter-01`
+9. `sign-token-01`
+10. `hash-password-01`
+
+**Node.js, expert (6)**
+1. `token-bucket-01`
+2. `sliding-window-limiter-01`
+3. `cache-stampede-01`
+4. `job-queue-01`
+5. `idempotency-01`
+6. `graceful-shutdown-01`
+
+---
+
 ## 6. Šta ide posle (nije deo ovog plana)
 
 - **Zadaci tipa `bug-hunt`.** Shema ih već podržava (`BugHuntExerciseSchema`), čeka se radni ekran. Dogovor: taj ekran ima prednost nad poslednjom trećinom klasičnih zadataka, jer je nalaženje greške u tuđem kodu bliže stvarnom poslu. Kad dođe na red, dobija svoj plan.
-- **Redosled za TypeScript i Node.js**: isti mehanizam, posebni fajlovi, kad te oblasti dobiju dovoljno zadataka.
 
 ---
 
@@ -262,6 +339,8 @@ Oznake: (novo) još nije napisan; izvor je osnovni plan ili dodatni plan.
 | Datum | Šta je urađeno | Napomena |
 |---|---|---|
 | 2026-11-11 | Uveden mehanizam: shema `OrderSchema`, `parseOrderFile` i provere u `lib/catalog.ts`, čitanje u `lib/content.ts`, 8 novih testova u `lib/catalog.test.ts`, fajl `content/order/javascript.json` (30 + 9 + 1 zadatak). `npm test` (247), `tsc`, lint i `npm run build` prolaze. Proveren HTML produkcionog servera: lista početnika kreće od `type-of-value-01`, a „Sledeći zadatak“ prati fajl redosleda (nije isprobano klikom u browseru). | Stranice u `app/` i `lib/browse.ts` nisu menjane: svi koriste redosled iz `getExercises()`, a nigde se ne sortira ponovo. |
+| 2026-11-11 | Dodati `content/order/typescript.json` (3 + 2 zadatka) i `content/order/node.json` (1 + 1). Ciljni redosled za TypeScript i Node.js je u odeljku 5a. | `react-next` nema zadataka, pa nema ni fajla. |
+| 2026-11-11 | Upisani zadaci grupe 5 za početnike: `full-name-01`, `word-lengths-01`, `long-words-01`, `first-adult-01`, `all-any-01` (mesta po odeljku 3). | Pojam „callback i strelica“ je u `word-lengths-01` samo kratko pomenut, jer ga po redosledu uvodi `apply-twice-01` (grupa 7, još nije napisan); do tada je redosled na stranici nepotpun. |
 
 Pomeranja zadataka u odnosu na prvobitni raspored (2026-11-11), posle čitanja rešenja:
 

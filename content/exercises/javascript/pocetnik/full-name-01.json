@@ -1,0 +1,140 @@
+{
+  "id": "full-name-01",
+  "title": {
+    "sr": "Puno ime",
+    "en": "Full name"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "objects",
+    "strings"
+  ],
+  "description": {
+    "sr": "Objekat grupiše više vrednosti pod imenima. Ta imena se zovu svojstva: `{ firstName: 'Ana', age: 20 }` ima svojstva `firstName` i `age`. Vrednost svojstva čitaš tačkom: `person.firstName` daje `'Ana'`. Ako svojstvo ne postoji, rezultat nije greška nego `undefined`, vrednost koja znači „ništa“.\n\nNapiši funkciju `getFullName(person)` koja vraća ime i prezime osobe, a između njih srednje ime ako ga ima.\n\n`person` je objekat sa svojstvima `firstName` i `lastName` (tekstovi, nikad prazni), a može da ima i `middleName`. Funkcija vraća tekst: delovi su razdvojeni jednim razmakom.\n\nPravila:\n- ako `middleName` ne postoji ili je prazan tekst `''`, srednje ime se preskače, bez duplog razmaka\n- ostala svojstva objekta (na primer `age`) se ignorišu\n- objekat `person` se ne menja\n\nPrimeri:\n- `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` → `'Ana Petrovic'`\n- `getFullName({ firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' })` → `'Ana Maria Petrovic'`\n- `getFullName({ firstName: 'Ana', middleName: '', lastName: 'Petrovic' })` → `'Ana Petrovic'`, jer prazno srednje ime ne ostavlja dupli razmak\n- `getFullName({ firstName: 'Ana', lastName: 'Petrovic', age: 30 })` → `'Ana Petrovic'`",
+    "en": "An object groups several values under names. Those names are called properties: `{ firstName: 'Ana', age: 20 }` has the properties `firstName` and `age`. You read the value of a property with a dot: `person.firstName` gives `'Ana'`. If a property does not exist, the result is not an error but `undefined`, a value that means “nothing”.\n\nWrite a function `getFullName(person)` that returns the first and last name of a person, with the middle name between them if there is one.\n\n`person` is an object with the properties `firstName` and `lastName` (texts, never empty), and it may also have `middleName`. The function returns a text: the parts are separated by a single space.\n\nRules:\n- if `middleName` does not exist or is an empty text `''`, the middle name is skipped, with no double space\n- other properties of the object (for example `age`) are ignored\n- the object `person` is not changed\n\nExamples:\n- `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` → `'Ana Petrovic'`\n- `getFullName({ firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' })` → `'Ana Maria Petrovic'`\n- `getFullName({ firstName: 'Ana', middleName: '', lastName: 'Petrovic' })` → `'Ana Petrovic'`, because an empty middle name leaves no double space\n- `getFullName({ firstName: 'Ana', lastName: 'Petrovic', age: 30 })` → `'Ana Petrovic'`"
+  },
+  "starterCode": "function getFullName(person) {\n  // your code\n}",
+  "tests": "test({ sr: 'ime i prezime bez srednjeg imena', en: 'first and last name without a middle name' }, () => {\n  expect(getFullName({ firstName: 'Ana', lastName: 'Petrovic' })).toBe('Ana Petrovic');\n});\ntest({ sr: 'srednje ime ide između', en: 'the middle name goes between' }, () => {\n  expect(getFullName({ firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' })).toBe('Ana Maria Petrovic');\n});\ntest({ sr: 'prazno srednje ime se preskače', en: 'an empty middle name is skipped' }, () => {\n  expect(getFullName({ firstName: 'Ana', middleName: '', lastName: 'Petrovic' })).toBe('Ana Petrovic');\n});",
+  "hiddenTests": "test('other properties are ignored', () => {\n  expect(getFullName({ firstName: 'Ana', lastName: 'Petrovic', age: 30 })).toBe('Ana Petrovic');\n  expect(getFullName({ age: 30, firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' })).toBe('Ana Maria Petrovic');\n});\ntest('different names', () => {\n  expect(getFullName({ firstName: 'Jo', middleName: 'K', lastName: 'Li' })).toBe('Jo K Li');\n});\ntest('no double space and no spaces at the ends', () => {\n  const name = getFullName({ firstName: 'Ana', middleName: '', lastName: 'Petrovic' });\n  expect(name).not.toContain('  ');\n  expect(name).toHaveLength(12);\n});\ntest('does not change the object', () => {\n  const person = { firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' };\n  getFullName(person);\n  expect(person).toEqual({ firstName: 'Ana', middleName: 'Maria', lastName: 'Petrovic' });\n});\ntest('the word undefined never appears in the result', () => {\n  expect(getFullName({ firstName: 'Ana', lastName: 'Petrovic' })).not.toContain('undefined');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "if i nadovezivanje",
+        "en": "if and concatenation"
+      },
+      "code": "function getFullName(person) {\n  let name = person.firstName;\n  if (person.middleName) {\n    name += ' ' + person.middleName;\n  }\n  return name + ' ' + person.lastName;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function getFullName` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(person)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `person` je objekat sa podacima o osobi. Poziv `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` daje `person = { firstName: 'Ana', lastName: 'Petrovic' }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function getFullName` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(person)` is the parameter list. A parameter is an empty “slot” for input: `person` is an object with the data about a person. The call `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` gives `person = { firstName: 'Ana', lastName: 'Petrovic' }`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Počinjemo od imena.\n\n- `person.firstName` čita svojstvo `firstName` objekta `person` (tačka znači „uzmi svojstvo“).\n- `let` pravi promenljivu čija se vrednost kasnije menja. Mora `let`, jer ćemo u liniji 4 na `name` nadovezati srednje ime.",
+            "en": "We start from the first name.\n\n- `person.firstName` reads the property `firstName` of the object `person` (the dot means “take the property”).\n- `let` creates a variable whose value changes later. It has to be `let`, because on line 4 we append the middle name to `name`."
+          }
+        },
+        {
+          "lines": [
+            3,
+            5
+          ],
+          "text": {
+            "sr": "Srednje ime dodajemo samo ako ga ima.\n\n- `if (person.middleName)` proverava da li je vrednost „truthy“. Ako svojstvo ne postoji, vrednost je `undefined`, a ako je prazan tekst, vrednost je `''`. Oba su falsy, pa se telo `if`-a preskače. Svaki neprazan tekst je truthy.\n- `name += ' ' + person.middleName` je skraćeno od `name = name + ' ' + person.middleName`. Nadovezuje razmak pa srednje ime, pa dobijamo razmak samo kad srednje ime postoji.\n- `{` u liniji 3 otvara telo, a `}` u liniji 5 ga zatvara.\n\n```\nperson                                  middleName   name posle if-a\n{ firstName: 'Ana', lastName: ... }     undefined    'Ana'\n{ ..., middleName: '', ... }            ''           'Ana'\n{ ..., middleName: 'Maria', ... }       'Maria'      'Ana Maria'\n```",
+            "en": "We add the middle name only if there is one.\n\n- `if (person.middleName)` checks whether the value is “truthy”. If the property does not exist, the value is `undefined`, and if it is an empty text, the value is `''`. Both are falsy, so the body of the `if` is skipped. Every non-empty text is truthy.\n- `name += ' ' + person.middleName` is short for `name = name + ' ' + person.middleName`. It appends a space and then the middle name, so we get a space only when the middle name exists.\n- `{` on line 3 opens the body, and `}` on line 5 closes it.\n\n```\nperson                                  middleName   name after the if\n{ firstName: 'Ana', lastName: ... }     undefined    'Ana'\n{ ..., middleName: '', ... }            ''           'Ana'\n{ ..., middleName: 'Maria', ... }       'Maria'      'Ana Maria'\n```"
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Dodajemo prezime i vraćamo rezultat.\n\n- `+` između tekstova ih nadovezuje, pa `name + ' ' + person.lastName` daje ime (i srednje ime), razmak i prezime.\n- Prezime uvek postoji, pa nema `if`-a. Zato je razmak pre prezimena uvek ispravan.\n- `person` smo samo čitali, nikad menjali.",
+            "en": "We add the last name and return the result.\n\n- `+` between texts joins them, so `name + ' ' + person.lastName` gives the first name (and the middle name), a space and the last name.\n- The last name always exists, so there is no `if`. That is why the space before it is always correct.\n- We only read `person`, never changed it."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Provera `if (person.middleName)` hvata i `undefined` i prazan tekst odjednom.",
+        "en": "The check `if (person.middleName)` catches both `undefined` and an empty text at once."
+      }
+    },
+    {
+      "label": {
+        "sr": "Šablon i ternarni operator",
+        "en": "Template and ternary"
+      },
+      "code": "function getFullName(person) {\n  const middle = person.middleName ? ` ${person.middleName}` : '';\n  return `${person.firstName}${middle} ${person.lastName}`;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function getFullName` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(person)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `person` je objekat sa podacima o osobi. Poziv `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` daje `person = { firstName: 'Ana', lastName: 'Petrovic' }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function getFullName` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(person)` is the parameter list. A parameter is an empty “slot” for input: `person` is an object with the data about a person. The call `getFullName({ firstName: 'Ana', lastName: 'Petrovic' })` gives `person = { firstName: 'Ana', lastName: 'Petrovic' }`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo deo za srednje ime: ili razmak i srednje ime, ili ništa.\n\n- `uslov ? a : b` je ternarni operator: ako je uslov truthy, rezultat je `a`, inače `b`.\n- Uslov je `person.middleName`. Ako svojstvo ne postoji (`undefined`) ili je prazan tekst, uslov je falsy i dobijamo `''` (prazan tekst).\n- Inače dobijamo `` ` ${person.middleName}` ``: šablon-literal (tekst u kosim apostrofima) u kome `${...}` ubacuje vrednost. Razmak na početku je deo šablona, pa se razmak pojavljuje samo uz srednje ime.\n\n```\nmiddleName   middle\nundefined    ''\n''           ''\n'Maria'      ' Maria'\n```",
+            "en": "We build the middle-name part: either a space and the middle name, or nothing.\n\n- `condition ? a : b` is the ternary operator: if the condition is truthy, the result is `a`, otherwise `b`.\n- The condition is `person.middleName`. If the property does not exist (`undefined`) or is an empty text, the condition is falsy and we get `''` (an empty text).\n- Otherwise we get `` ` ${person.middleName}` ``: a template literal (text in backticks) in which `${...}` inserts a value. The space at the start is part of the template, so a space appears only with the middle name.\n\n```\nmiddleName   middle\nundefined    ''\n''           ''\n'Maria'      ' Maria'\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Sastavljamo rezultat jednim šablonom: `${person.firstName}` je ime, `${middle}` je srednje ime sa razmakom ispred (ili ništa), zatim razmak i `${person.lastName}`. Rezultat je `'Ana Maria Petrovic'` ili `'Ana Petrovic'`, uvek sa jednim razmakom između delova.",
+            "en": "We build the result with one template: `${person.firstName}` is the first name, `${middle}` is the middle name with a space before it (or nothing), then a space and `${person.lastName}`. The result is `'Ana Maria Petrovic'` or `'Ana Petrovic'`, always with one space between the parts."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kraće, ali ternarni operator i šablon traže malo više čitanja nego `if`.",
+        "en": "Shorter, but the ternary operator and the template take a little more reading than an `if`."
+      }
+    }
+  ]
+}

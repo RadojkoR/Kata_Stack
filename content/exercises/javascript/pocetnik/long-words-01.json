@@ -1,0 +1,150 @@
+{
+  "id": "long-words-01",
+  "title": {
+    "sr": "Dugačke reči",
+    "en": "Long words"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "arrays",
+    "filter"
+  ],
+  "description": {
+    "sr": "Metoda `filter` prolazi kroz niz i pravi nov niz samo od elemenata za koje funkcija koju joj damo vrati `true`. Na primer, `[1, 2, 3, 4].filter((n) => n > 2)` daje `[3, 4]`. Ostali elementi se izostavljaju, a redosled onih koji ostanu je isti.\n\nNapiši funkciju `longWords(words, min)` koja vraća reči koje imaju bar `min` slova.\n\n`words` je niz tekstova, a `min` je ceo broj, `0` ili veći. Funkcija vraća novi niz tekstova.\n\nPravila:\n- reč koja ima tačno `min` slova ulazi u rezultat\n- ako nijedna reč ne ulazi, rezultat je prazan niz `[]`\n- redosled reči ostaje kao u ulazu\n- originalni niz se ne menja\n\nPrimeri:\n- `longWords(['a', 'bb', 'ccc', 'dd'], 2)` → `['bb', 'ccc', 'dd']`\n- `longWords(['cat', 'house'], 4)` → `['house']`\n- `longWords(['cat', 'dog'], 3)` → `['cat', 'dog']`, jer reč sa tačno 3 slova ulazi\n- `longWords(['a', 'b'], 5)` → `[]`\n- `longWords(['', 'a'], 0)` → `['', 'a']`, jer svaka reč ima bar 0 slova",
+    "en": "The `filter` method goes through an array and creates a new array only from the elements for which the function we give it returns `true`. For example, `[1, 2, 3, 4].filter((n) => n > 2)` gives `[3, 4]`. The other elements are left out, and the order of those that stay is the same.\n\nWrite a function `longWords(words, min)` that returns the words that have at least `min` letters.\n\n`words` is an array of texts and `min` is a whole number, `0` or more. The function returns a new array of texts.\n\nRules:\n- a word with exactly `min` letters goes into the result\n- if no word goes in, the result is an empty array `[]`\n- the order of the words stays as in the input\n- the original array is not changed\n\nExamples:\n- `longWords(['a', 'bb', 'ccc', 'dd'], 2)` → `['bb', 'ccc', 'dd']`\n- `longWords(['cat', 'house'], 4)` → `['house']`\n- `longWords(['cat', 'dog'], 3)` → `['cat', 'dog']`, because a word with exactly 3 letters goes in\n- `longWords(['a', 'b'], 5)` → `[]`\n- `longWords(['', 'a'], 0)` → `['', 'a']`, because every word has at least 0 letters"
+  },
+  "starterCode": "function longWords(words, min) {\n  // your code\n}",
+  "tests": "test({ sr: 'zadržava reči sa bar min slova', en: 'keeps words with at least min letters' }, () => {\n  expect(longWords(['a', 'bb', 'ccc', 'dd'], 2)).toEqual(['bb', 'ccc', 'dd']);\n});\ntest({ sr: 'reč sa tačno min slova ulazi', en: 'a word with exactly min letters goes in' }, () => {\n  expect(longWords(['cat', 'dog'], 3)).toEqual(['cat', 'dog']);\n});\ntest({ sr: 'nijedna reč ne ulazi', en: 'no word goes in' }, () => {\n  expect(longWords(['a', 'b'], 5)).toEqual([]);\n});",
+  "hiddenTests": "test('only the longer word stays', () => {\n  expect(longWords(['cat', 'house'], 4)).toEqual(['house']);\n});\ntest('min 0 keeps everything, even the empty text', () => {\n  expect(longWords(['', 'a'], 0)).toEqual(['', 'a']);\n});\ntest('keeps the original order', () => {\n  expect(longWords(['dddd', 'a', 'bbb', 'cc'], 2)).toEqual(['dddd', 'bbb', 'cc']);\n});\ntest('an empty array gives an empty array', () => {\n  expect(longWords([], 3)).toEqual([]);\n});\ntest('does not change the input and returns a new array', () => {\n  const input = ['cat', 'dog'];\n  const result = longWords(input, 3);\n  expect(input).toEqual(['cat', 'dog']);\n  expect(result).not.toBe(input);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "filter",
+        "en": "filter"
+      },
+      "code": "function longWords(words, min) {\n  return words.filter((word) => word.length >= min);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function longWords` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(words, min)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `words` je niz tekstova, `min` je najmanji dozvoljeni broj slova. Poziv `longWords(['a', 'bb'], 2)` daje `words = ['a', 'bb']` i `min = 2`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function longWords` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(words, min)` is the parameter list. A parameter is an empty “slot” for input: `words` is the array of texts, `min` is the smallest allowed number of letters. The call `longWords(['a', 'bb'], 2)` gives `words = ['a', 'bb']` and `min = 2`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Cela obrada je u jednoj liniji.\n\n- `words.filter(...)` poziva metodu `filter` nad nizom `words` i pravi **nov** niz. Original se ne menja.\n- `(word) => word.length >= min` je uslov koji dajemo metodi `filter`. Za svaki element `word` vraća `true` ili `false`.\n- `>=` znači „veće ili jednako“. Zato reč sa tačno `min` slova prolazi. Sa `>` bi ispala, a to bi bila greška.\n- `filter` zadržava elemente za koje je odgovor `true`, redom kojim su bili u nizu.\n- Ako nijedan ne prođe, `filter` vraća prazan niz `[]`.\n- `min` je dostupno unutar strelice jer je ona napisana unutar funkcije `longWords`.\n\n```\nwords = ['cat', 'dog', 'house'], min = 4\n'cat'   → 3 >= 4 → false (ispada)\n'dog'   → 3 >= 4 → false (ispada)\n'house' → 5 >= 4 → true  (ostaje)\nrezultat: ['house']\n```",
+            "en": "The whole processing is on one line.\n\n- `words.filter(...)` calls the `filter` method on the array `words` and creates a **new** array. The original is not changed.\n- `(word) => word.length >= min` is the condition we give to `filter`. For every element `word` it returns `true` or `false`.\n- `>=` means “greater than or equal”. That is why a word with exactly `min` letters passes. With `>` it would drop out, and that would be a mistake.\n- `filter` keeps the elements for which the answer is `true`, in the order they had in the array.\n- If none passes, `filter` returns an empty array `[]`.\n- `min` is available inside the arrow because it is written inside the function `longWords`.\n\n```\nwords = ['cat', 'dog', 'house'], min = 4\n'cat'   → 3 >= 4 → false (dropped)\n'dog'   → 3 >= 4 → false (dropped)\n'house' → 5 >= 4 → true  (stays)\nresult: ['house']\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najkraće. `filter` vraća prazan niz kad ništa ne prođe, pa nema posebnog slučaja.",
+        "en": "The shortest. `filter` returns an empty array when nothing passes, so there is no special case."
+      }
+    },
+    {
+      "label": {
+        "sr": "Petlja i push",
+        "en": "Loop and push"
+      },
+      "code": "function longWords(words, min) {\n  const result = [];\n  for (const word of words) {\n    if (word.length >= min) result.push(word);\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function longWords` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(words, min)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `words` je niz tekstova, `min` je najmanji dozvoljeni broj slova. Poziv `longWords(['a', 'bb'], 2)` daje `words = ['a', 'bb']` i `min = 2`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function longWords` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(words, min)` is the parameter list. A parameter is an empty “slot” for input: `words` is the array of texts, `min` is the smallest allowed number of letters. The call `longWords(['a', 'bb'], 2)` gives `words = ['a', 'bb']` and `min = 2`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo prazan niz za reči koje prođu.\n\n- `const` jer se promenljiva `result` ne dodeljuje ponovo; sadržaj niza se menja.\n- Ako nijedna reč ne prođe, upravo ovaj prazan niz se vraća.",
+            "en": "We create an empty array for the words that pass.\n\n- `const` because the variable `result` is not assigned again; the contents of the array change.\n- If no word passes, exactly this empty array is returned."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prolazimo kroz sve reči redom.\n\n- `for (const word of words)` znači: za svaki element niza `words`, redom, uradi telo petlje. U svakom krugu `word` je jedna reč.\n- Zato redosled u rezultatu ostaje isti kao u ulazu.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through all the words in order.\n\n- `for (const word of words)` means: for every element of the array `words`, in order, run the loop body. In every round `word` is one word.\n- That is why the order in the result stays the same as in the input.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Dodajemo reč u rezultat samo ako je dovoljno dugačka.\n\n- `word.length >= min` je uslov: da li reč ima bar `min` slova. `>=` znači „veće ili jednako“, pa reč sa tačno `min` slova prolazi.\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.\n- `result.push(word)` dodaje reč na kraj niza `result`.\n\n```\nwords = ['cat', 'dog', 'house'], min = 4\nkrug  word     uslov     result posle kruga\n1     'cat'    3>=4 ne   []\n2     'dog'    3>=4 ne   []\n3     'house'  5>=4 da   ['house']\n```",
+            "en": "We add the word to the result only if it is long enough.\n\n- `word.length >= min` is the condition: does the word have at least `min` letters. `>=` means “greater than or equal”, so a word with exactly `min` letters passes.\n- `if` without curly braces: exactly one statement after the condition belongs to it.\n- `result.push(word)` adds the word to the end of the array `result`.\n\n```\nwords = ['cat', 'dog', 'house'], min = 4\nround  word     condition  result after the round\n1      'cat'    3>=4 no    []\n2      'dog'    3>=4 no    []\n3      'house'  5>=4 yes   ['house']\n```"
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Vraćamo niz reči koje su prošle. Ulazni niz smo samo čitali, nikad menjali.",
+            "en": "We return the array of words that passed. We only read the input array, never changed it."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Isti rezultat kao `filter`, uz vidljiv `if` i `push`.",
+        "en": "The same result as `filter`, with a visible `if` and `push`."
+      }
+    }
+  ]
+}

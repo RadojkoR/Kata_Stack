@@ -1,0 +1,150 @@
+{
+  "id": "word-lengths-01",
+  "title": {
+    "sr": "Dužine reči",
+    "en": "Word lengths"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "arrays",
+    "map"
+  ],
+  "description": {
+    "sr": "Metoda `map` prolazi kroz niz i pravi **nov** niz iste dužine: za svaki element pozove funkciju koju joj damo, a ono što funkcija vrati ide na isto mesto u novom nizu. Na primer, `[1, 2, 3].map((n) => n * 2)` daje `[2, 4, 6]`. Funkcija se piše kao strelica: `(n) => n * 2` znači „za `n` vrati `n * 2`“.\n\nNapiši funkciju `wordLengths(words)` koja vraća dužine reči.\n\n`words` je niz tekstova. Funkcija vraća novi niz brojeva: na svakom mestu je dužina teksta sa istog mesta u `words`.\n\nPravila:\n- prazan tekst `''` ima dužinu `0` i ostaje u rezultatu\n- prazan niz daje prazan niz\n- originalni niz se ne menja\n\nPrimeri:\n- `wordLengths(['cat', 'house'])` → `[3, 5]`\n- `wordLengths(['a', '', 'abc'])` → `[1, 0, 3]`, jer prazan tekst nema slova, ali ipak ima svoje mesto\n- `wordLengths([])` → `[]`\n\nOvde vežbaš `map`. Testovi proveravaju samo rezultat, pa je dozvoljena i petlja.",
+    "en": "The `map` method goes through an array and creates a **new** array of the same length: for every element it calls the function we give it, and what the function returns goes to the same place in the new array. For example, `[1, 2, 3].map((n) => n * 2)` gives `[2, 4, 6]`. The function is written as an arrow: `(n) => n * 2` means “for `n` return `n * 2`”.\n\nWrite a function `wordLengths(words)` that returns the lengths of words.\n\n`words` is an array of texts. The function returns a new array of numbers: at every place is the length of the text from the same place in `words`.\n\nRules:\n- an empty text `''` has length `0` and stays in the result\n- an empty array gives an empty array\n- the original array is not changed\n\nExamples:\n- `wordLengths(['cat', 'house'])` → `[3, 5]`\n- `wordLengths(['a', '', 'abc'])` → `[1, 0, 3]`, because an empty text has no letters but still has its place\n- `wordLengths([])` → `[]`\n\nHere you practise `map`. Tests check only the result, so a loop is allowed too."
+  },
+  "starterCode": "function wordLengths(words) {\n  // your code\n}",
+  "tests": "test({ sr: 'vraća dužinu svake reči', en: 'returns the length of every word' }, () => {\n  expect(wordLengths(['cat', 'house'])).toEqual([3, 5]);\n});\ntest({ sr: 'prazan tekst ima dužinu 0', en: 'an empty text has length 0' }, () => {\n  expect(wordLengths(['a', '', 'abc'])).toEqual([1, 0, 3]);\n});\ntest({ sr: 'prazan niz daje prazan niz', en: 'an empty array gives an empty array' }, () => {\n  expect(wordLengths([])).toEqual([]);\n});",
+  "hiddenTests": "test('keeps the order of the words', () => {\n  expect(wordLengths(['aaaa', 'b', 'cc'])).toEqual([4, 1, 2]);\n});\ntest('a single word', () => {\n  expect(wordLengths(['hello'])).toEqual([5]);\n});\ntest('only empty texts', () => {\n  expect(wordLengths(['', ''])).toEqual([0, 0]);\n});\ntest('does not change the input', () => {\n  const input = ['cat', 'house'];\n  const result = wordLengths(input);\n  expect(input).toEqual(['cat', 'house']);\n  expect(result).not.toBe(input);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "map",
+        "en": "map"
+      },
+      "code": "function wordLengths(words) {\n  return words.map((word) => word.length);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function wordLengths` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(words)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `words` je niz tekstova čije dužine tražimo. Poziv `wordLengths(['a', 'bb'])` daje `words = ['a', 'bb']`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function wordLengths` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(words)` is the parameter list. A parameter is an empty “slot” for input: `words` is the array of texts whose lengths we want. The call `wordLengths(['a', 'bb'])` gives `words = ['a', 'bb']`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Cela obrada je u jednoj liniji.\n\n- `return` vraća vrednost iz funkcije: ono što stoji desno od njega.\n- `words.map(...)` poziva metodu `map` nad nizom `words`. `map` prolazi kroz elemente redom i pravi **nov** niz iste dužine. Original ostaje isti.\n- `(word) => word.length` je funkcija koju dajemo metodi `map`. Levo od `=>` je parametar `word`: jedan element niza. Desno je ono što funkcija vraća: `word.length`, broj slova u tekstu. Kad iza `=>` nema `{ }`, desni izraz se vraća sam, bez reči `return`.\n- Ono što funkcija vrati za neki element postaje element novog niza na istom mestu.\n- Prazan tekst ima `.length` jednak `0`, pa i on daje `0`. Prazan niz daje prazan niz, jer nema nijednog elementa za obradu.\n\n```\nwords = ['a', '', 'abc']\n'a'   → 1\n''    → 0\n'abc' → 3\nrezultat: [1, 0, 3]\n```",
+            "en": "The whole processing is on one line.\n\n- `return` returns a value from the function: what stands to the right of it.\n- `words.map(...)` calls the `map` method on the array `words`. `map` goes through the elements in order and creates a **new** array of the same length. The original stays the same.\n- `(word) => word.length` is the function we give to `map`. To the left of `=>` is the parameter `word`: one element of the array. To the right is what the function returns: `word.length`, the number of letters in the text. When there is no `{ }` after `=>`, the right-hand expression is returned by itself, without the word `return`.\n- What the function returns for an element becomes the element of the new array at the same place.\n- An empty text has `.length` equal to `0`, so it gives `0` too. An empty array gives an empty array, because there are no elements to process.\n\n```\nwords = ['a', '', 'abc']\n'a'   → 1\n''    → 0\n'abc' → 3\nresult: [1, 0, 3]\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najkraće: `map` radi baš ono što zadatak traži i ne menja original.",
+        "en": "The shortest: `map` does exactly what the task asks for and does not change the original."
+      }
+    },
+    {
+      "label": {
+        "sr": "Petlja i push",
+        "en": "Loop and push"
+      },
+      "code": "function wordLengths(words) {\n  const lengths = [];\n  for (const word of words) {\n    lengths.push(word.length);\n  }\n  return lengths;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function wordLengths` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(words)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `words` je niz tekstova čije dužine tražimo. Poziv `wordLengths(['a', 'bb'])` daje `words = ['a', 'bb']`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function wordLengths` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(words)` is the parameter list. A parameter is an empty “slot” for input: `words` is the array of texts whose lengths we want. The call `wordLengths(['a', 'bb'])` gives `words = ['a', 'bb']`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo prazan niz u koji ćemo ubacivati dužine.\n\n- `const` pravi promenljivu koja se ne dodeljuje ponovo. Sadržaj niza se menja, a to je dozvoljeno.\n- `[]` je prazan niz.\n- Ako je ulaz prazan, petlja se uopšte ne izvrši i upravo ovaj prazan niz se vraća.",
+            "en": "We create an empty array into which we will put the lengths.\n\n- `const` creates a variable that is not assigned again. The contents of the array change, which is allowed.\n- `[]` is an empty array.\n- If the input is empty, the loop does not run at all and exactly this empty array is returned."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prolazimo kroz sve elemente ulaza.\n\n- `for (const word of words)` znači: za svaki element niza `words`, redom, uradi telo petlje.\n- U svakom krugu `word` je jedan element. `const` ovde nije greška: u svakom krugu nastaje nova promenljiva `word`.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through all elements of the input.\n\n- `for (const word of words)` means: for every element of the array `words`, in order, run the loop body.\n- In every round `word` is one element. `const` is not a mistake here: a new variable `word` is created in every round.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Dodajemo dužinu tekućeg teksta na kraj niza.\n\n- `word.length` je broj slova u tekstu `word`.\n- `lengths.push(x)` dodaje `x` na kraj niza `lengths`.\n- Nema provere `if`, pa se i prazan tekst obrađuje: njegova dužina `0` ulazi u rezultat.\n\n```\nkrug  word    word.length  lengths posle kruga\n1     'a'     1            [1]\n2     ''      0            [1, 0]\n3     'abc'   3            [1, 0, 3]\n```",
+            "en": "We add the length of the current text to the end of the array.\n\n- `word.length` is the number of letters in the text `word`.\n- `lengths.push(x)` adds `x` to the end of the array `lengths`.\n- There is no `if` check, so an empty text is processed too: its length `0` goes into the result.\n\n```\nround  word    word.length  lengths after the round\n1      'a'     1            [1]\n2      ''      0            [1, 0]\n3      'abc'   3            [1, 0, 3]\n```"
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Vraćamo napunjeni niz. Ulazni niz `words` smo samo čitali, nikad menjali.",
+            "en": "We return the filled array. We only read the input array `words`, never changed it."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Duže, ali svaki korak je vidljiv. Isti rezultat kao `map`.",
+        "en": "Longer, but every step is visible. The same result as `map`."
+      }
+    }
+  ]
+}

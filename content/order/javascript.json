@@ -27,8 +27,13 @@
     "split-list-01",
     "fizzbuzz-01",
     "closure-counter-01",
+    "full-name-01",
     "count-words-01",
+    "word-lengths-01",
     "capitalize-words-01",
+    "long-words-01",
+    "first-adult-01",
+    "all-any-01",
     "sum-evens-01"
   ],
   "srednji": [
@@ -42,5 +47,7 @@
     "group-by-js-01",
     "promise-all-01"
   ],
-  "expert": ["curry-01"]
+  "expert": [
+    "curry-01"
+  ]
 }

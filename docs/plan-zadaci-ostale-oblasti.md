@@ -68,6 +68,8 @@ Pre pisanja pročitati i: `types/exercise.ts`, `lib/catalog.ts`, `lib/runner/tes
 **Tagovi**
 - Koristiti postojeće iz `i18n/dictionaries/*.json`. Novi tagovi koje ovaj plan uvodi: `data-structures`, `concurrency`, `immutability`, `iterators`, `classes`, `type-guards`, `unions`, `template-literals`, `infer`, `validation`, `http`, `routing`, `security`, `middleware`. Svaki dodati u `sr.json` i `en.json` kad se prvi put upotrebi.
 
+**Redosled prikaza.** Svaki napisan zadatak se u istoj izmeni upisuje u `content/order/<oblast>.json`, na mesto iz [plan-redosled-javascript.md](plan-redosled-javascript.md) (JavaScript: odeljci 3–5, TypeScript i Node.js: odeljak 5a). Bez toga `npm test` pada.
+
 **Spisak je predlog, ne ugovor.** Ako se zadatak pokaže kao duplikat postojećeg, pretežak za nivo ili neproverljiv testovima, zameniti ga drugim iz iste teme i to zapisati u odeljku 8.
 
 ---
@@ -250,5 +252,6 @@ Brojač N se čita iz tabele u odeljku 8 (kolona „Pregled“) i tamo se ažuri
 | Datum | Grupa | Zadaci | `npm test` | Pregled (od poslednjeg / urađen) | Napomena |
 |---|---|---|---|---|---|
 | 2026-11-11 | JS srednji, grupa 1 | `throttle-01`, `once-01`, `compose-pipe-01`, `partial-01`, `group-by-js-01` | 239 prolazi; `tsc` i lint čisti | 5 od 15–20 napisano od poslednjeg pregleda | 27 pogrešnih/alternativnih rešenja kroz `executeTests` dalo očekivan ishod; tvrdnje iz objašnjenja izvršene u Node-u; bez zamena u spisku |
+| 2026-11-11 | JS početnik, grupa 5 | `word-lengths-01`, `long-words-01`, `first-adult-01`, `all-any-01`, `full-name-01` | 262 prolaze; `tsc`, lint i build čisti | 10 od 15–20 napisano od poslednjeg pregleda | 39 pogrešnih/alternativnih rešenja kroz `executeTests` dala očekivan ishod; tvrdnje iz objašnjenja izvršene u Node-u; novi tagovi `map`, `find`, `every-some`; upisani u `content/order/javascript.json`; čeka potvrdu korisnika |
 
 Zamene i odustajanja od zadataka iz spiska upisivati ovde, sa razlogom.

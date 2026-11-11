@@ -175,6 +175,9 @@
     "operators": "operatori",
     "templates": "šabloni teksta",
     "spread": "spread operator",
-    "searching": "pretraga"
+    "searching": "pretraga",
+    "map": "map",
+    "find": "find",
+    "every-some": "every i some"
   }
 }

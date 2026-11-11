@@ -1,0 +1,230 @@
+{
+  "id": "all-any-01",
+  "title": {
+    "sr": "Svi pozitivni, bar jedan negativan",
+    "en": "All positive, any negative"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "arrays",
+    "every-some"
+  ],
+  "description": {
+    "sr": "Za proveru celog niza postoje dve metode. `every` vraća `true` ako funkcija koju joj damo vrati `true` za **svaki** element. `some` vraća `true` ako funkcija vrati `true` za **bar jedan** element. Na primer, `[2, 4].every((n) => n % 2 === 0)` je `true`, a `[1, 4].some((n) => n % 2 === 0)` je `true`.\n\nKod praznog niza nema nijednog elementa: `every` je tada uvek `true` (nema elementa koji bi pokvario uslov), a `some` je uvek `false` (nema elementa koji bi ga zadovoljio).\n\nNapiši dve funkcije, `allPositive(nums)` i `anyNegative(nums)`. `nums` je niz brojeva.\n\n- `allPositive` vraća `true` ako je svaki broj veći od `0`, inače `false`.\n- `anyNegative` vraća `true` ako je bar jedan broj manji od `0`, inače `false`.\n\nPravila:\n- `0` nije ni pozitivan ni negativan\n- za prazan niz `allPositive` vraća `true`, a `anyNegative` vraća `false`\n\nPrimeri:\n- `allPositive([1, 2, 3])` → `true`\n- `allPositive([3, 0, 5])` → `false`, jer `0` nije pozitivan\n- `allPositive([])` → `true`, jer nema broja koji bi pokvario uslov\n- `anyNegative([5, -1, 2])` → `true`\n- `anyNegative([0, 5])` → `false`, jer `0` nije negativan\n- `anyNegative([])` → `false`, jer nema broja koji bi zadovoljio uslov",
+    "en": "There are two methods for checking a whole array. `every` returns `true` if the function we give it returns `true` for **every** element. `some` returns `true` if the function returns `true` for **at least one** element. For example, `[2, 4].every((n) => n % 2 === 0)` is `true`, and `[1, 4].some((n) => n % 2 === 0)` is `true`.\n\nAn empty array has no elements: `every` is then always `true` (there is no element that would break the condition), and `some` is always `false` (there is no element that would meet it).\n\nWrite two functions, `allPositive(nums)` and `anyNegative(nums)`. `nums` is an array of numbers.\n\n- `allPositive` returns `true` if every number is greater than `0`, otherwise `false`.\n- `anyNegative` returns `true` if at least one number is less than `0`, otherwise `false`.\n\nRules:\n- `0` is neither positive nor negative\n- for an empty array `allPositive` returns `true` and `anyNegative` returns `false`\n\nExamples:\n- `allPositive([1, 2, 3])` → `true`\n- `allPositive([3, 0, 5])` → `false`, because `0` is not positive\n- `allPositive([])` → `true`, because there is no number that would break the condition\n- `anyNegative([5, -1, 2])` → `true`\n- `anyNegative([0, 5])` → `false`, because `0` is not negative\n- `anyNegative([])` → `false`, because there is no number that would meet the condition"
+  },
+  "starterCode": "function allPositive(nums) {\n  // your code\n}\n\nfunction anyNegative(nums) {\n  // your code\n}",
+  "tests": "test({ sr: 'allPositive: svi su pozitivni', en: 'allPositive: all are positive' }, () => {\n  expect(allPositive([1, 2, 3])).toBe(true);\n});\ntest({ sr: 'allPositive: nula nije pozitivna', en: 'allPositive: zero is not positive' }, () => {\n  expect(allPositive([3, 0, 5])).toBe(false);\n});\ntest({ sr: 'anyNegative: ima negativan', en: 'anyNegative: there is a negative one' }, () => {\n  expect(anyNegative([5, -1, 2])).toBe(true);\n});\ntest({ sr: 'anyNegative: nula nije negativna', en: 'anyNegative: zero is not negative' }, () => {\n  expect(anyNegative([0, 5])).toBe(false);\n});",
+  "hiddenTests": "test('allPositive of an empty array is true', () => {\n  expect(allPositive([])).toBe(true);\n});\ntest('anyNegative of an empty array is false', () => {\n  expect(anyNegative([])).toBe(false);\n});\ntest('allPositive: one negative number is enough to fail', () => {\n  expect(allPositive([4, 5, -1])).toBe(false);\n});\ntest('allPositive: a single positive number', () => {\n  expect(allPositive([7])).toBe(true);\n});\ntest('anyNegative: all negative', () => {\n  expect(anyNegative([-3, -1])).toBe(true);\n});\ntest('anyNegative: only positive numbers', () => {\n  expect(anyNegative([1, 2, 3])).toBe(false);\n});\ntest('anyNegative: the negative number is the last one', () => {\n  expect(anyNegative([1, 2, -3])).toBe(true);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "every i some",
+        "en": "every and some"
+      },
+      "code": "function allPositive(nums) {\n  return nums.every((n) => n > 0);\n}\n\nfunction anyNegative(nums) {\n  return nums.some((n) => n < 0);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function allPositive` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(nums)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `nums` je niz brojeva. Poziv `allPositive([1, 2])` daje `nums = [1, 2]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function allPositive` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(nums)` is the parameter list. A parameter is an empty “slot” for input: `nums` is an array of numbers. The call `allPositive([1, 2])` gives `nums = [1, 2]`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Proveravamo da li je svaki broj pozitivan.\n\n- `nums.every(...)` vraća `true` samo ako uslov vrati `true` za svaki element. Čim naiđe na jedan za koji vrati `false`, staje i vraća `false`.\n- `(n) => n > 0` je uslov. Strogo `> 0` jer `0` nije pozitivan.\n- Za prazan niz nema nijednog elementa koji bi pokvario uslov, pa `every` vraća `true`. To je upravo ono što zadatak traži, bez posebnog slučaja.\n\n```\n[3, 0, 5]: 3 > 0 da, 0 > 0 ne → false (5 se ne proverava)\n[]       : nema elemenata → true\n```",
+            "en": "We check whether every number is positive.\n\n- `nums.every(...)` returns `true` only if the condition returns `true` for every element. As soon as it meets one for which it returns `false`, it stops and returns `false`.\n- `(n) => n > 0` is the condition. Strictly `> 0` because `0` is not positive.\n- For an empty array there is no element that would break the condition, so `every` returns `true`. That is exactly what the task asks for, without a special case.\n\n```\n[3, 0, 5]: 3 > 0 yes, 0 > 0 no → false (5 is not checked)\n[]       : no elements → true\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function anyNegative` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(nums)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `nums` je niz brojeva. Poziv `anyNegative([1, -2])` daje `nums = [1, -2]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function anyNegative` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(nums)` is the parameter list. A parameter is an empty “slot” for input: `nums` is an array of numbers. The call `anyNegative([1, -2])` gives `nums = [1, -2]`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Proveravamo da li je bar jedan broj negativan.\n\n- `nums.some(...)` vraća `true` čim uslov vrati `true` za neki element. Ako nijedan ne zadovolji uslov, vraća `false`.\n- `(n) => n < 0` je uslov. Strogo `< 0` jer `0` nije negativan.\n- Za prazan niz nema nijednog elementa koji bi zadovoljio uslov, pa `some` vraća `false`.\n\n```\n[5, -1, 2]: 5 < 0 ne, -1 < 0 da → true (2 se ne proverava)\n[0, 5]    : 0 < 0 ne, 5 < 0 ne → false\n[]        : nema elemenata → false\n```",
+            "en": "We check whether at least one number is negative.\n\n- `nums.some(...)` returns `true` as soon as the condition returns `true` for some element. If none meets the condition, it returns `false`.\n- `(n) => n < 0` is the condition. Strictly `< 0` because `0` is not negative.\n- For an empty array there is no element that would meet the condition, so `some` returns `false`.\n\n```\n[5, -1, 2]: 5 < 0 no, -1 < 0 yes → true (2 is not checked)\n[0, 5]    : 0 < 0 no, 5 < 0 no → false\n[]        : no elements → false\n```"
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 5.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 5.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`every` i `some` sami rešavaju prazan niz, pa nema posebnih slučajeva.",
+        "en": "`every` and `some` handle the empty array themselves, so there are no special cases."
+      }
+    },
+    {
+      "label": {
+        "sr": "Petlje sa ranim izlaskom",
+        "en": "Loops with an early exit"
+      },
+      "code": "function allPositive(nums) {\n  for (const n of nums) {\n    if (n <= 0) return false;\n  }\n  return true;\n}\n\nfunction anyNegative(nums) {\n  for (const n of nums) {\n    if (n < 0) return true;\n  }\n  return false;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function allPositive` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(nums)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `nums` je niz brojeva. Poziv `allPositive([1, 2])` daje `nums = [1, 2]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 6.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function allPositive` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(nums)` is the parameter list. A parameter is an empty “slot” for input: `nums` is an array of numbers. The call `allPositive([1, 2])` gives `nums = [1, 2]`.\n- `{` opens the function body, and `}` on line 6 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Prolazimo kroz brojeve redom.\n\n- `for (const n of nums)` znači: za svaki element niza `nums`, redom, uradi telo petlje. U svakom krugu `n` je jedan broj.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 4.",
+            "en": "We go through the numbers in order.\n\n- `for (const n of nums)` means: for every element of the array `nums`, in order, run the loop body. In every round `n` is one number.\n- `{` opens the loop body; it is closed by `}` on line 4."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Čim nađemo broj koji nije pozitivan, odgovor je `false`.\n\n- `n <= 0` znači „manje ili jednako nuli“. Uključuje `0`, jer `0` nije pozitivan.\n- `return false` odmah završava funkciju. Jedan loš broj je dovoljan, ostali se ne proveravaju.\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.\n\n```\n[3, 0, 5]\nkrug 1: n = 3 → 3 <= 0 ne\nkrug 2: n = 0 → 0 <= 0 da → return false\n```",
+            "en": "As soon as we find a number that is not positive, the answer is `false`.\n\n- `n <= 0` means “less than or equal to zero”. It includes `0`, because `0` is not positive.\n- `return false` ends the function at once. One bad number is enough, the others are not checked.\n- `if` without curly braces: exactly one statement after the condition belongs to it.\n\n```\n[3, 0, 5]\nround 1: n = 3 → 3 <= 0 no\nround 2: n = 0 → 0 <= 0 yes → return false\n```"
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 2.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 2.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Do ove linije stižemo samo ako nijedan broj nije pokvario uslov, jer bi nas `return false` već prekinuo. Tada su svi pozitivni, pa vraćamo `true`. Prazan niz takođe stiže ovde, jer se petlja nijednom ne izvrši, što je tačno ono što zadatak traži.",
+            "en": "We reach this line only if no number broke the condition, because `return false` would already have stopped us. Then all are positive, so we return `true`. An empty array also arrives here, because the loop does not run even once, which is exactly what the task asks for."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            8,
+            8
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function anyNegative` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(nums)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `nums` je niz brojeva. Poziv `anyNegative([1, -2])` daje `nums = [1, -2]`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 13.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function anyNegative` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(nums)` is the parameter list. A parameter is an empty “slot” for input: `nums` is an array of numbers. The call `anyNegative([1, -2])` gives `nums = [1, -2]`.\n- `{` opens the function body, and `}` on line 13 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            9,
+            9
+          ],
+          "text": {
+            "sr": "Prolazimo kroz brojeve redom, isto kao u prvoj funkciji.\n\n- `{` otvara telo petlje; zatvara ga `}` u liniji 11.",
+            "en": "We go through the numbers in order, the same as in the first function.\n\n- `{` opens the loop body; it is closed by `}` on line 11."
+          }
+        },
+        {
+          "lines": [
+            10,
+            10
+          ],
+          "text": {
+            "sr": "Čim nađemo negativan broj, odgovor je `true`.\n\n- `n < 0` je strogo manje od nule, pa `0` ne prolazi.\n- `return true` odmah završava funkciju. Jedan negativan broj je dovoljan.\n\n```\n[5, -1, 2]\nkrug 1: n = 5  → 5 < 0 ne\nkrug 2: n = -1 → -1 < 0 da → return true\n```",
+            "en": "As soon as we find a negative number, the answer is `true`.\n\n- `n < 0` is strictly less than zero, so `0` does not pass.\n- `return true` ends the function at once. One negative number is enough.\n\n```\n[5, -1, 2]\nround 1: n = 5  → 5 < 0 no\nround 2: n = -1 → -1 < 0 yes → return true\n```"
+          }
+        },
+        {
+          "lines": [
+            11,
+            11
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 9.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 9.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            12,
+            12
+          ],
+          "text": {
+            "sr": "Do ove linije stižemo samo ako nijedan broj nije bio negativan (ili je niz prazan). Tada vraćamo `false`.",
+            "en": "We reach this line only if no number was negative (or the array is empty). Then we return `false`."
+          }
+        },
+        {
+          "lines": [
+            13,
+            13
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 8.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 8.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Obe funkcije se završavaju ranim `return`-om, a odgovor „svi“ ili „nijedan“ je na kraju, posle petlje.",
+        "en": "Both functions end with an early `return`, and the “all” or “none” answer comes at the end, after the loop."
+      }
+    }
+  ]
+}

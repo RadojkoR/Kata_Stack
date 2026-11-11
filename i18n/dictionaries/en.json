@@ -175,6 +175,9 @@
     "operators": "operators",
     "templates": "template literals",
     "spread": "spread operator",
-    "searching": "searching"
+    "searching": "searching",
+    "map": "map",
+    "find": "find",
+    "every-some": "every and some"
   }
 }
