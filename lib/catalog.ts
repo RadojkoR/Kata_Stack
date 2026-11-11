@@ -1,5 +1,16 @@
 import { z } from "zod";
-import { ExerciseSchema, TrackSchema, type Exercise, type Solution, type Track } from "@/types/exercise";
+import {
+  AREAS,
+  LEVELS,
+  ExerciseSchema,
+  OrderSchema,
+  TrackSchema,
+  type Area,
+  type Exercise,
+  type Order,
+  type Solution,
+  type Track,
+} from "@/types/exercise";
 
 export class ContentError extends Error {
   constructor(message: string) {
@@ -77,6 +88,23 @@ export function parseTrackFile(file: string, raw: string): Track {
   return result.data;
 }
 
+/**
+ * `file` je putanja relativna u odnosu na `content/order`, npr. `javascript.json`.
+ * Ime fajla je oblast na koju se redosled odnosi.
+ */
+export function parseOrderFile(file: string, raw: string): { area: Area; order: Order } {
+  const result = OrderSchema.safeParse(parseJson(file, raw));
+  if (!result.success) {
+    throw new ContentError(`${file}: neispravan redosled\n${formatIssues(result.error)}`);
+  }
+  const name = file.replace(/\.json$/, "");
+  const area = AREAS.find((a) => a === name);
+  if (!area) {
+    throw new ContentError(`${file}: ime fajla mora biti oblast (${AREAS.join(", ")})`);
+  }
+  return { area, order: result.data };
+}
+
 export type Catalog = {
   exercises: Exercise[];
   tracks: Track[];
@@ -86,6 +114,7 @@ export type Catalog = {
 export function buildCatalog(
   exercises: { file: string; exercise: Exercise }[],
   tracks: { file: string; track: Track }[],
+  orders: { file: string; area: Area; order: Order }[] = [],
 ): Catalog {
   const seen = new Map<string, string>();
   for (const { file, exercise } of exercises) {
@@ -109,5 +138,59 @@ export function buildCatalog(
     }
   }
 
-  return { exercises: exercises.map((e) => e.exercise), tracks: tracks.map((t) => t.track) };
+  const orderedIds = checkOrders(exercises, orders);
+  return { exercises: sortExercises(exercises.map((e) => e.exercise), orderedIds), tracks: tracks.map((t) => t.track) };
+}
+
+/**
+ * Provere fajlova redosleda: svaki id postoji u toj oblasti i tom nivou, nijedan se ne ponavlja,
+ * i svaki zadatak oblasti koja ima fajl redosleda je upisan. Vraća mesto svakog id-a u njegovom nivou.
+ */
+function checkOrders(
+  exercises: { file: string; exercise: Exercise }[],
+  orders: { file: string; area: Area; order: Order }[],
+): Map<string, number> {
+  const position = new Map<string, number>();
+  const seenAreas = new Set<Area>();
+
+  for (const { file, area, order } of orders) {
+    if (seenAreas.has(area)) throw new ContentError(`${file}: dupliran redosled za oblast "${area}"`);
+    seenAreas.add(area);
+
+    const listed = new Set<string>();
+    for (const level of LEVELS) {
+      for (const [i, id] of (order[level] ?? []).entries()) {
+        if (listed.has(id)) throw new ContentError(`${file}: id "${id}" je naveden više puta`);
+        listed.add(id);
+
+        const exercise = exercises.find((e) => e.exercise.id === id)?.exercise;
+        if (!exercise || exercise.area !== area || exercise.level !== level) {
+          throw new ContentError(`${file}: "${id}" nije zadatak oblasti ${area} i nivoa ${level}`);
+        }
+        position.set(id, i);
+      }
+    }
+
+    const missing = exercises.filter((e) => e.exercise.area === area && !listed.has(e.exercise.id)).map((e) => e.exercise.id);
+    if (missing.length) {
+      throw new ContentError(`${file}: zadaci nisu upisani u redosled: ${missing.join(", ")}`);
+    }
+  }
+  return position;
+}
+
+/** Oblast, pa nivo, pa mesto u redosledu. Zadaci bez mesta (oblast bez fajla redosleda) ostaju po abecedi iza ostalih. */
+function sortExercises(exercises: Exercise[], position: Map<string, number>): Exercise[] {
+  return exercises
+    .map((exercise, index) => ({ exercise, index }))
+    .sort((a, b) => {
+      const byArea = AREAS.indexOf(a.exercise.area) - AREAS.indexOf(b.exercise.area);
+      if (byArea) return byArea;
+      const byLevel = LEVELS.indexOf(a.exercise.level) - LEVELS.indexOf(b.exercise.level);
+      if (byLevel) return byLevel;
+      const pa = position.get(a.exercise.id) ?? Infinity;
+      const pb = position.get(b.exercise.id) ?? Infinity;
+      return pa === pb ? a.index - b.index : pa - pb;
+    })
+    .map((e) => e.exercise);
 }

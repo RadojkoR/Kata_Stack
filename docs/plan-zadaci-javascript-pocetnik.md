@@ -2,7 +2,7 @@
 
 > Dopuna dokumenata [plan-js-platforma.md](plan-js-platforma.md) i [koraci-za-programiranje.md](koraci-za-programiranje.md). Ovaj dokument beleži dogovor, pravila i stanje rada, da se nastavi bez ponovnog objašnjavanja.
 >
-> Stanje na dan 2026-11-07.
+> Stanje na dan 2026-11-10.
 
 ---
 
@@ -71,94 +71,99 @@
 
 ---
 
-## 5. Stanje (2026-11-07)
+## 5. Stanje (2026-11-10)
 
-**Ukupno pocetnik JavaScript: 30 od 50.** Testova: 221, svi prolaze. `tsc` i lint su čisti.
+**Ukupno pocetnik JavaScript: 30 od 50.** Testova: 225, svi prolaze. `tsc`, lint i `npm run build` su čisti.
 
-### Pregledi kvaliteta koji su već urađeni
+### Pregledi kvaliteta
 
-- **Pregled 1** (prvih 10 zadataka): 35 pogrešnih i alternativnih rešenja, 19 tvrdnji u Node-u. Nađeno: jedna stvarna rupa u testovima (`capitalize-words-01`), nedorečen opis u 4 zadatka, jedna netačna tvrdnja (emoji u `reverse-string-01`). Sve je ispravljeno.
-- **Pregled 2** (5 zadataka): 29 rešenja, 19 tvrdnji. Nađeno: 4 rupe u testovima, jedna netačna tvrdnja. Ispravljeno. Nakon ispravki nijedno pogrešno rešenje ne prolazi.
-- **Grupa 2:** 31 rešenje, 13 tvrdnji, nijedan neočekivan ishod.
-- **Grupa 3:** 32 rešenja, 15 tvrdnji, nijedan neočekivan ishod.
+Pregled svake grupe obuhvata: pogrešna i alternativna rešenja kroz pravi `executeTests`, tvrdnje iz objašnjenja izvršene u Node-u, provera brojeva linija i sr/en podudarnosti.
+
+- **Pregled 1** (prvih 10 zadataka): 35 rešenja, 19 tvrdnji. Ispravljeno: rupa u testovima (`capitalize-words-01`), nedorečen opis u 4 zadatka, netačna tvrdnja (emoji u `reverse-string-01`).
+- **Pregled 2** (5 zadataka): 29 rešenja, 19 tvrdnji. Ispravljeno: 4 rupe u testovima, jedna netačna tvrdnja.
+- **Grupa 2:** 31 rešenje, 13 tvrdnji, bez neočekivanih ishoda.
+- **Grupa 3:** 32 rešenja, 15 tvrdnji, bez neočekivanih ishoda.
+- **Grupa 4** (2026-11-10): 36 rešenja, 28 tvrdnji. Ispravljeno: pogrešna linija u objašnjenju (`count-occurrences-01`, rešenje sa `filter`), opis nije tražio novi niz (`last-items-01`), dodat skriveni test za falsy vrednosti (`has-value-01`).
+- **Grupa 1** (2026-11-10): 63 rešenja, 49 tvrdnji, svi brojevi linija tačni. Ispravljeno: `startsWith('t')`, `includes('true')` i „samo prvo slovo“ su prolazili `parse-boolean-01`; dodat skriveni test.
 
 ### Zadaci po grupama
 
 | Grupa | Tema | id | Stanje |
 |---|---|---|---|
-| 1 | 1 | `type-of-value-01` | napisan, testovi prolaze. **Nisu urađeni: alternativna rešenja, tvrdnje, brojevi linija** |
-| 1 | 1 | `to-number-safe-01` | isto |
-| 1 | 1 | `count-truthy-01` | isto |
-| 1 | 1 | `parse-boolean-01` | isto |
-| 1 | 2 | `letter-grade-01` | isto |
-| 2 | 2 | `even-or-odd-01` | provereno (alternativna, tvrdnje, tekst) |
-| 2 | 2 | `day-name-01` | provereno |
-| 2 | 2 | `leap-year-01` | provereno |
-| 2 | 3 | `sum-to-n-01` | provereno |
-| 2 | 3 | `countdown-01` | provereno |
-| 3 | 3 | `index-of-item-01` | provereno |
-| 3 | 3 | `triangle-01` | provereno |
-| 3 | 4 | `truncate-text-01` | provereno |
-| 3 | 4 | `contains-ignore-case-01` | provereno |
-| 3 | 4 | `format-time-01` | provereno |
-| 4 | 4 | `split-list-01` | napisan, testovi prolaze. **Nisu urađeni: alternativna rešenja, tvrdnje, tekst, build** |
-| 4 | 5 | `last-items-01` | isto |
-| 4 | 5 | `has-value-01` | isto |
-| 4 | 5 | `insert-at-01` | isto |
-| 4 | 5 | `count-occurrences-01` | isto |
+| 1 | 1 | `type-of-value-01`, `to-number-safe-01`, `count-truthy-01`, `parse-boolean-01` | provereno |
+| 1 | 2 | `letter-grade-01` | provereno |
+| 2 | 2 | `even-or-odd-01`, `day-name-01`, `leap-year-01` | provereno |
+| 2 | 3 | `sum-to-n-01`, `countdown-01` | provereno |
+| 3 | 3 | `index-of-item-01`, `triangle-01` | provereno |
+| 3 | 4 | `truncate-text-01`, `contains-ignore-case-01`, `format-time-01` | provereno |
+| 4 | 4 | `split-list-01` | provereno |
+| 4 | 5 | `last-items-01`, `has-value-01`, `insert-at-01`, `count-occurrences-01` | provereno |
 
-**Build** (`npm run build`) je prošao posle grupe 3, a on obuhvata sve zadatke do tada. Posle grupe 4 build još nije pokrenut.
+**Build** je prošao posle grupe 4 i posle izmena na front-endu. Grupe 1–4 su zatvorene.
 
 ### Pokrivenost po temama
 
-| Tema | Gotovo | Napomena |
-|---|---|---|
-| 1 | 4 / 4 | provera grupe 1 nije potpuna |
-| 2 | 4 / 4 | provera `letter-grade-01` nije potpuna |
-| 3 | 4 / 4 | |
-| 4 | 4 / 4 | `split-list-01` nije potpuno proveren |
-| 5 | 4 / 4 | nije potpuno proveren |
-| 6–10 | 0 / 20 | još nije početo |
+| Tema | Gotovo |
+|---|---|
+| 1–5 | 4 / 4 svaka (20 zadataka, sve provereno) |
+| 6–10 | 0 / 20, još nije početo |
 
 Srednji (4/4) i expert (1/1) su gotovi.
+
+### Front-end izmene (2026-11-10)
+
+- **Dugme „Sledeći zadatak“** u gornjoj traci radnog ekrana: vodi na sledeći zadatak istog nivoa i oblasti, redom kao u listi. Zeleno je kad je zadatak rešen. Na poslednjem zadatku u nivou ga nema. Radni ekran se pravi iznova za svaki zadatak (`key`), pa tajmer i kod ne prelaze na sledeći.
+- **„Nazad“ vraća odakle je korisnik došao:** linkovi ka zadatku nose `?from=<putanja>` (stranica oblasti sa nivoom, ili Pregled); „Sledeći zadatak“ prenosi isti `from`. Bez `from` vraća na listu oblasti i nivoa tog zadatka. Dozvoljene su samo putanje na sajtu na istom jeziku. Kod: `lib/back-link.ts` (+ test).
+- **Izabrani nivo na stranici oblasti je u adresi** (`?level=`), pa se lista otvara na istom nivou. Filteri po tipu i temi se još ne pamte.
+- Ništa od ovoga nije isprobano klikom u browseru (provereni su HTML odgovori produkcionog servera).
 
 ---
 
 ## 6. Šta je sledeće
 
-### A. Dovršiti grupu 4
+### A. Grupe 5–8: preostalih 20 zadataka (teme 6–10)
 
-1. **Alternativna rešenja** za svih 5 zadataka. Primeri za pokušaj:
-   - `split-list-01`: bez `trim`, bez filtera praznih, `split(', ')`.
-   - `last-items-01`: `slice(-count)` (pada za `0`), pogrešan indeks.
-   - `has-value-01`: `indexOf(value) !== -1` (pada za `NaN`), `some(x => x == value)` (pada za `'1'`).
-   - `insert-at-01`: `splice` koji menja ulaz (pada zbog neizmenjenosti), ugnježdeni niz.
-   - `count-occurrences-01`: samo prvo poklapanje, brojanje od `1`, `==`.
-   - **Ne pokretati** `indexOf(value, index)` bez `+ 1`. To je beskonačna petlja.
-2. **Tvrdnje iz objašnjenja u Node-u**: `slice(-0)`, `indexOf` i `NaN`, `[...'a']`, `''.split(',')`.
-3. **Brojevi linija i sr/en podudarnost.**
-4. `npm run build`.
+Konačan spisak (zamenjuje ranije predloge ideja). Svaka stavka: **id**, potpis, šta radi, **Pojam** koji opis uvodi (pravilo 3.1 iz [pravila-za-opis-zadataka.md](pravila-za-opis-zadataka.md)), pa **Zamke**: granični slučajevi koje skriveni testovi pokrivaju i koje opis mora da pomene, svaki sa primerom.
 
-### B. Dovršiti grupe 1 i 2
+Tekst koji funkcije vraćaju je na engleskom (`'Hello, Guest!'`), isti u oba jezika, kao u postojećim zadacima.
 
-Grupa 1 nema alternativna rešenja, proveru tvrdnji i proveru brojeva linija. Grupa 2 ih ima, ali bez builda posle nje (build je prošao posle grupe 3). Istim postupkom zatvoriti i ovu prazninu.
+**Grupa 5: metode nizova i prvi zadatak sa objektima**
+- **word-lengths-01** (tema 6) — `wordLengths(words)`: niz dužina reči. Pojam: `map` pravi nov niz iste dužine; funkcija kao argument (callback) i arrow funkcija. Zamke: prazan niz; prazan tekst ima dužinu 0; ulaz se ne menja.
+- **long-words-01** (tema 6) — `longWords(words, min)`: reči sa bar `min` slova. Pojam: `filter` zadržava elemente za koje callback vrati `true`. Zamke: dužina tačno `min` ulazi; nijedna ne prolazi daje `[]`; redosled ostaje; ulaz se ne menja.
+- **first-adult-01** (tema 6) — `firstAdult(people)`: prvi objekat sa `age` 18 ili više. Pojam: `find` vraća prvi element ili `undefined`. Zamke: tačno 18 se računa; nema nikog daje `undefined`; vraća se prvi po redu, ne najstariji; vraća se isti objekat, ne kopija.
+- **all-any-01** (tema 6) — `allPositive(nums)` i `anyNegative(nums)`. Pojam: `every` i `some`. Zamke: prazan niz daje `true` za `allPositive` i `false` za `anyNegative` (objasniti zašto); `0` nije ni pozitivan ni negativan.
+- **full-name-01** (tema 7) — `getFullName(person)`: `'Ana Maria Petrovic'` iz `firstName`, `middleName` (može da nedostaje), `lastName`. Pojam: čitanje svojstva objekta; svojstvo koje ne postoji je `undefined`. Zamke: bez srednjeg imena nema duplog razmaka; srednje ime `''` se tretira kao da ga nema.
 
-### C. Grupe 5–8: preostalih 20 zadataka (teme 6–10)
+**Grupa 6: objekti i funkcije**
+- **safe-city-01** (tema 7) — `getCity(user)`: `user.address.city`, ili `'Unknown'` ako `address` ili `city` ne postoji. Pojam: čitanje svojstva od `undefined` baca grešku; `?.` i `??`. Zamke: `address` je `undefined`; `address` je `null`; `city` je `''` (vraća se `''`, ne `'Unknown'`, jer `??` reaguje samo na `null` i `undefined`).
+- **merge-settings-01** (tema 7) — `mergeSettings(defaults, user)`: nov objekat u kome vrednosti iz `user` prepisuju `defaults`. Pojam: spread objekta, redosled odlučuje ko pobeđuje. Zamke: nijedan ulaz se ne menja; prazan `user`; ključ koji postoji samo u `user`; vrednost `false` i `0` iz `user` prepisuju.
+- **format-entries-01** (tema 7) — `formatEntries(obj)`: niz tekstova `'key: value'`. Pojam: `Object.entries` (uz pomen `Object.keys` i `Object.values`). Zamke: prazan objekat daje `[]`; redosled kao u objektu; vrednost broj i `true` postaju tekst.
+- **greet-default-01** (tema 8) — `greet(name = 'Guest')` → `'Hello, Ana!'`. Pojam: podrazumevana vrednost parametra. Zamke: poziv bez argumenta i sa `undefined` koristi podrazumevanu; `''` i `null` je ne koriste (opis kaže šta se tada vraća: `'Hello, !'` i `'Hello, null!'`).
+- **sum-all-01** (tema 8) — `sumAll(...nums)`: zbir svih argumenata. Pojam: rest parametar skuplja argumente u niz. Zamke: bez argumenata daje `0`; jedan argument; negativni brojevi.
 
-Predlog rasporeda:
-- **Grupa 5:** tema 6 (4) + tema 7 (1)
-- **Grupa 6:** tema 7 (3) + tema 8 (2)
-- **Grupa 7:** tema 8 (2) + tema 9 (3)
-- **Grupa 8:** tema 9 (1) + tema 10 (4)
+**Grupa 7: funkcije i Math**
+- **apply-twice-01** (tema 8) — `applyTwice(fn, x)`: `fn(fn(x))`. Pojam: funkcija je vrednost i može se proslediti. Zamke: `fn` se poziva tačno dvaput; radi i sa tekstom (`(s) => s + '!'`).
+- **make-multiplier-01** (tema 8) — `makeMultiplier(k)`: vraća funkciju koja množi sa `k`. Pojam: podsetnik na closure (uveden u `closure-counter-01`), arrow funkcija koja vraća vrednost bez `return`. Zamke: dva množioca su nezavisna; `k` je `0`; negativan `k`. Razlika od `closure-counter-01`: ovde se zapamćena vrednost ne menja.
+- **clamp-01** (tema 9) — `clamp(n, min, max)`: `n` ograničen na opseg. Pojam: `Math.min` i `Math.max`. Zamke: `n` tačno na granici; `n` ispod i iznad; `min` jednak `max`; negativan opseg. Opis kaže da je uvek `min <= max`.
+- **pages-needed-01** (tema 9) — `pagesNeeded(total, perPage)`: broj stranica. Pojam: `Math.ceil`, uz kratko poređenje sa `Math.floor`. Zamke: `total` 0 daje 0; deljivo bez ostatka; jedan element viška otvara novu stranicu. Opis kaže da je `perPage` ceo broj, 1 ili veći.
+- **average-rounded-01** (tema 9) — `averageRounded(nums)`: prosek zaokružen na ceo broj. Pojam: `Math.round`. Zamke: prazan niz daje `0` (ne `NaN`); polovina se zaokružuje nagore, i kod negativnih (`-2.5` daje `-2`, objasniti); jedan element.
 
-**Predlozi ideja** (još nisu napisani):
-- **Tema 6:** `mapToLengths` (`map`), `onlyLong` (`filter`), `firstOver18` (`find`), `allPositive` i `anyNegative` (`every`, `some`), `sumOfPrices` (`reduce`). Paziti na preklapanje sa `sum-evens-01`, koji već koristi `filter` i `reduce`.
-- **Tema 7:** `getFullName(person)` (pristup svojstvu), `countKeys(obj)` (`Object.keys`), `mergeSettings(a, b)` (spread objekata), `pickEntries(obj)` (`Object.entries`).
-- **Tema 8:** `greet(name = 'Gost')` (podrazumevana vrednost), `sumAll(...nums)` (rest), `applyTwice(fn, x)`, `makeMultiplier(k)` (arrow funkcija i closure). Paziti na `closure-counter-01`.
-- **Tema 9:** `clamp(n, min, max)` (`Math.min`, `Math.max`), `pagesNeeded(total, perPage)` (`Math.ceil`), `secondsToMinutes(s)` (`Math.floor`), `isWholeNumber(n)` (`Number.isInteger`). Bez poređenja tipa `0.1 + 0.2`.
-- **Tema 10:** mini zadaci koji kombinuju teme 6, 7 i 2. Primeri: zbir cena u korpi, izveštaj o ocenama, statistika reči.
+**Grupa 8: brojevi i mini zadaci**
+- **is-whole-number-01** (tema 9) — `isWholeNumber(value)`. Pojam: `Number.isInteger`. Zamke: `5.0` je ceo; `'5'` nije, jer je tekst; `NaN` i `Infinity` nisu; negativni celi jesu.
+- **cart-total-01** (tema 10) — `cartTotal(items)`: zbir `price * quantity`. Kombinuje objekte i `reduce`. Zamke: prazna korpa daje `0`; `quantity` 0; ulaz se ne menja. Cene su celi brojevi. Razlika od `sum-evens-01`: sabiraju se svojstva objekata.
+- **passed-names-01** (tema 10) — `passedNames(students, minScore)`: imena učenika sa `score` bar `minScore`. Kombinuje `filter` i `map`. Zamke: tačno `minScore` prolazi; niko ne prolazi daje `[]`; redosled ostaje.
+- **word-frequency-01** (tema 10) — `wordFrequency(text)`: objekat reč → broj pojavljivanja. Kombinuje tekst, petlju i objekat kao brojač. Zamke: velika i mala slova su ista reč; više razmaka zaredom; prazan tekst daje `{}`. Razlika od `count-occurrences-01` (jedna vrednost u nizu) i `count-words-01` (samo ukupan broj).
+- **sort-numbers-01** (tema 10) — `sortNumbers(nums)`: nov niz, rastuće. Pojam: `sort` bez argumenta poredi kao tekst (`[10, 9, 1]` daje `[1, 10, 9]`) i menja niz nad kojim se poziva. Zamke: dvocifreni i jednocifreni zajedno; negativni; ulaz se ne menja; duplikati ostaju.
 
-Pre pisanja proveriti da se teme i id-jevi ne preklapaju sa postojećim zadacima.
+**Odstupanja od ranijeg rasporeda tema (namerna):**
+- `count-keys` je zamenjen sa `safe-city-01`, jer srednji nivo koristi `?.` i `??` bez objašnjenja.
+- `seconds-to-minutes` je izbačen zbog preklapanja sa `format-time-01`; umesto njega `average-rounded-01`.
+- `reduce` nije u temi 6 (pokriva ga `sum-evens-01`), nego u `cart-total-01`.
+- Tema 10 je dobila `sort-numbers-01`, jer je podrazumevano sortiranje česta zamka.
+
+Pre pisanja svake grupe proveriti da se id-jevi ne preklapaju sa postojećim zadacima.
+
+**Redosled prikaza** svih 50 zadataka je u [plan-redosled-javascript.md](plan-redosled-javascript.md), odeljak 3. On određuje i koji zadatak uvodi pojam: „Pojam“ iz spiska gore se objašnjava u celosti samo u zadatku koji je prvi po tom redosledu, a u ostalima ide jedna rečenica podsetnika (na primer, `apply-twice-01` dolazi pre `word-lengths-01`).
 
 ### Pomoćni alati
 

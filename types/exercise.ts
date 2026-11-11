@@ -78,3 +78,15 @@ export const TrackSchema = z.strictObject({
 });
 
 export type Track = z.infer<typeof TrackSchema>;
+
+/**
+ * Redosled prikaza zadataka jedne oblasti (`content/order/<oblast>.json`): za svaki nivo spisak id-jeva.
+ * Nivo koji nije naveden nema zadataka u redosledu.
+ */
+export const OrderSchema = z.strictObject({
+  pocetnik: z.array(IdSchema).optional(),
+  srednji: z.array(IdSchema).optional(),
+  expert: z.array(IdSchema).optional(),
+});
+
+export type Order = z.infer<typeof OrderSchema>;

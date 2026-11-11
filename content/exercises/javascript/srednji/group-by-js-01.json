@@ -1,0 +1,130 @@
+{
+  "id": "group-by-js-01",
+  "title": {
+    "sr": "Grupisanje elemenata niza",
+    "en": "Grouping array elements"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": [
+    "arrays",
+    "objects"
+  ],
+  "description": {
+    "sr": "Napiši funkciju `groupBy(items, keyFn)` koja grupiše elemente niza po ključu.\n\n`items` je niz, a `keyFn` je funkcija koja za jedan element vraća njegov ključ. Funkcija vraća objekat u kome je svaki ključ povezan sa nizom elemenata koji su dobili taj ključ.\n\nPravila:\n- elementi unutar grupe zadržavaju redosled iz ulaznog niza\n- prazan niz daje prazan objekat `{}`\n- ključevi objekta su uvek tekst, pa ključ koji je broj postaje tekst: `1` i `'1'` završavaju u istoj grupi\n- ulazni niz se ne menja\n\nPrimeri:\n```\ngroupBy(['one', 'two', 'three', 'four'], (w) => w.length);\n// { 3: ['one', 'two'], 4: ['four'], 5: ['three'] }\n\ngroupBy([1, 2, 3, 4, 5], (n) => n % 2);\n// { 0: [2, 4], 1: [1, 3, 5] }\n\ngroupBy([], (x) => x);        // {}\ngroupBy([1, '1'], (x) => x);  // { 1: [1, '1'] }\n```",
+    "en": "Write a function `groupBy(items, keyFn)` that groups the elements of an array by a key.\n\n`items` is an array and `keyFn` is a function that returns the key of one element. The function returns an object in which every key is linked to an array of the elements that got that key.\n\nRules:\n- elements inside a group keep the order of the input array\n- an empty array gives an empty object `{}`\n- object keys are always text, so a numeric key becomes text: `1` and `'1'` end up in the same group\n- the input array is not changed\n\nExamples:\n```\ngroupBy(['one', 'two', 'three', 'four'], (w) => w.length);\n// { 3: ['one', 'two'], 4: ['four'], 5: ['three'] }\n\ngroupBy([1, 2, 3, 4, 5], (n) => n % 2);\n// { 0: [2, 4], 1: [1, 3, 5] }\n\ngroupBy([], (x) => x);        // {}\ngroupBy([1, '1'], (x) => x);  // { 1: [1, '1'] }\n```"
+  },
+  "starterCode": "function groupBy(items, keyFn) {\n  // your code\n}",
+  "tests": "test({ sr: 'grupiše reči po dužini', en: 'groups words by length' }, () => {\n  expect(groupBy(['one', 'two', 'three', 'four'], (w) => w.length)).toEqual({ 3: ['one', 'two'], 4: ['four'], 5: ['three'] });\n});\ntest({ sr: 'ključ može biti ostatak pri deljenju', en: 'the key can be a remainder' }, () => {\n  expect(groupBy([1, 2, 3, 4, 5], (n) => n % 2)).toEqual({ 0: [2, 4], 1: [1, 3, 5] });\n});\ntest({ sr: 'prazan niz daje prazan objekat', en: 'an empty array gives an empty object' }, () => {\n  expect(groupBy([], (x) => x)).toEqual({});\n});",
+  "hiddenTests": "test('elements keep their order inside a group', () => {\n  const people = [\n    { name: 'Ana', city: 'NS' },\n    { name: 'Bojan', city: 'BG' },\n    { name: 'Cana', city: 'NS' },\n    { name: 'Dejan', city: 'NS' },\n  ];\n  const g = groupBy(people, (p) => p.city);\n  expect(g.NS.map((p) => p.name)).toEqual(['Ana', 'Cana', 'Dejan']);\n  expect(g.BG.map((p) => p.name)).toEqual(['Bojan']);\n});\ntest('numeric and text keys end up in the same group', () => {\n  expect(groupBy([1, '1', 2], (x) => x)).toEqual({ 1: [1, '1'], 2: [2] });\n});\ntest('the input array is not changed', () => {\n  const items = [3, 1, 2];\n  groupBy(items, (n) => n % 2);\n  expect(items).toEqual([3, 1, 2]);\n});\ntest('the same key for all gives one group', () => {\n  expect(groupBy(['a', 'b', 'c'], () => 'all')).toEqual({ all: ['a', 'b', 'c'] });\n});\ntest('the groups contain the same objects, not copies', () => {\n  const a = { id: 1 };\n  const g = groupBy([a], (x) => x.id);\n  expect(g[1][0]).toBe(a);\n});\ntest('a single element gives a single group', () => {\n  expect(groupBy(['x'], (s) => s.toUpperCase())).toEqual({ X: ['x'] });\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Petlja for...of",
+        "en": "for...of loop"
+      },
+      "code": "function groupBy(items, keyFn) {\n  const groups = {};\n  for (const item of items) {\n    const key = keyFn(item);\n    if (!groups[key]) groups[key] = [];\n    groups[key].push(item);\n  }\n  return groups;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            2
+          ],
+          "text": {
+            "sr": "Rezultat počinje kao prazan objekat. Ako je ulaz prazan, upravo njega vraćamo (linija sa `return`).",
+            "en": "The result starts as an empty object. If the input is empty, that is exactly what we return (the `return` line)."
+          }
+        },
+        {
+          "lines": [
+            3,
+            4
+          ],
+          "text": {
+            "sr": "Prolazimo kroz elemente redom, pa je redosled u grupi isti kao u ulaznom nizu. `keyFn(item)` daje ključ tog elementa.",
+            "en": "We go through the elements in order, so the order inside a group is the same as in the input array. `keyFn(item)` gives the key of that element."
+          }
+        },
+        {
+          "lines": [
+            5,
+            6
+          ],
+          "text": {
+            "sr": "Ako grupa za ovaj ključ još ne postoji (`groups[key]` je `undefined`, što je falsy), pravimo prazan niz. Zatim dodajemo element u grupu. `groups[key]` radi sa uglastim zagradama jer je ključ promenljiva, i pretvara ga u tekst, zato `1` i `'1'` dele grupu.\n\n```\ngroupBy([1, 2, 3], (n) => n % 2):\nitem=1: key=1, groups[1] ne postoji → [], dodaje 1   → { 1: [1] }\nitem=2: key=0, groups[0] ne postoji → [], dodaje 2   → { 1: [1], 0: [2] }\nitem=3: key=1, groups[1] postoji → dodaje 3          → { 1: [1, 3], 0: [2] }\n```",
+            "en": "If the group for this key does not exist yet (`groups[key]` is `undefined`, which is falsy), we create an empty array. Then we add the element to the group. `groups[key]` uses square brackets because the key is a variable, and it turns it into text, which is why `1` and `'1'` share a group.\n\n```\ngroupBy([1, 2, 3], (n) => n % 2):\nitem=1: key=1, groups[1] missing → [], adds 1   → { 1: [1] }\nitem=2: key=0, groups[0] missing → [], adds 2   → { 1: [1], 0: [2] }\nitem=3: key=1, groups[1] exists  → adds 3       → { 1: [1, 3], 0: [2] }\n```"
+          }
+        },
+        {
+          "lines": [
+            7,
+            9
+          ],
+          "text": {
+            "sr": "Zatvaraju se petlja i funkcija; vraćamo objekat sa grupama. Ulazni niz se samo čita, nikad ne menja.",
+            "en": "The loop and the function are closed; we return the object with the groups. The input array is only read, never changed."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Elementi se ubacuju u postojeći niz, pa je rešenje linearno.",
+        "en": "Elements are pushed into an existing array, so the solution is linear."
+      }
+    },
+    {
+      "label": {
+        "sr": "reduce",
+        "en": "reduce"
+      },
+      "code": "function groupBy(items, keyFn) {\n  return items.reduce((groups, item) => {\n    const key = keyFn(item);\n    groups[key] = [...(groups[key] ?? []), item];\n    return groups;\n  }, {});\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            2
+          ],
+          "text": {
+            "sr": "`reduce` prolazi kroz niz i nosi sa sobom akumulator `groups`; početna vrednost je prazan objekat `{}` (poslednji argument, vidi liniju sa `}, {});`). Za prazan niz `reduce` odmah vraća početnu vrednost, pa dobijamo `{}`.",
+            "en": "`reduce` goes through the array and carries an accumulator `groups`; the starting value is an empty object `{}` (the last argument, see the line `}, {});`). For an empty array `reduce` returns the starting value right away, so we get `{}`."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Ključ tekućeg elementa.",
+            "en": "The key of the current element."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "`groups[key] ?? []` uzima postojeću grupu ili prazan niz ako je još nema (`??` se aktivira samo za `undefined` i `null`). Spread ga raspakuje u nov niz, uz njega ide `item`, i taj nov niz postaje grupa.",
+            "en": "`groups[key] ?? []` takes the existing group or an empty array if there is none yet (`??` only kicks in for `undefined` and `null`). Spread unpacks it into a new array, `item` goes next to it, and that new array becomes the group."
+          }
+        },
+        {
+          "lines": [
+            5,
+            7
+          ],
+          "text": {
+            "sr": "Vraćamo akumulator da ga `reduce` prosledi sledećem koraku; poslednji akumulator je rezultat funkcije.",
+            "en": "We return the accumulator so `reduce` passes it to the next step; the last accumulator is the result of the function."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Svaki korak kopira grupu, pa je sporije za velike grupe (kvadratno). Rešenje sa petljom i `push` je brže.",
+        "en": "Every step copies the group, so it is slower for large groups (quadratic). The loop solution with `push` is faster."
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCatalog, ContentError, parseExerciseFile, parseTrackFile } from "./catalog";
+import { buildCatalog, ContentError, parseExerciseFile, parseOrderFile, parseTrackFile } from "./catalog";
 
 const classic = {
   id: "sum-01",
@@ -154,5 +154,75 @@ describe("buildCatalog", () => {
     ]);
     expect(catalog.exercises).toHaveLength(1);
     expect(catalog.tracks).toHaveLength(1);
+  });
+});
+
+describe("redosled zadataka", () => {
+  const ex = (id: string, level = "pocetnik", area = "javascript") =>
+    parseExerciseFile(`${area}/${level}/${id}.json`, raw({ ...classic, id, level, area }));
+  const file = (id: string, level = "pocetnik", area = "javascript") => ({
+    file: `${area}/${level}/${id}.json`,
+    exercise: ex(id, level, area),
+  });
+  const order = (json: unknown, name = "javascript.json") => ({ file: name, ...parseOrderFile(name, raw(json)) });
+  const ids = (c: { exercises: { id: string }[] }) => c.exercises.map((e) => e.id);
+
+  it("bez fajla redosleda zadaci ostaju po redosledu fajlova", () => {
+    const c = buildCatalog([file("b-01"), file("a-01")], []);
+    expect(ids(c)).toEqual(["b-01", "a-01"]);
+  });
+
+  it("slaže po oblasti, nivou i mestu u fajlu redosleda", () => {
+    const c = buildCatalog(
+      [
+        file("t-01", "pocetnik", "typescript"),
+        file("e-01", "expert"),
+        file("b-01"),
+        file("a-01"),
+        file("m-01", "srednji"),
+      ],
+      [],
+      [order({ pocetnik: ["a-01", "b-01"], srednji: ["m-01"], expert: ["e-01"] })],
+    );
+    expect(ids(c)).toEqual(["a-01", "b-01", "m-01", "e-01", "t-01"]);
+  });
+
+  it("zadaci oblasti bez fajla redosleda idu iza i ostaju po abecedi", () => {
+    const c = buildCatalog(
+      [file("z-01"), file("y-01", "pocetnik", "typescript"), file("x-01", "pocetnik", "typescript")],
+      [],
+      [order({ pocetnik: ["z-01"] })],
+    );
+    expect(ids(c)).toEqual(["z-01", "y-01", "x-01"]);
+  });
+
+  it("odbija id koji ne postoji", () => {
+    expect(() => buildCatalog([file("a-01")], [], [order({ pocetnik: ["a-01", "nema-01"] })])).toThrow(/nema-01/);
+  });
+
+  it("odbija id koji je u pogrešnom nivou ili oblasti", () => {
+    expect(() => buildCatalog([file("a-01", "srednji")], [], [order({ pocetnik: ["a-01"] })])).toThrow(/nivoa pocetnik/);
+    expect(() => buildCatalog([file("a-01", "pocetnik", "typescript")], [], [order({ pocetnik: ["a-01"] })])).toThrow(
+      /oblasti javascript/,
+    );
+  });
+
+  it("odbija id naveden dvaput", () => {
+    expect(() => buildCatalog([file("a-01")], [], [order({ pocetnik: ["a-01", "a-01"] })])).toThrow(/više puta/);
+    expect(() =>
+      buildCatalog([file("a-01"), file("b-01", "srednji")], [], [order({ pocetnik: ["a-01"], srednji: ["b-01", "a-01"] })]),
+    ).toThrow(/više puta/);
+  });
+
+  it("odbija zadatak oblasti koja ima fajl redosleda, a nije upisan", () => {
+    expect(() => buildCatalog([file("a-01"), file("b-01")], [], [order({ pocetnik: ["a-01"] })])).toThrow(
+      /nisu upisani u redosled: b-01/,
+    );
+  });
+
+  it("fajl redosleda mora imati ime oblasti i poznate nivoe", () => {
+    expect(() => parseOrderFile("python.json", "{}")).toThrow(/ime fajla/);
+    expect(() => parseOrderFile("javascript.json", raw({ lak: [] }))).toThrow(ContentError);
+    expect(() => parseOrderFile("javascript.json", raw({ pocetnik: ["Veliko Slovo"] }))).toThrow(/pocetnik/);
   });
 });

@@ -1,0 +1,110 @@
+{
+  "id": "partial-01",
+  "title": {
+    "sr": "Delimična primena funkcije",
+    "en": "Partial application"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": [
+    "functional",
+    "closures"
+  ],
+  "description": {
+    "sr": "Napiši funkciju `partial(fn, ...preset)` koja vraća novu funkciju u kojoj su prvi argumenti funkcije `fn` već zadati.\n\nKad se vraćena funkcija pozove, `fn` se poziva sa zadatim argumentima (`preset`), a iza njih idu argumenti trenutnog poziva.\n\nPravila:\n- `partial` sam ne poziva `fn`; `fn` se poziva tek kad se pozove vraćena funkcija\n- bez zadatih argumenata vraćena funkcija se ponaša kao `fn`\n- vraćena funkcija se može pozivati više puta, a svaki poziv dobija iste zadate argumente\n- vraćena funkcija vraća ono što vrati `fn`\n\nPrimeri:\n```\nconst greet = (greeting, name) => `${greeting}, ${name}!`;\nconst hello = partial(greet, 'Hello');\nhello('Ana');   // 'Hello, Ana!'\nhello('Marko'); // 'Hello, Marko!'\n\nconst add3 = (a, b, c) => a + b + c;\npartial(add3, 1, 2)(3); // 6\npartial(add3)(1, 2, 3); // 6\n```",
+    "en": "Write a function `partial(fn, ...preset)` that returns a new function in which the first arguments of `fn` are already set.\n\nWhen the returned function is called, `fn` is called with the preset arguments (`preset`), followed by the arguments of the current call.\n\nRules:\n- `partial` itself does not call `fn`; `fn` is called only when the returned function is called\n- with no preset arguments the returned function behaves like `fn`\n- the returned function can be called many times, and every call gets the same preset arguments\n- the returned function returns what `fn` returns\n\nExamples:\n```\nconst greet = (greeting, name) => `${greeting}, ${name}!`;\nconst hello = partial(greet, 'Hello');\nhello('Ana');   // 'Hello, Ana!'\nhello('Marko'); // 'Hello, Marko!'\n\nconst add3 = (a, b, c) => a + b + c;\npartial(add3, 1, 2)(3); // 6\npartial(add3)(1, 2, 3); // 6\n```"
+  },
+  "starterCode": "function partial(fn, ...preset) {\n  // your code\n}",
+  "tests": "const greet = (greeting, name) => `${greeting}, ${name}!`;\ntest({ sr: 'prvi argument je unapred zadat', en: 'the first argument is preset' }, () => {\n  const hello = partial(greet, 'Hello');\n  expect(hello('Ana')).toBe('Hello, Ana!');\n});\ntest({ sr: 'zadati argumenti idu pre novih', en: 'preset arguments go before the new ones' }, () => {\n  const sub = (a, b, c) => a - b - c;\n  expect(partial(sub, 10, 3)(2)).toBe(5);\n});\ntest({ sr: 'može da se poziva više puta', en: 'can be called many times' }, () => {\n  const hello = partial(greet, 'Hi');\n  expect(hello('Ana')).toBe('Hi, Ana!');\n  expect(hello('Marko')).toBe('Hi, Marko!');\n});",
+  "hiddenTests": "test('without preset arguments it behaves like fn', () => {\n  const add3 = (a, b, c) => a + b + c;\n  expect(partial(add3)(1, 2, 3)).toBe(6);\n});\ntest('partial does not call fn by itself', () => {\n  let calls = 0;\n  const fn = () => { calls++; };\n  const p = partial(fn, 1);\n  expect(calls).toBe(0);\n  p();\n  expect(calls).toBe(1);\n});\ntest('the preset arguments are not changed between calls', () => {\n  const seen = [];\n  const p = partial((...all) => { seen.push(all.length); return all; }, 1, 2);\n  p(3);\n  p(4, 5);\n  p();\n  expect(seen).toEqual([3, 4, 2]);\n  expect(p(9)).toEqual([1, 2, 9]);\n});\ntest('several preset and several new arguments keep their order', () => {\n  const list = (...all) => all;\n  expect(partial(list, 1, 2)(3, 4)).toEqual([1, 2, 3, 4]);\n});\ntest('two partial functions from the same fn are independent', () => {\n  const a = partial(greet, 'A');\n  const b = partial(greet, 'B');\n  expect(a('x')).toBe('A, x!');\n  expect(b('x')).toBe('B, x!');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Rest i spread",
+        "en": "Rest and spread"
+      },
+      "code": "function partial(fn, ...preset) {\n  return (...rest) => fn(...preset, ...rest);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "`...preset` je rest parametar: skuplja sve argumente posle `fn` u niz `preset`. Taj niz ostaje zapamćen u vraćenoj funkciji (closure).",
+            "en": "`...preset` is a rest parameter: it collects all arguments after `fn` into the array `preset`. That array stays remembered in the returned function (closure)."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Vraćena funkcija skuplja nove argumente u `rest`, pa poziva `fn(...preset, ...rest)`: spread raspakuje oba niza jedan za drugim, zadati prvo. Spread svaki put pravi nov spisak argumenata i ne menja `preset`, pa više poziva ne utiče jedan na drugi. `fn` se poziva tek ovde, ne u `partial`.\n\n```\npartial(add3, 1, 2)(3):\npreset = [1, 2], rest = [3]\nfn(1, 2, 3) = 6\n```",
+            "en": "The returned function collects the new arguments into `rest` and then calls `fn(...preset, ...rest)`: spread unpacks both arrays one after another, preset first. Spread creates a new list of arguments every time and does not change `preset`, so several calls do not affect each other. `fn` is called only here, not in `partial`.\n\n```\npartial(add3, 1, 2)(3):\npreset = [1, 2], rest = [3]\nfn(1, 2, 3) = 6\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara se `partial`.",
+            "en": "`partial` is closed."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Strelica funkcija ne menja `this`, pa ova verzija ne podržava metode koje zavise od `this`.",
+        "en": "The arrow function does not set `this`, so this version does not support methods that depend on `this`."
+      }
+    },
+    {
+      "label": {
+        "sr": "bind",
+        "en": "bind"
+      },
+      "code": "function partial(fn, ...preset) {\n  return fn.bind(null, ...preset);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Isti potpis: `preset` skuplja unapred zadate argumente.",
+            "en": "The same signature: `preset` collects the preset arguments."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Svaka funkcija ima metodu `bind`. `fn.bind(thisValue, ...args)` pravi novu funkciju sa unapred zadatim prvim argumentima: baš ono što se traži. Prvi parametar je vrednost za `this`; ovde je `null` jer `fn` ne koristi `this` (strelice ga ionako ignorišu). Nova funkcija se pravi odmah, a `fn` se ne poziva dok se ona ne pozove.",
+            "en": "Every function has a `bind` method. `fn.bind(thisValue, ...args)` creates a new function with the first arguments preset: exactly what is asked. The first parameter is the value for `this`; here it is `null` because `fn` does not use `this` (arrow functions ignore it anyway). The new function is created right away, and `fn` is not called until it is called."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara se `partial`.",
+            "en": "`partial` is closed."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kratko, ali sakriva ono što se dešava; ručna verzija je jasnija za učenje.",
+        "en": "Short, but it hides what happens; the manual version is clearer for learning."
+      }
+    }
+  ]
+}

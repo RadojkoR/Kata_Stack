@@ -11,6 +11,7 @@ import { useProgressMap } from "@/lib/storage/use-progress";
 import { Bar } from "../home/Bar";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { ThemeToggle } from "../ThemeToggle";
+import { Logo } from "./Logo";
 
 type Props = {
   locale: Locale;
@@ -66,7 +67,12 @@ export function SiteHeader({ locale, total, labels }: Props) {
       className="sticky top-0 z-50 h-12 shrink-0 border-b border-zinc-200 bg-background/85 backdrop-blur dark:border-zinc-800"
     >
       <div className="flex h-full w-full items-center gap-3 px-4">
-        <Link href={home} className="mr-2 font-semibold tracking-tight" onClick={() => setOpen(false)}>
+        <Link
+          href={home}
+          className="mr-2 flex items-center gap-2 font-semibold tracking-tight"
+          onClick={() => setOpen(false)}
+        >
+          <Logo className="size-6 shrink-0" />
           {labels.meta.title}
         </Link>
 

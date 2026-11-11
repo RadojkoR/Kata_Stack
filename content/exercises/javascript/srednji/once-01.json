@@ -1,0 +1,67 @@
+{
+  "id": "once-01",
+  "title": {
+    "sr": "Funkcija koja se izvršava samo jednom",
+    "en": "A function that runs only once"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "srednji",
+  "runtime": "worker",
+  "tags": [
+    "closures",
+    "functions"
+  ],
+  "description": {
+    "sr": "Napiši funkciju `once(fn)` koja vraća novu funkciju.\n\nPrvi poziv vraćene funkcije izvršava `fn` i pamti njen rezultat. Svaki kasniji poziv ne izvršava `fn`, nego vraća zapamćeni rezultat.\n\nPravila:\n- `fn` dobija argumente prvog poziva; argumenti kasnijih poziva se ignorišu\n- ako `fn` vrati `undefined`, i to je zapamćen rezultat: `fn` se ne poziva ponovo\n- svaka funkcija dobijena iz `once` ima svoje stanje\n\nPrimeri:\n```\nconst init = once(() => { console.log('start'); return 42; });\ninit(); // ispisuje 'start', vraća 42\ninit(); // ne ispisuje ništa, vraća 42\n\nconst double = once((x) => x * 2);\ndouble(2);  // 4\ndouble(10); // 4, jer se argument 10 ignoriše\n```",
+    "en": "Write a function `once(fn)` that returns a new function.\n\nThe first call of the returned function runs `fn` and remembers its result. Every later call does not run `fn`, but returns the remembered result.\n\nRules:\n- `fn` receives the arguments of the first call; the arguments of later calls are ignored\n- if `fn` returns `undefined`, that is also a remembered result: `fn` is not called again\n- every function returned by `once` has its own state\n\nExamples:\n```\nconst init = once(() => { console.log('start'); return 42; });\ninit(); // prints 'start', returns 42\ninit(); // prints nothing, returns 42\n\nconst double = once((x) => x * 2);\ndouble(2);  // 4\ndouble(10); // 4, because the argument 10 is ignored\n```"
+  },
+  "starterCode": "function once(fn) {\n  // your code\n}",
+  "tests": "test({ sr: 'fn se izvršava samo jednom', en: 'fn runs only once' }, () => {\n  let calls = 0;\n  const f = once(() => { calls++; return 42; });\n  f(); f(); f();\n  expect(calls).toBe(1);\n});\ntest({ sr: 'kasniji pozivi vraćaju isti rezultat', en: 'later calls return the same result' }, () => {\n  const f = once(() => ({ id: 1 }));\n  const first = f();\n  expect(first).toEqual({ id: 1 });\n  expect(f()).toBe(first);\n});\ntest({ sr: 'argumenti kasnijih poziva se ignorišu', en: 'arguments of later calls are ignored' }, () => {\n  const f = once((x) => x * 2);\n  expect(f(2)).toBe(4);\n  expect(f(10)).toBe(4);\n});",
+  "hiddenTests": "test('an undefined result is remembered too', () => {\n  let calls = 0;\n  const f = once(() => { calls++; });\n  expect(f()).toBe(undefined);\n  f(); f();\n  expect(calls).toBe(1);\n});\ntest('falsy results are remembered too', () => {\n  let calls = 0;\n  const f = once(() => { calls++; return 0; });\n  f(); f();\n  expect(calls).toBe(1);\n  expect(f()).toBe(0);\n});\ntest('two once functions are independent', () => {\n  let a = 0;\n  let b = 0;\n  const fa = once(() => { a++; return 'a'; });\n  const fb = once(() => { b++; return 'b'; });\n  expect(fa()).toBe('a');\n  expect(fb()).toBe('b');\n  expect(a).toBe(1);\n  expect(b).toBe(1);\n});\ntest('fn receives all arguments of the first call', () => {\n  const f = once((a, b, c) => a + b + c);\n  expect(f(1, 2, 3)).toBe(6);\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Zastavica i zapamćen rezultat",
+        "en": "Flag and remembered result"
+      },
+      "code": "function once(fn) {\n  let called = false;\n  let result;\n  return (...args) => {\n    if (!called) {\n      called = true;\n      result = fn(...args);\n    }\n    return result;\n  };\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            3
+          ],
+          "text": {
+            "sr": "Stanje živi van vraćene funkcije (closure), pa traje između poziva. `called` pamti da li je `fn` već izvršena, a `result` njen rezultat. Svaki poziv `once(...)` pravi svoj par, pa su funkcije nezavisne.",
+            "en": "The state lives outside the returned function (closure), so it lasts between calls. `called` remembers whether `fn` has already run, and `result` its result. Every call of `once(...)` creates its own pair, so the functions are independent."
+          }
+        },
+        {
+          "lines": [
+            4,
+            8
+          ],
+          "text": {
+            "sr": "Samo prvi poziv ulazi u `if`: postavlja zastavicu i izvršava `fn` sa svojim argumentima. Posebna zastavica je potrebna zato što bi provera `result === undefined` pogrešno ponovo pozvala `fn` kad je njen rezultat `undefined` (ili ponovo računala za rezultat `0` ako bi se proveravalo `if (!result)`).\n\n```\npoziv   called   šta se desi\n1.      false    called = true, result = fn(...), vraća result\n2.      true     preskače if, vraća zapamćeni result\n3.      true     preskače if, vraća zapamćeni result\n```",
+            "en": "Only the first call enters the `if`: it sets the flag and runs `fn` with its arguments. A separate flag is needed because checking `result === undefined` would wrongly call `fn` again when its result is `undefined` (and `if (!result)` would recompute for a result of `0`).\n\n```\ncall    called   what happens\n1st     false    called = true, result = fn(...), returns result\n2nd     true     skips the if, returns the remembered result\n3rd     true     skips the if, returns the remembered result\n```"
+          }
+        },
+        {
+          "lines": [
+            9,
+            11
+          ],
+          "text": {
+            "sr": "Uvek vraćamo zapamćeni rezultat: pri prvom pozivu je tek upisan, pri kasnijim je stari. Zatvaraju se vraćena funkcija i `once`.",
+            "en": "We always return the remembered result: on the first call it was just stored, on later calls it is the old one. The returned function and `once` are closed."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Zastavica `called` je postavljena pre poziva `fn`, pa i rekurzivan poziv iznutra ne bi ponovo pokrenuo `fn`.",
+        "en": "The flag `called` is set before `fn` runs, so even a recursive call from inside would not start `fn` again."
+      }
+    }
+  ]
+}

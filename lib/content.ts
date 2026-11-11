@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { buildCatalog, parseExerciseFile, parseTrackFile, type Catalog } from "./catalog";
+import { buildCatalog, parseExerciseFile, parseOrderFile, parseTrackFile, type Catalog } from "./catalog";
 import type { Area, Exercise, Level, Track } from "@/types/exercise";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
@@ -27,7 +27,13 @@ function loadCatalog(): Catalog {
     track: parseTrackFile(file, fs.readFileSync(path.join(tracksDir, file), "utf8")),
   }));
 
-  return buildCatalog(exercises, tracks);
+  const orderDir = path.join(CONTENT_DIR, "order");
+  const orders = listJson(orderDir).map((file) => ({
+    file,
+    ...parseOrderFile(file, fs.readFileSync(path.join(orderDir, file), "utf8")),
+  }));
+
+  return buildCatalog(exercises, tracks, orders);
 }
 
 let cached: Catalog | undefined;
