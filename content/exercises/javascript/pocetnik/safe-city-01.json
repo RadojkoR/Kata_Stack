@@ -1,0 +1,150 @@
+{
+  "id": "safe-city-01",
+  "title": {
+    "sr": "Bezbedno čitanje grada",
+    "en": "Safely reading the city"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "objects",
+    "optional-chaining"
+  ],
+  "description": {
+    "sr": "Čitanje svojstva od `undefined` ili `null` ne daje `undefined`, nego grešku: ako `user.address` ne postoji, `user.address.city` baca `TypeError`. Zato postoje dva operatora:\n- `?.` (opcioni lanac) staje i vraća `undefined` ako je ono levo od njega `undefined` ili `null`, umesto da baci grešku: `user.address?.city`\n- `??` vraća desnu vrednost samo ako je leva `undefined` ili `null`. Za razliku od `||`, ne zamenjuje `''` ni `0`: `'' ?? 'x'` je `''`, a `'' || 'x'` je `'x'`.\n\nNapiši funkciju `getCity(user)` koja vraća grad iz `user.address.city`, ili `'Unknown'` ako grada nema.\n\n`user` je objekat. Može da ima svojstvo `address` (objekat), a taj može da ima svojstvo `city` (tekst). Funkcija vraća tekst.\n\nPravila:\n- ako `address` ne postoji ili je `null`, vraća se `'Unknown'`\n- ako `city` ne postoji ili je `null`, vraća se `'Unknown'`\n- prazan tekst `''` je ispravan grad i vraća se kakav jeste\n\nPrimeri:\n- `getCity({ address: { city: 'Novi Sad' } })` → `'Novi Sad'`\n- `getCity({})` → `'Unknown'`\n- `getCity({ address: null })` → `'Unknown'`\n- `getCity({ address: {} })` → `'Unknown'`\n- `getCity({ address: { city: null } })` → `'Unknown'`\n- `getCity({ address: { city: '' } })` → `''`, jer je prazan tekst prava vrednost, a zamenjuju se samo `null` i `undefined`",
+    "en": "Reading a property of `undefined` or `null` does not give `undefined`, but an error: if `user.address` does not exist, `user.address.city` throws a `TypeError`. That is why there are two operators:\n- `?.` (optional chaining) stops and returns `undefined` if what is to the left of it is `undefined` or `null`, instead of throwing an error: `user.address?.city`\n- `??` returns the right-hand value only if the left one is `undefined` or `null`. Unlike `||`, it does not replace `''` or `0`: `'' ?? 'x'` is `''`, while `'' || 'x'` is `'x'`.\n\nWrite a function `getCity(user)` that returns the city from `user.address.city`, or `'Unknown'` if there is no city.\n\n`user` is an object. It may have the property `address` (an object), and that may have the property `city` (a text). The function returns a text.\n\nRules:\n- if `address` does not exist or is `null`, `'Unknown'` is returned\n- if `city` does not exist or is `null`, `'Unknown'` is returned\n- an empty text `''` is a valid city and is returned as it is\n\nExamples:\n- `getCity({ address: { city: 'Novi Sad' } })` → `'Novi Sad'`\n- `getCity({})` → `'Unknown'`\n- `getCity({ address: null })` → `'Unknown'`\n- `getCity({ address: {} })` → `'Unknown'`\n- `getCity({ address: { city: null } })` → `'Unknown'`\n- `getCity({ address: { city: '' } })` → `''`, because an empty text is a real value, and only `null` and `undefined` are replaced"
+  },
+  "starterCode": "function getCity(user) {\n  // your code\n}",
+  "tests": "test({ sr: 'vraća grad kad postoji', en: 'returns the city when it exists' }, () => {\n  expect(getCity({ address: { city: 'Novi Sad' } })).toBe('Novi Sad');\n});\ntest({ sr: 'bez adrese vraća Unknown', en: 'without an address returns Unknown' }, () => {\n  expect(getCity({})).toBe('Unknown');\n});\ntest({ sr: 'adresa bez grada vraća Unknown', en: 'an address without a city returns Unknown' }, () => {\n  expect(getCity({ address: {} })).toBe('Unknown');\n});",
+  "hiddenTests": "test('address null gives Unknown', () => {\n  expect(getCity({ address: null })).toBe('Unknown');\n});\ntest('address undefined gives Unknown', () => {\n  expect(getCity({ address: undefined })).toBe('Unknown');\n});\ntest('city null gives Unknown', () => {\n  expect(getCity({ address: { city: null } })).toBe('Unknown');\n});\ntest('an empty text is a valid city', () => {\n  expect(getCity({ address: { city: '' } })).toBe('');\n});\ntest('other properties do not matter', () => {\n  expect(getCity({ name: 'Ana', address: { street: 'Main 1', city: 'Nis' } })).toBe('Nis');\n  expect(getCity({ name: 'Ana', address: { street: 'Main 1' } })).toBe('Unknown');\n});\ntest('never throws', () => {\n  expect(() => getCity({})).not.toThrow();\n  expect(() => getCity({ address: null })).not.toThrow();\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "?. i ??",
+        "en": "?. and ??"
+      },
+      "code": "function getCity(user) {\n  return user.address?.city ?? 'Unknown';\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function getCity` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(user)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `user` je objekat sa podacima o korisniku. Poziv `getCity({ address: { city: 'Novi Sad' } })` daje `user = { address: { city: 'Novi Sad' } }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function getCity` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(user)` is the parameter list. A parameter is an empty “slot” for input: `user` is an object with the data about a user. The call `getCity({ address: { city: 'Novi Sad' } })` gives `user = { address: { city: 'Novi Sad' } }`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Cela provera je u jednoj liniji, i čita se sleva nadesno.\n\n- `user.address?.city` čita `user.address`. Ako je to `undefined` ili `null`, `?.` staje i cela vrednost je `undefined`, bez greške. Inače čita `city` iz adrese.\n- `?? 'Unknown'` zamenjuje rezultat sa `'Unknown'` samo ako je rezultat `undefined` ili `null`. To pokriva sve slučajeve bez grada: nema adrese, adresa je `null`, nema grada, grad je `null`.\n- Prazan tekst `''` nije ni `undefined` ni `null`, pa ostaje `''`. Sa `||` bi bio zamenjen sa `'Unknown'`, što bi bila greška.\n- `return` vraća rezultat iz funkcije.\n\n```\nuser                          user.address?.city   posle ?? 'Unknown'\n{ address: { city: 'Nis' } }  'Nis'                'Nis'\n{}                            undefined            'Unknown'\n{ address: null }             undefined            'Unknown'\n{ address: { city: '' } }     ''                   ''\n```",
+            "en": "The whole check is on one line, and it reads left to right.\n\n- `user.address?.city` reads `user.address`. If that is `undefined` or `null`, `?.` stops and the whole value is `undefined`, with no error. Otherwise it reads `city` from the address.\n- `?? 'Unknown'` replaces the result with `'Unknown'` only if the result is `undefined` or `null`. That covers all the cases without a city: no address, the address is `null`, no city, the city is `null`.\n- An empty text `''` is neither `undefined` nor `null`, so it stays `''`. With `||` it would be replaced with `'Unknown'`, which would be a mistake.\n- `return` returns the result from the function.\n\n```\nuser                          user.address?.city   after ?? 'Unknown'\n{ address: { city: 'Nis' } }  'Nis'                'Nis'\n{}                            undefined            'Unknown'\n{ address: null }             undefined            'Unknown'\n{ address: { city: '' } }     ''                   ''\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Najkraće: dva operatora rade posao cele `if` lestvice.",
+        "en": "The shortest: two operators do the job of the whole `if` ladder."
+      }
+    },
+    {
+      "label": {
+        "sr": "if provere korak po korak",
+        "en": "Step-by-step if checks"
+      },
+      "code": "function getCity(user) {\n  const address = user.address;\n  if (address === undefined || address === null) return 'Unknown';\n  const city = address.city;\n  if (city === undefined || city === null) return 'Unknown';\n  return city;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function getCity` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(user)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `user` je objekat sa podacima o korisniku. Poziv `getCity({ address: { city: 'Novi Sad' } })` daje `user = { address: { city: 'Novi Sad' } }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function getCity` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(user)` is the parameter list. A parameter is an empty “slot” for input: `user` is an object with the data about a user. The call `getCity({ address: { city: 'Novi Sad' } })` gives `user = { address: { city: 'Novi Sad' } }`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Čitamo adresu u promenljivu.\n\n- `user.address` je ili objekat, ili `undefined` (ako svojstvo ne postoji), ili `null`.\n- Ovo čitanje samo po sebi ne baca grešku, jer je `user` objekat. Greška bi nastala tek pri čitanju `address.city` kad je `address` `undefined` ili `null`.",
+            "en": "We read the address into a variable.\n\n- `user.address` is either an object, or `undefined` (if the property does not exist), or `null`.\n- This reading does not throw by itself, because `user` is an object. The error would appear only when reading `address.city` while `address` is `undefined` or `null`."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prvo proveravamo da li adrese uopšte ima.\n\n- `address === undefined || address === null` je tačno ako je adresa `undefined` ili `null`. `||` znači „ili“: dovoljno je da jedan deo bude tačan.\n- Ako adrese nema, odmah vraćamo `'Unknown'` i ne dolazimo do čitanja `address.city`, pa nema greške.\n- Ovo je ručna verzija onoga što `?.` radi.",
+            "en": "First we check whether there is an address at all.\n\n- `address === undefined || address === null` is true if the address is `undefined` or `null`. `||` means “or”: it is enough for one part to be true.\n- If there is no address, we return `'Unknown'` at once and never reach reading `address.city`, so there is no error.\n- This is the manual version of what `?.` does."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Sad je bezbedno čitati grad, jer znamo da je `address` pravi objekat.",
+            "en": "Now it is safe to read the city, because we know `address` is a real object."
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Ista provera za grad: ako je `undefined` ili `null`, vraćamo `'Unknown'`. Prazan tekst `''` ne prolazi kroz ovaj `if`, jer nije ni `undefined` ni `null`, pa se vraća u sledećoj liniji.",
+            "en": "The same check for the city: if it is `undefined` or `null`, we return `'Unknown'`. An empty text `''` does not pass through this `if`, because it is neither `undefined` nor `null`, so it is returned on the next line."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Grad postoji (uključujući `''`), pa ga vraćamo kakav jeste.",
+            "en": "The city exists (including `''`), so we return it as it is."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Duže, ali svaki slučaj je vidljiv. Isti rezultat kao prva verzija.",
+        "en": "Longer, but every case is visible. The same result as the first version."
+      }
+    }
+  ]
+}

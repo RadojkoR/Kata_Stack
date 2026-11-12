@@ -1,0 +1,150 @@
+{
+  "id": "sum-all-01",
+  "title": {
+    "sr": "Zbir svih argumenata",
+    "en": "Sum of all arguments"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "functions",
+    "rest"
+  ],
+  "description": {
+    "sr": "Rest parametar skuplja argumente u niz. U `function f(...nums)` tri tačke ispred imena znače: svi argumenti poziva idu u jedan pravi niz `nums`. Poziv `f(1, 2, 3)` daje `nums = [1, 2, 3]`, a poziv `f()` daje `nums = []`. Zato funkcija može da primi koliko god argumenata.\n\nNapiši funkciju `sumAll(...nums)` koja vraća zbir svih argumenata.\n\nSvaki argument je broj. Funkcija vraća jedan broj.\n\nPravila:\n- bez argumenata zbir je `0`\n- radi i sa jednim argumentom i sa negativnim brojevima\n\nPrimeri:\n- `sumAll(1, 2, 3)` → `6`\n- `sumAll(10)` → `10`\n- `sumAll(5, -2, -3)` → `0`\n- `sumAll(-4, -6)` → `-10`\n- `sumAll()` → `0`, jer nema šta da se sabere",
+    "en": "A rest parameter collects arguments into an array. In `function f(...nums)` the three dots in front of the name mean: all arguments of the call go into one real array `nums`. The call `f(1, 2, 3)` gives `nums = [1, 2, 3]`, and the call `f()` gives `nums = []`. That is why the function can accept any number of arguments.\n\nWrite a function `sumAll(...nums)` that returns the sum of all arguments.\n\nEvery argument is a number. The function returns one number.\n\nRules:\n- with no arguments the sum is `0`\n- it works with a single argument and with negative numbers\n\nExamples:\n- `sumAll(1, 2, 3)` → `6`\n- `sumAll(10)` → `10`\n- `sumAll(5, -2, -3)` → `0`\n- `sumAll(-4, -6)` → `-10`\n- `sumAll()` → `0`, because there is nothing to add"
+  },
+  "starterCode": "function sumAll(...nums) {\n  // your code\n}",
+  "tests": "test({ sr: 'sabira sve argumente', en: 'adds all arguments' }, () => {\n  expect(sumAll(1, 2, 3)).toBe(6);\n});\ntest({ sr: 'jedan argument', en: 'a single argument' }, () => {\n  expect(sumAll(10)).toBe(10);\n});\ntest({ sr: 'bez argumenata zbir je 0', en: 'with no arguments the sum is 0' }, () => {\n  expect(sumAll()).toBe(0);\n});",
+  "hiddenTests": "test('negative numbers', () => {\n  expect(sumAll(5, -2, -3)).toBe(0);\n  expect(sumAll(-4, -6)).toBe(-10);\n});\ntest('a single negative number', () => {\n  expect(sumAll(-7)).toBe(-7);\n});\ntest('many arguments', () => {\n  expect(sumAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)).toBe(55);\n});\ntest('zeros', () => {\n  expect(sumAll(0, 0, 0)).toBe(0);\n  expect(sumAll(0, 4)).toBe(4);\n});\ntest('the result is a number', () => {\n  expect(typeof sumAll()).toBe('number');\n  expect(typeof sumAll(1, 2)).toBe('number');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Petlja",
+        "en": "Loop"
+      },
+      "code": "function sumAll(...nums) {\n  let total = 0;\n  for (const n of nums) {\n    total += n;\n  }\n  return total;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function sumAll` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(...nums)` je rest parametar. Tri tačke znače: skupi sve prosleđene argumente u jedan pravi niz `nums`. Poziv `sumAll(1, 2, 3)` daje `nums = [1, 2, 3]`, a poziv `sumAll()` daje `nums = []`. Zato funkcija prima koliko god argumenata.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function sumAll` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(...nums)` is a rest parameter. The three dots mean: collect all passed arguments into one real array `nums`. The call `sumAll(1, 2, 3)` gives `nums = [1, 2, 3]`, and the call `sumAll()` gives `nums = []`. That is why the function accepts any number of arguments.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo zbir koji počinje od nule.\n\n- `let` jer se vrednost `total` menja u svakom krugu petlje.\n- `0` je početna vrednost i neutralan element za sabiranje. Ako nema argumenata, petlja se nijednom ne izvrši i vraća se upravo `0`, kako zadatak traži.",
+            "en": "We create a sum that starts at zero.\n\n- `let` because the value of `total` changes in every round of the loop.\n- `0` is the starting value and the neutral element for addition. If there are no arguments, the loop does not run even once and exactly `0` is returned, as the task asks."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prolazimo kroz sve argumente.\n\n- `for (const n of nums)` znači: za svaki element niza `nums`, redom, uradi telo petlje. U svakom krugu `n` je jedan broj.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through all the arguments.\n\n- `for (const n of nums)` means: for every element of the array `nums`, in order, run the loop body. In every round `n` is one number.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Dodajemo broj na zbir.\n\n- `total += n` je skraćeno od `total = total + n`.\n\n```\nsumAll(5, -2, -3), total na početku: 0\nkrug  n    total posle kruga\n1     5    5\n2     -2   3\n3     -3   0\n```",
+            "en": "We add the number to the sum.\n\n- `total += n` is short for `total = total + n`.\n\n```\nsumAll(5, -2, -3), total at the start: 0\nround  n    total after the round\n1      5    5\n2      -2   3\n3      -3   0\n```"
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Vraćamo konačan zbir.",
+            "en": "We return the final sum."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Radi i za prazan niz, jer zbir počinje od `0`.",
+        "en": "Works for an empty array too, because the sum starts at `0`."
+      }
+    },
+    {
+      "label": {
+        "sr": "reduce",
+        "en": "reduce"
+      },
+      "code": "function sumAll(...nums) {\n  return nums.reduce((total, n) => total + n, 0);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function sumAll` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(...nums)` je rest parametar. Tri tačke znače: skupi sve prosleđene argumente u jedan pravi niz `nums`. Poziv `sumAll(1, 2, 3)` daje `nums = [1, 2, 3]`, a poziv `sumAll()` daje `nums = []`. Zato funkcija prima koliko god argumenata.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function sumAll` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(...nums)` is a rest parameter. The three dots mean: collect all passed arguments into one real array `nums`. The call `sumAll(1, 2, 3)` gives `nums = [1, 2, 3]`, and the call `sumAll()` gives `nums = []`. That is why the function accepts any number of arguments.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Cela obrada je u jednoj liniji.\n\n- `nums.reduce(...)` svodi ceo niz na jednu vrednost. Prolazi kroz elemente redom i nosi sa sobom akumulator, tj. rezultat do tog trenutka.\n- `(total, n) => total + n` je funkcija koju `reduce` poziva za svaki element: `total` je akumulator, `n` je tekući broj, a ono što funkcija vrati postaje novi `total`.\n- `0` posle strelice je početna vrednost akumulatora. Ona je važna: kod praznog niza `reduce` bez početne vrednosti baca grešku (`TypeError`), a sa njom vraća baš tu vrednost, pa `sumAll()` daje `0`.\n\n```\nsumAll(5, -2, -3), početno total = 0\nn = 5   → total = 0 + 5 = 5\nn = -2  → total = 5 + (-2) = 3\nn = -3  → total = 3 + (-3) = 0\nrezultat: 0\n```",
+            "en": "The whole processing is on one line.\n\n- `nums.reduce(...)` reduces the whole array to a single value. It goes through the elements in order and carries an accumulator, i.e. the result up to that moment.\n- `(total, n) => total + n` is the function `reduce` calls for every element: `total` is the accumulator, `n` is the current number, and what the function returns becomes the new `total`.\n- `0` after the arrow is the starting value of the accumulator. It matters: for an empty array `reduce` without a starting value throws an error (`TypeError`), and with it returns exactly that value, so `sumAll()` gives `0`.\n\n```\nsumAll(5, -2, -3), starting total = 0\nn = 5   → total = 0 + 5 = 5\nn = -2  → total = 5 + (-2) = 3\nn = -3  → total = 3 + (-3) = 0\nresult: 0\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Kraće, ali traži razumevanje akumulatora i početne vrednosti.",
+        "en": "Shorter, but it needs an understanding of the accumulator and the starting value."
+      }
+    }
+  ]
+}

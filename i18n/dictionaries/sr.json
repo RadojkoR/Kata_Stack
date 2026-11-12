@@ -178,6 +178,10 @@
     "searching": "pretraga",
     "map": "map",
     "find": "find",
-    "every-some": "every i some"
+    "every-some": "every i some",
+    "default-params": "podrazumevane vrednosti",
+    "rest": "rest parametri",
+    "optional-chaining": "opcioni lanac",
+    "entries": "Object.entries"
   }
 }

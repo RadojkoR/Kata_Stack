@@ -73,7 +73,7 @@
 
 ## 5. Stanje (2026-11-10)
 
-**Ukupno pocetnik JavaScript: 35 od 50.** Testovi svi prolaze (262 posle grupe 5). `tsc`, lint i `npm run build` su čisti.
+**Ukupno pocetnik JavaScript: 40 od 50.** Testovi svi prolaze (277 posle grupe 6). `tsc`, lint i `npm run build` su čisti.
 
 ### Pregledi kvaliteta
 
@@ -100,6 +100,8 @@ Pregled svake grupe obuhvata: pogrešna i alternativna rešenja kroz pravi `exec
 | 4 | 5 | `last-items-01`, `has-value-01`, `insert-at-01`, `count-occurrences-01` | provereno |
 | 5 | 6 | `word-lengths-01`, `long-words-01`, `first-adult-01`, `all-any-01` | napisano 2026-11-11, čeka potvrdu |
 | 5 | 7 | `full-name-01` | napisano 2026-11-11, čeka potvrdu |
+| 6 | 7 | `safe-city-01`, `merge-settings-01`, `format-entries-01` | napisano 2026-11-11, čeka potvrdu |
+| 6 | 8 | `greet-default-01`, `sum-all-01` | napisano 2026-11-11, čeka potvrdu |
 
 **Build** je prošao posle grupe 4 i posle izmena na front-endu. Grupe 1–4 su zatvorene.
 
@@ -109,8 +111,9 @@ Pregled svake grupe obuhvata: pogrešna i alternativna rešenja kroz pravi `exec
 |---|---|
 | 1–5 | 4 / 4 svaka (20 zadataka, sve provereno) |
 | 6 | 4 / 4 (grupa 5, čeka potvrdu) |
-| 7 | 1 / 4 (grupa 5, čeka potvrdu) |
-| 8–10 | 0 / 12, još nije početo |
+| 7 | 4 / 4 (grupe 5 i 6, čekaju potvrdu) |
+| 8 | 2 / 4 (grupa 6, čeka potvrdu) |
+| 9–10 | 0 / 8, još nije početo |
 
 Srednji (4/4) i expert (1/1) su gotovi.
 
@@ -138,7 +141,7 @@ Tekst koji funkcije vraćaju je na engleskom (`'Hello, Guest!'`), isti u oba jez
 - **all-any-01** (tema 6) — `allPositive(nums)` i `anyNegative(nums)`. Pojam: `every` i `some`. Zamke: prazan niz daje `true` za `allPositive` i `false` za `anyNegative` (objasniti zašto); `0` nije ni pozitivan ni negativan.
 - **full-name-01** (tema 7) — `getFullName(person)`: `'Ana Maria Petrovic'` iz `firstName`, `middleName` (može da nedostaje), `lastName`. Pojam: čitanje svojstva objekta; svojstvo koje ne postoji je `undefined`. Zamke: bez srednjeg imena nema duplog razmaka; srednje ime `''` se tretira kao da ga nema.
 
-**Grupa 6: objekti i funkcije**
+**Grupa 6: objekti i funkcije** (napisana 2026-11-11, čeka potvrdu; pregled jačim modelom obavezan pre grupe 7)
 - **safe-city-01** (tema 7) — `getCity(user)`: `user.address.city`, ili `'Unknown'` ako `address` ili `city` ne postoji. Pojam: čitanje svojstva od `undefined` baca grešku; `?.` i `??`. Zamke: `address` je `undefined`; `address` je `null`; `city` je `''` (vraća se `''`, ne `'Unknown'`, jer `??` reaguje samo na `null` i `undefined`).
 - **merge-settings-01** (tema 7) — `mergeSettings(defaults, user)`: nov objekat u kome vrednosti iz `user` prepisuju `defaults`. Pojam: spread objekta, redosled odlučuje ko pobeđuje. Zamke: nijedan ulaz se ne menja; prazan `user`; ključ koji postoji samo u `user`; vrednost `false` i `0` iz `user` prepisuju.
 - **format-entries-01** (tema 7) — `formatEntries(obj)`: niz tekstova `'key: value'`. Pojam: `Object.entries` (uz pomen `Object.keys` i `Object.values`). Zamke: prazan objekat daje `[]`; redosled kao u objektu; vrednost broj i `true` postaju tekst.

@@ -178,6 +178,10 @@
     "searching": "searching",
     "map": "map",
     "find": "find",
-    "every-some": "every and some"
+    "every-some": "every and some",
+    "default-params": "default parameters",
+    "rest": "rest parameters",
+    "optional-chaining": "optional chaining",
+    "entries": "Object.entries"
   }
 }

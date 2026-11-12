@@ -1,0 +1,110 @@
+{
+  "id": "merge-settings-01",
+  "title": {
+    "sr": "Spajanje podešavanja",
+    "en": "Merging settings"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "objects",
+    "spread"
+  ],
+  "description": {
+    "sr": "Spread (`...`) smo već videli kod nizova. Kod objekata on raspakuje svojstva objekta u novi objekat: `{ ...a, ...b }` pravi nov objekat sa svojstvima iz `a`, pa iz `b`. Ako isti ključ postoji u oba, pobeđuje onaj koji dolazi kasnije. Na primer, `{ ...{ x: 1, y: 2 }, ...{ y: 5 } }` daje `{ x: 1, y: 5 }`.\n\nNapiši funkciju `mergeSettings(defaults, user)` koja spaja podrazumevana podešavanja sa korisničkim.\n\n`defaults` i `user` su objekti. Funkcija vraća **nov** objekat u kome korisnička podešavanja prepisuju podrazumevana.\n\nPravila:\n- ključ koji postoji samo u `defaults` ostaje, a ključ koji postoji samo u `user` se dodaje\n- vrednosti `false`, `0` i `''` iz `user` takođe prepisuju\n- ni `defaults` ni `user` se ne menjaju\n- rezultat je uvek nov objekat, čak i kad je `user` prazan\n\nPrimeri:\n- `mergeSettings({ theme: 'light', size: 12 }, { size: 14 })` → `{ theme: 'light', size: 14 }`\n- `mergeSettings({ theme: 'light' }, { lang: 'sr' })` → `{ theme: 'light', lang: 'sr' }`\n- `mergeSettings({ sound: true, volume: 5 }, { sound: false, volume: 0 })` → `{ sound: false, volume: 0 }`, jer su `false` i `0` prave vrednosti\n- `mergeSettings({ a: 1 }, {})` → `{ a: 1 }`, kao nov objekat, različit od `defaults`",
+    "en": "We have already seen spread (`...`) with arrays. With objects it unpacks the properties of an object into a new object: `{ ...a, ...b }` creates a new object with the properties from `a`, then from `b`. If the same key exists in both, the one that comes later wins. For example, `{ ...{ x: 1, y: 2 }, ...{ y: 5 } }` gives `{ x: 1, y: 5 }`.\n\nWrite a function `mergeSettings(defaults, user)` that merges the default settings with the user's settings.\n\n`defaults` and `user` are objects. The function returns a **new** object in which the user's settings overwrite the defaults.\n\nRules:\n- a key that exists only in `defaults` stays, and a key that exists only in `user` is added\n- the values `false`, `0` and `''` from `user` overwrite too\n- neither `defaults` nor `user` is changed\n- the result is always a new object, even when `user` is empty\n\nExamples:\n- `mergeSettings({ theme: 'light', size: 12 }, { size: 14 })` → `{ theme: 'light', size: 14 }`\n- `mergeSettings({ theme: 'light' }, { lang: 'sr' })` → `{ theme: 'light', lang: 'sr' }`\n- `mergeSettings({ sound: true, volume: 5 }, { sound: false, volume: 0 })` → `{ sound: false, volume: 0 }`, because `false` and `0` are real values\n- `mergeSettings({ a: 1 }, {})` → `{ a: 1 }`, as a new object, different from `defaults`"
+  },
+  "starterCode": "function mergeSettings(defaults, user) {\n  // your code\n}",
+  "tests": "test({ sr: 'korisnik prepisuje podrazumevano', en: 'the user overwrites the default' }, () => {\n  expect(mergeSettings({ theme: 'light', size: 12 }, { size: 14 })).toEqual({ theme: 'light', size: 14 });\n});\ntest({ sr: 'novi ključ se dodaje', en: 'a new key is added' }, () => {\n  expect(mergeSettings({ theme: 'light' }, { lang: 'sr' })).toEqual({ theme: 'light', lang: 'sr' });\n});\ntest({ sr: 'false i 0 takođe prepisuju', en: 'false and 0 overwrite too' }, () => {\n  expect(mergeSettings({ sound: true, volume: 5 }, { sound: false, volume: 0 })).toEqual({ sound: false, volume: 0 });\n});",
+  "hiddenTests": "test('an empty user gives a copy of the defaults, not the same object', () => {\n  const defaults = { a: 1 };\n  const result = mergeSettings(defaults, {});\n  expect(result).toEqual({ a: 1 });\n  expect(result).not.toBe(defaults);\n});\ntest('an empty text overwrites too', () => {\n  expect(mergeSettings({ name: 'Ana' }, { name: '' })).toEqual({ name: '' });\n});\ntest('both empty gives an empty object', () => {\n  expect(mergeSettings({}, {})).toEqual({});\n});\ntest('does not change defaults', () => {\n  const defaults = { theme: 'light', size: 12 };\n  mergeSettings(defaults, { size: 14, lang: 'sr' });\n  expect(defaults).toEqual({ theme: 'light', size: 12 });\n});\ntest('does not change user', () => {\n  const user = { size: 14 };\n  mergeSettings({ theme: 'light', size: 12 }, user);\n  expect(user).toEqual({ size: 14 });\n});\ntest('the defaults do not win over the user', () => {\n  expect(mergeSettings({ x: 1, y: 2 }, { y: 5 })).toEqual({ x: 1, y: 5 });\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Spread objekata",
+        "en": "Object spread"
+      },
+      "code": "function mergeSettings(defaults, user) {\n  return { ...defaults, ...user };\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function mergeSettings` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(defaults, user)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `defaults` je objekat sa podrazumevanim podešavanjima, `user` je objekat sa podešavanjima koja je korisnik promenio. Poziv `mergeSettings({ size: 12 }, { size: 14 })` daje `defaults = { size: 12 }` i `user = { size: 14 }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function mergeSettings` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(defaults, user)` is the parameter list. A parameter is an empty “slot” for input: `defaults` is the object with the default settings, `user` is the object with the settings the user changed. The call `mergeSettings({ size: 12 }, { size: 14 })` gives `defaults = { size: 12 }` and `user = { size: 14 }`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Spajamo oba objekta u jedan nov.\n\n- `{ ... }` pravi nov objekat, pa se nijedan ulaz ne menja.\n- `...defaults` upisuje u njega sva svojstva iz `defaults`.\n- `...user` posle toga upisuje svojstva iz `user`. Ako ključ već postoji, nova vrednost ga prepisuje. Zato redosled odlučuje ko pobeđuje: `user` je napisan drugi, pa pobeđuje.\n- Vrednosti `false`, `0` i `''` se prepisuju kao i svaka druga, jer spread ništa ne filtrira.\n- Prazan `user` ne dodaje ništa, ali rezultat je i dalje nov objekat.\n\n```\ndefaults = { theme: 'light', size: 12 }, user = { size: 14 }\nposle ...defaults: { theme: 'light', size: 12 }\nposle ...user:     { theme: 'light', size: 14 }\n```",
+            "en": "We merge both objects into one new object.\n\n- `{ ... }` creates a new object, so neither input is changed.\n- `...defaults` writes into it all the properties from `defaults`.\n- `...user` then writes the properties from `user`. If a key already exists, the new value overwrites it. That is why the order decides who wins: `user` is written second, so it wins.\n- The values `false`, `0` and `''` are overwritten like any other, because spread filters nothing.\n- An empty `user` adds nothing, but the result is still a new object.\n\n```\ndefaults = { theme: 'light', size: 12 }, user = { size: 14 }\nafter ...defaults: { theme: 'light', size: 12 }\nafter ...user:     { theme: 'light', size: 14 }\n```"
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Spread je plitak: radi za ovakva podešavanja, ali ne spaja ugnježdene objekte.",
+        "en": "Spread is shallow: it works for settings like these, but does not merge nested objects."
+      }
+    },
+    {
+      "label": {
+        "sr": "Object.assign",
+        "en": "Object.assign"
+      },
+      "code": "function mergeSettings(defaults, user) {\n  return Object.assign({}, defaults, user);\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function mergeSettings` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(defaults, user)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `defaults` je objekat sa podrazumevanim podešavanjima, `user` je objekat sa podešavanjima koja je korisnik promenio. Poziv `mergeSettings({ size: 12 }, { size: 14 })` daje `defaults = { size: 12 }` i `user = { size: 14 }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function mergeSettings` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(defaults, user)` is the parameter list. A parameter is an empty “slot” for input: `defaults` is the object with the default settings, `user` is the object with the settings the user changed. The call `mergeSettings({ size: 12 }, { size: 14 })` gives `defaults = { size: 12 }` and `user = { size: 14 }`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "`Object.assign(cilj, izvor1, izvor2, ...)` kopira svojstva iz izvora u prvi objekat (cilj) i vraća taj cilj.\n\n- Prvi argument je `{}`, prazan novi objekat. On je cilj, pa se kopiranjem menja samo on, a ne `defaults` ni `user`. Da smo napisali `Object.assign(defaults, user)`, izmenili bismo `defaults`, a to je greška.\n- Prvo se kopiraju svojstva iz `defaults`, pa iz `user`; kasniji izvor prepisuje raniji, isto kao kod spread-a.\n- Rezultat je isti kao `{ ...defaults, ...user }`.",
+            "en": "`Object.assign(target, source1, source2, ...)` copies the properties from the sources into the first object (the target) and returns that target.\n\n- The first argument is `{}`, an empty new object. It is the target, so only it is changed by the copying, not `defaults` or `user`. If we had written `Object.assign(defaults, user)`, we would have changed `defaults`, and that is a mistake.\n- First the properties from `defaults` are copied, then from `user`; a later source overwrites an earlier one, the same as with spread.\n- The result is the same as `{ ...defaults, ...user }`."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Starija sintaksa za isto. Prvi argument mora biti `{}`, inače se menja ulaz.",
+        "en": "The older syntax for the same thing. The first argument must be `{}`, otherwise the input is changed."
+      }
+    }
+  ]
+}

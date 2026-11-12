@@ -1,0 +1,120 @@
+{
+  "id": "greet-default-01",
+  "title": {
+    "sr": "Pozdrav sa podrazumevanim imenom",
+    "en": "Greeting with a default name"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "functions",
+    "default-params"
+  ],
+  "description": {
+    "sr": "Parametar funkcije može da ima podrazumevanu vrednost: u `function f(x = 5)` deo `= 5` znači „ako `x` nije prosleđen, uzmi `5`“. Podrazumevana vrednost se koristi samo kad argumenta nema ili je `undefined`. Svaka druga vrednost, uključujući `0`, `''` i `null`, koristi se kakva jeste.\n\nNapiši funkciju `greet(name)` koja vraća pozdrav, a za `name` postavi podrazumevanu vrednost `'Guest'`.\n\n`name` je obično tekst. Funkcija vraća tekst oblika `'Hello, ' + name + '!'`.\n\nPravila:\n- bez argumenta, ili sa `undefined`, ime je `'Guest'`\n- prazan tekst, `0` i `null` se ne zamenjuju: koriste se kakvi jesu\n\nPrimeri:\n- `greet('Ana')` → `'Hello, Ana!'`\n- `greet()` → `'Hello, Guest!'`\n- `greet(undefined)` → `'Hello, Guest!'`\n- `greet('')` → `'Hello, !'`, jer je prazan tekst prosleđena vrednost\n- `greet(0)` → `'Hello, 0!'`\n- `greet(null)` → `'Hello, null!'`, jer se `null` u tekst upisuje kao reč `null`",
+    "en": "A function parameter can have a default value: in `function f(x = 5)` the part `= 5` means “if `x` was not passed, take `5`”. The default value is used only when the argument is missing or is `undefined`. Every other value, including `0`, `''` and `null`, is used as it is.\n\nWrite a function `greet(name)` that returns a greeting, and give `name` the default value `'Guest'`.\n\n`name` is usually a text. The function returns a text of the form `'Hello, ' + name + '!'`.\n\nRules:\n- with no argument, or with `undefined`, the name is `'Guest'`\n- an empty text, `0` and `null` are not replaced: they are used as they are\n\nExamples:\n- `greet('Ana')` → `'Hello, Ana!'`\n- `greet()` → `'Hello, Guest!'`\n- `greet(undefined)` → `'Hello, Guest!'`\n- `greet('')` → `'Hello, !'`, because an empty text is a passed value\n- `greet(0)` → `'Hello, 0!'`\n- `greet(null)` → `'Hello, null!'`, because `null` is written into the text as the word `null`"
+  },
+  "starterCode": "function greet(name) {\n  // your code\n}",
+  "tests": "test({ sr: 'pozdravlja po imenu', en: 'greets by name' }, () => {\n  expect(greet('Ana')).toBe('Hello, Ana!');\n});\ntest({ sr: 'bez argumenta koristi Guest', en: 'without an argument it uses Guest' }, () => {\n  expect(greet()).toBe('Hello, Guest!');\n});\ntest({ sr: 'undefined je isto što i bez argumenta', en: 'undefined is the same as no argument' }, () => {\n  expect(greet(undefined)).toBe('Hello, Guest!');\n});",
+  "hiddenTests": "test('an empty text is not replaced', () => {\n  expect(greet('')).toBe('Hello, !');\n});\ntest('zero is not replaced', () => {\n  expect(greet(0)).toBe('Hello, 0!');\n});\ntest('null is not replaced', () => {\n  expect(greet(null)).toBe('Hello, null!');\n});\ntest('the name Guest passed on purpose', () => {\n  expect(greet('Guest')).toBe('Hello, Guest!');\n});\ntest('every call is independent', () => {\n  expect(greet('Ana')).toBe('Hello, Ana!');\n  expect(greet()).toBe('Hello, Guest!');\n  expect(greet('Marko')).toBe('Hello, Marko!');\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Podrazumevana vrednost u parametru",
+        "en": "Default value in the parameter"
+      },
+      "code": "function greet(name = 'Guest') {\n  return `Hello, ${name}!`;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function greet` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(name = 'Guest')` je lista parametara sa jednim parametrom. `name` je prazno „mesto“ za ulaz, a `= 'Guest'` je njegova podrazumevana vrednost: ako se funkcija pozove bez argumenta ili sa `undefined`, `name` postaje `'Guest'`.\n- Za svaku drugu prosleđenu vrednost podrazumevana vrednost se ne koristi. Zato `greet('')` ostaje `''`, `greet(0)` ostaje `0`, a `greet(null)` ostaje `null`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 3.\n\n```\npoziv                 name\ngreet('Ana')          'Ana'\ngreet()               'Guest'\ngreet(undefined)      'Guest'\ngreet('')             ''\ngreet(null)           null\n```",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function greet` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(name = 'Guest')` is a parameter list with one parameter. `name` is an empty “slot” for input, and `= 'Guest'` is its default value: if the function is called with no argument or with `undefined`, `name` becomes `'Guest'`.\n- For every other passed value the default is not used. That is why `greet('')` stays `''`, `greet(0)` stays `0`, and `greet(null)` stays `null`.\n- `{` opens the function body, and `}` on line 3 closes it.\n\n```\ncall                  name\ngreet('Ana')          'Ana'\ngreet()               'Guest'\ngreet(undefined)      'Guest'\ngreet('')             ''\ngreet(null)           null\n```"
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Vraćamo pozdrav.\n\n- Tekst u kosim apostrofima (`` ` ``) je šablon-literal. Unutar njega `${name}` ubacuje vrednost promenljive `name` u tekst.\n- `Hello, ` i `!` ostaju kakvi jesu, pa `greet('Ana')` daje `'Hello, Ana!'`.\n- Prazan tekst se ubacuje kao ništa (`'Hello, !'`), a `null` kao reč `null` (`'Hello, null!'`).",
+            "en": "We return the greeting.\n\n- Text in backticks (`` ` ``) is a template literal. Inside it, `${name}` inserts the value of the variable `name` into the text.\n- `Hello, ` and `!` stay as they are, so `greet('Ana')` gives `'Hello, Ana!'`.\n- An empty text is inserted as nothing (`'Hello, !'`), and `null` as the word `null` (`'Hello, null!'`)."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Podrazumevana vrednost reaguje samo na `undefined`, što je tačno ono što zadatak traži.",
+        "en": "The default value reacts only to `undefined`, which is exactly what the task asks for."
+      }
+    },
+    {
+      "label": {
+        "sr": "Provera unutar funkcije",
+        "en": "A check inside the function"
+      },
+      "code": "function greet(name) {\n  if (name === undefined) name = 'Guest';\n  return 'Hello, ' + name + '!';\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function greet` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(name)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `name` je ime koje pozdravljamo. Poziv `greet('Ana')` daje `name = 'Ana'`, a poziv `greet()` daje `name = undefined`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 4.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function greet` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(name)` is the parameter list. A parameter is an empty “slot” for input: `name` is the name we greet. The call `greet('Ana')` gives `name = 'Ana'`, and the call `greet()` gives `name = undefined`.\n- `{` opens the function body, and `}` on line 4 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Ručno radimo ono što podrazumevana vrednost radi sama.\n\n- `name === undefined` proverava da li ime nije prosleđeno. `===` je strogo poređenje: samo `undefined` je jednako `undefined`.\n- Ako jeste, dodeljujemo `name = 'Guest'`. Parametar je obična promenljiva i može da dobije novu vrednost.\n- Zašto ne `if (!name)` ili `name || 'Guest'`: `!name` je tačno i za `''`, `0` i `null`, pa bismo ih pogrešno zamenili.\n- `if` bez vitičastih zagrada: u njega spada tačno jedna naredba posle uslova.",
+            "en": "We do by hand what the default value does by itself.\n\n- `name === undefined` checks whether the name was not passed. `===` is the strict comparison: only `undefined` equals `undefined`.\n- If so, we assign `name = 'Guest'`. A parameter is an ordinary variable and can get a new value.\n- Why not `if (!name)` or `name || 'Guest'`: `!name` is true for `''`, `0` and `null` too, so we would wrongly replace them.\n- `if` without curly braces: exactly one statement after the condition belongs to it."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Vraćamo pozdrav nadovezivanjem tekstova.\n\n- `+` između tekstova ih spaja. Kad je jedan od njih `null` ili broj, JavaScript ga pretvara u tekst: `null` postaje `'null'`, a `0` postaje `'0'`.\n- Rezultat je `'Hello, '`, ime i `'!'`.",
+            "en": "We return the greeting by joining texts.\n\n- `+` between texts joins them. When one of them is `null` or a number, JavaScript turns it into text: `null` becomes `'null'`, and `0` becomes `'0'`.\n- The result is `'Hello, '`, the name and `'!'`."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Pokazuje šta podrazumevana vrednost radi iznutra. Prva verzija je kraća i uobičajena.",
+        "en": "Shows what the default value does internally. The first version is shorter and more common."
+      }
+    }
+  ]
+}

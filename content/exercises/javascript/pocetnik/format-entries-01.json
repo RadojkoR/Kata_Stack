@@ -1,0 +1,190 @@
+{
+  "id": "format-entries-01",
+  "title": {
+    "sr": "Ispis svojstava objekta",
+    "en": "Printing object properties"
+  },
+  "type": "classic",
+  "area": "javascript",
+  "level": "pocetnik",
+  "runtime": "worker",
+  "tags": [
+    "objects",
+    "entries"
+  ],
+  "description": {
+    "sr": "Za prolazak kroz svojstva objekta postoje tri pomoćne funkcije. Svaka vraća niz:\n- `Object.keys(obj)` vraća ključeve: `Object.keys({ a: 1, b: 2 })` → `['a', 'b']`\n- `Object.values(obj)` vraća vrednosti: → `[1, 2]`\n- `Object.entries(obj)` vraća parove `[ključ, vrednost]`: → `[['a', 1], ['b', 2]]`\n\nNapiši funkciju `formatEntries(obj)` koja svako svojstvo objekta pretvara u tekst oblika `'ključ: vrednost'`.\n\n`obj` je objekat čije su vrednosti tekstovi, brojevi ili `true`/`false`. Funkcija vraća niz tekstova, po jedan za svako svojstvo.\n\nPravila:\n- redosled tekstova je isti kao redosled svojstava u objektu\n- prazan objekat daje prazan niz\n- brojevi i `true`/`false` postaju tekst, a `0`, `false` i `''` se ne preskaču\n\nPrimeri:\n- `formatEntries({ name: 'Ana', age: 20 })` → `['name: Ana', 'age: 20']`\n- `formatEntries({ b: 1, a: 2 })` → `['b: 1', 'a: 2']`, jer redosled ostaje kao u objektu\n- `formatEntries({ count: 0, on: false })` → `['count: 0', 'on: false']`\n- `formatEntries({ note: '' })` → `['note: ']`, jer je prazan tekst i dalje vrednost\n- `formatEntries({})` → `[]`",
+    "en": "There are three helper functions for going through the properties of an object. Each returns an array:\n- `Object.keys(obj)` returns the keys: `Object.keys({ a: 1, b: 2 })` → `['a', 'b']`\n- `Object.values(obj)` returns the values: → `[1, 2]`\n- `Object.entries(obj)` returns `[key, value]` pairs: → `[['a', 1], ['b', 2]]`\n\nWrite a function `formatEntries(obj)` that turns every property of the object into a text of the form `'key: value'`.\n\n`obj` is an object whose values are texts, numbers or `true`/`false`. The function returns an array of texts, one for every property.\n\nRules:\n- the order of the texts is the same as the order of the properties in the object\n- an empty object gives an empty array\n- numbers and `true`/`false` become text, and `0`, `false` and `''` are not skipped\n\nExamples:\n- `formatEntries({ name: 'Ana', age: 20 })` → `['name: Ana', 'age: 20']`\n- `formatEntries({ b: 1, a: 2 })` → `['b: 1', 'a: 2']`, because the order stays as in the object\n- `formatEntries({ count: 0, on: false })` → `['count: 0', 'on: false']`\n- `formatEntries({ note: '' })` → `['note: ']`, because an empty text is still a value\n- `formatEntries({})` → `[]`"
+  },
+  "starterCode": "function formatEntries(obj) {\n  // your code\n}",
+  "tests": "test({ sr: 'pretvara svojstva u tekstove', en: 'turns properties into texts' }, () => {\n  expect(formatEntries({ name: 'Ana', age: 20 })).toEqual(['name: Ana', 'age: 20']);\n});\ntest({ sr: 'zadržava redosled iz objekta', en: 'keeps the order from the object' }, () => {\n  expect(formatEntries({ b: 1, a: 2 })).toEqual(['b: 1', 'a: 2']);\n});\ntest({ sr: 'prazan objekat daje prazan niz', en: 'an empty object gives an empty array' }, () => {\n  expect(formatEntries({})).toEqual([]);\n});",
+  "hiddenTests": "test('0 and false are not skipped', () => {\n  expect(formatEntries({ count: 0, on: false })).toEqual(['count: 0', 'on: false']);\n});\ntest('true becomes text', () => {\n  expect(formatEntries({ active: true })).toEqual(['active: true']);\n});\ntest('an empty text is still a value', () => {\n  expect(formatEntries({ note: '' })).toEqual(['note: ']);\n});\ntest('the order is not sorted alphabetically', () => {\n  expect(formatEntries({ zebra: 1, apple: 2, mango: 3 })).toEqual(['zebra: 1', 'apple: 2', 'mango: 3']);\n});\ntest('a single property', () => {\n  expect(formatEntries({ x: 'y' })).toEqual(['x: y']);\n});\ntest('does not change the object', () => {\n  const obj = { a: 1, b: 2 };\n  formatEntries(obj);\n  expect(obj).toEqual({ a: 1, b: 2 });\n});",
+  "solutions": [
+    {
+      "label": {
+        "sr": "Object.entries",
+        "en": "Object.entries"
+      },
+      "code": "function formatEntries(obj) {\n  const result = [];\n  for (const [key, value] of Object.entries(obj)) {\n    result.push(key + ': ' + value);\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function formatEntries` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(obj)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `obj` je objekat čija svojstva ispisujemo. Poziv `formatEntries({ name: 'Ana' })` daje `obj = { name: 'Ana' }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function formatEntries` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(obj)` is the parameter list. A parameter is an empty “slot” for input: `obj` is the object whose properties we print. The call `formatEntries({ name: 'Ana' })` gives `obj = { name: 'Ana' }`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo prazan niz za tekstove.\n\n- `const` jer se promenljiva `result` ne dodeljuje ponovo; sadržaj niza se menja.\n- Za prazan objekat petlja se ne izvrši i vraća se upravo ovaj prazan niz, kako zadatak traži.",
+            "en": "We create an empty array for the texts.\n\n- `const` because the variable `result` is not assigned again; the contents of the array change.\n- For an empty object the loop does not run and exactly this empty array is returned, as the task asks."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prolazimo kroz parove ključ-vrednost.\n\n- `Object.entries(obj)` vraća niz parova, redom kojim su svojstva u objektu. Za `{ name: 'Ana', age: 20 }` to je `[['name', 'Ana'], ['age', 20]]`.\n- `for (const ... of ...)` uzima jedan par po krugu.\n- `[key, value]` je destrukturiranje: par je niz od dva elementa, a ovaj zapis odmah daje ime prvom (`key`) i drugom (`value`). Isto je što i `const pair = ...; const key = pair[0]; const value = pair[1];`, samo kraće.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through the key-value pairs.\n\n- `Object.entries(obj)` returns an array of pairs, in the order the properties have in the object. For `{ name: 'Ana', age: 20 }` that is `[['name', 'Ana'], ['age', 20]]`.\n- `for (const ... of ...)` takes one pair per round.\n- `[key, value]` is destructuring: a pair is an array of two elements, and this notation immediately names the first (`key`) and the second (`value`). It is the same as `const pair = ...; const key = pair[0]; const value = pair[1];`, only shorter.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Pravimo tekst i dodajemo ga u rezultat.\n\n- `key + ': ' + value` nadovezuje ključ, dvotačku sa razmakom i vrednost. Kad je vrednost broj ili `true`/`false`, JavaScript je pretvara u tekst: `'age: ' + 20` je `'age: 20'`.\n- Nema provere `if`, pa se `0`, `false` i `''` ne preskaču: `'count: ' + 0` je `'count: 0'`, a `'note: ' + ''` je `'note: '`.\n- `result.push(...)` dodaje tekst na kraj niza.\n\n```\nobj = { name: 'Ana', age: 20 }\nkrug  key     value  tekst        result posle kruga\n1     'name'  'Ana'  'name: Ana'  ['name: Ana']\n2     'age'   20     'age: 20'    ['name: Ana', 'age: 20']\n```",
+            "en": "We build the text and add it to the result.\n\n- `key + ': ' + value` joins the key, a colon with a space and the value. When the value is a number or `true`/`false`, JavaScript turns it into text: `'age: ' + 20` is `'age: 20'`.\n- There is no `if` check, so `0`, `false` and `''` are not skipped: `'count: ' + 0` is `'count: 0'`, and `'note: ' + ''` is `'note: '`.\n- `result.push(...)` adds the text to the end of the array.\n\n```\nobj = { name: 'Ana', age: 20 }\nround  key     value  text         result after the round\n1      'name'  'Ana'  'name: Ana'  ['name: Ana']\n2      'age'   20     'age: 20'    ['name: Ana', 'age: 20']\n```"
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Vraćamo niz tekstova. Objekat `obj` smo samo čitali, nikad menjali.",
+            "en": "We return the array of texts. We only read the object `obj`, never changed it."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "`Object.entries` daje ključ i vrednost zajedno, pa nema dodatnog čitanja iz objekta.",
+        "en": "`Object.entries` gives the key and the value together, so there is no extra reading from the object."
+      }
+    },
+    {
+      "label": {
+        "sr": "Object.keys",
+        "en": "Object.keys"
+      },
+      "code": "function formatEntries(obj) {\n  const result = [];\n  for (const key of Object.keys(obj)) {\n    result.push(key + ': ' + obj[key]);\n  }\n  return result;\n}",
+      "walkthrough": [
+        {
+          "lines": [
+            1,
+            1
+          ],
+          "text": {
+            "sr": "Ovde pravimo (deklarišemo) funkciju. Funkcija je imenovan komad koda koji možemo da pozovemo koliko god puta hoćemo, svaki put sa drugim ulazom.\n\n- `function formatEntries` pravi funkciju sa tim imenom. Test je poziva baš tim imenom, pa mora biti napisano tačno ovako (velika i mala slova se razlikuju).\n- `(obj)` je lista parametara. Parametar je prazno „mesto“ za ulaz: `obj` je objekat čija svojstva ispisujemo. Poziv `formatEntries({ name: 'Ana' })` daje `obj = { name: 'Ana' }`.\n- `{` otvara telo funkcije, a zatvara ga `}` u liniji 7.\n\nSama deklaracija ništa ne računa. Kod iz tela se izvršava tek kad funkciju pozovemo.",
+            "en": "Here we create (declare) a function. A function is a named piece of code that we can call as many times as we like, each time with different input.\n\n- `function formatEntries` creates a function with that name. The test calls it by exactly this name, so it must be spelled exactly like this (letter case matters).\n- `(obj)` is the parameter list. A parameter is an empty “slot” for input: `obj` is the object whose properties we print. The call `formatEntries({ name: 'Ana' })` gives `obj = { name: 'Ana' }`.\n- `{` opens the function body, and `}` on line 7 closes it.\n\nThe declaration itself computes nothing. The code in the body runs only when we call the function."
+          }
+        },
+        {
+          "lines": [
+            2,
+            2
+          ],
+          "text": {
+            "sr": "Pravimo prazan niz za tekstove.\n\n- `const` jer se promenljiva `result` ne dodeljuje ponovo; sadržaj niza se menja.\n- Za prazan objekat petlja se ne izvrši i vraća se upravo ovaj prazan niz.",
+            "en": "We create an empty array for the texts.\n\n- `const` because the variable `result` is not assigned again; the contents of the array change.\n- For an empty object the loop does not run and exactly this empty array is returned."
+          }
+        },
+        {
+          "lines": [
+            3,
+            3
+          ],
+          "text": {
+            "sr": "Prolazimo kroz ključeve.\n\n- `Object.keys(obj)` vraća niz ključeva, redom kojim su svojstva u objektu: za `{ name: 'Ana', age: 20 }` to je `['name', 'age']`.\n- U svakom krugu `key` je jedan ključ.\n- `{` otvara telo petlje; zatvara ga `}` u liniji 5.",
+            "en": "We go through the keys.\n\n- `Object.keys(obj)` returns an array of keys, in the order the properties have in the object: for `{ name: 'Ana', age: 20 }` that is `['name', 'age']`.\n- In every round `key` is one key.\n- `{` opens the loop body; it is closed by `}` on line 5."
+          }
+        },
+        {
+          "lines": [
+            4,
+            4
+          ],
+          "text": {
+            "sr": "Vrednost čitamo iz objekta po ključu i pravimo tekst.\n\n- `obj[key]` čita svojstvo čije ime stoji u promenljivoj `key`. Uglaste zagrade su potrebne jer je ime u promenljivoj; `obj.key` bi tražilo svojstvo koje se doslovno zove `key`.\n- `key + ': ' + obj[key]` nadovezuje ključ, dvotačku sa razmakom i vrednost. Brojevi i `true`/`false` se pretvaraju u tekst.\n- Nema provere `if`, pa se `0`, `false` i `''` ne preskaču.\n\n```\nobj = { name: 'Ana', age: 20 }\nkrug  key     obj[key]  tekst\n1     'name'  'Ana'     'name: Ana'\n2     'age'   20        'age: 20'\n```",
+            "en": "We read the value from the object by key and build the text.\n\n- `obj[key]` reads the property whose name is in the variable `key`. Square brackets are needed because the name is in a variable; `obj.key` would look for a property literally called `key`.\n- `key + ': ' + obj[key]` joins the key, a colon with a space and the value. Numbers and `true`/`false` are turned into text.\n- There is no `if` check, so `0`, `false` and `''` are not skipped.\n\n```\nobj = { name: 'Ana', age: 20 }\nround  key     obj[key]  text\n1      'name'  'Ana'     'name: Ana'\n2      'age'   20        'age: 20'\n```"
+          }
+        },
+        {
+          "lines": [
+            5,
+            5
+          ],
+          "text": {
+            "sr": "Zatvara telo petlje otvoreno u liniji 3.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the loop body opened on line 3.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        },
+        {
+          "lines": [
+            6,
+            6
+          ],
+          "text": {
+            "sr": "Vraćamo niz tekstova.",
+            "en": "We return the array of texts."
+          }
+        },
+        {
+          "lines": [
+            7,
+            7
+          ],
+          "text": {
+            "sr": "Zatvara telo funkcije otvoreno u liniji 1.\n\n- `}` je par za `{`. Svaka otvorena `{` mora da ima svoju `}`; ako jedna fali, kod se ne može pročitati (`SyntaxError`).",
+            "en": "Closes the function body opened on line 1.\n\n- `}` is the pair of `{`. Every opened `{` must have its `}`; if one is missing, the code cannot be read (`SyntaxError`)."
+          }
+        }
+      ],
+      "note": {
+        "sr": "Radi isto, ali vrednost čita posebno iz objekta. `Object.entries` je kraći put do iste stvari.",
+        "en": "Does the same, but reads the value separately from the object. `Object.entries` is a shorter way to the same thing."
+      }
+    }
+  ]
+}
